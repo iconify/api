@@ -2,4 +2,4 @@
 .elasticbeanstalk
 node_modules
 *.log
-ssl/ssl.*
+.ssl/ssl.*
