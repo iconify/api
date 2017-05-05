@@ -1,0 +1,17 @@
+{
+  "name": "simple-svg-website-icons",
+  "version": "0.0.2",
+  "description": "Node.js version of icons.simplesvg.com",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Vjacheslav Trushkin",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.6.2",
+    "express": "^4.15.2",
+    "simple-svg-cdn": "*",
+    "simple-svg-icons": "git+https://github.com/simplesvg/icons.git"
+  }
+}
