@@ -26,7 +26,6 @@ const port = process.env.PORT || 3000;
 const fs = require('fs'),
     // Express stuff
     express = require('express'),
-    compression = require('compression'),
     app = express(),
 
     // Debug stuff
@@ -84,11 +83,8 @@ files.forEach(file => {
 // Sort collections
 cdn.sortPrefixes();
 
-// Disable X-Powered-By header and enable compression
+// Disable X-Powered-By header
 app.disable('x-powered-by');
-app.use(compression({
-    filter: (req, res) => true
-}));
 
 // CORS
 app.options('/*', (req, res) => {
