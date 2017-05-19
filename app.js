@@ -19,7 +19,6 @@ const customIconsDirectory = 'json';
 // Run ssl.js for SSL support
 const port = process.env.PORT || 3000;
 
-
 /*
  *  Main stuff
  */
@@ -35,8 +34,9 @@ const fs = require('fs'),
     cdn = require('simple-svg-cdn');
 
 // Cache time
-const cache = 3600; // cache time in seconds
+const cache = 604800; // cache time in seconds
 const cacheMin = cache; // minimum cache refresh time in seconds
+const cachePrivate = false; // True if cache is private
 
 // Load default collections
 if (serveDefaultIcons) {
@@ -117,7 +117,15 @@ app.get(/\/([a-z0-9\-]+)\/([a-z0-9\-,]+\.(js|json|svg))?$/, (req, res) => {
         (req.get('Pragma') === void 0 || req.get('Pragma').indexOf('no-cache') === -1) &&
         (req.get('Cache-Control') === void 0 || req.get('Cache-Control').indexOf('no-cache') === -1)
     ) {
-        res.set('Cache-Control', 'public, max-age=' + cache + ', min-refresh=' + cacheMin);
+        res.set('Cache-Control', (cachePrivate ? 'private' : 'public') + ', max-age=' + cache + ', min-refresh=' + cacheMin);
+        if (!cachePrivate) {
+            res.set('Pragma', 'cache');
+        }
+    }
+
+    // Check for download
+    if (result.filename !== void 0 && (req.query.download === '1' || req.query.download === 'true')) {
+        res.set('Content-Disposition', 'attachment; filename="' + result.filename + '"');
     }
 
     // Send data
