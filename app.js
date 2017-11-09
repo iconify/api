@@ -38,6 +38,19 @@ const cache = 604800; // cache time in seconds
 const cacheMin = cache; // minimum cache refresh time in seconds
 const cachePrivate = false; // True if cache is private
 
+// Region file to easy identify server in CDN
+let region = '';
+if (!region.length && process.env.region) {
+    region = process.env.region;
+}
+try {
+    region = fs.readFileSync('region.txt', 'utf8').trim();
+} catch (err) {
+}
+if (region.length > 10 || !region.match(/^[a-z0-9_-]+$/i)) {
+    region = '';
+}
+
 // Load default collections
 if (serveDefaultIcons) {
     const icons = require('simple-svg-icons');
@@ -135,8 +148,8 @@ app.get(/\/([a-z0-9\-]+)\/([a-z0-9\-,]+\.(js|json|svg))?$/, (req, res) => {
 // Debug information and AWS health check
 app.get('/version', (req, res) => {
     let body = 'SimpleSVG CDN version ' + version + ' (Node';
-    if (process.env.region) {
-        body += ', ' + process.env.region;
+    if (region.length) {
+        body += ', ' + region;
     }
     body += ')';
     res.send(body);

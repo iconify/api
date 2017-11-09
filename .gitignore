@@ -2,5 +2,6 @@
 .elasticbeanstalk
 node_modules
 package-lock.json
+region.txt
 *.log
 .ssl/ssl.*
