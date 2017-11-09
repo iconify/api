@@ -1,6 +1,6 @@
 {
   "name": "simple-svg-website-icons",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "Node.js version of icons.simplesvg.com",
   "main": "app.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2",
-    "simple-svg-cdn": "^0.2.2",
+    "simple-svg-cdn": "^0.3.1",
     "simple-svg-icons": "git+https://github.com/simplesvg/icons.git"
   }
 }

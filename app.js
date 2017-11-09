@@ -109,14 +109,16 @@ app.options('/*', (req, res) => {
 });
 
 // GET request
-app.get(/\/([a-z0-9\-]+)\/([a-z0-9\-,]+\.(js|json|svg))?$/, (req, res) => {
-    let collection = cdn.findCollection(req.params[0]),
-        result;
-
-    if (collection === null) {
+app.get(/\/([a-z0-9\-\/]+)\.(js|json|svg)$/, (req, res) => {
+    let parts = req.params[0].split('/'),
         result = 404;
-    } else {
-        result = cdn.parser(collection, req.params[1], req.query);
+
+    if (parts.length) {
+        let collection = cdn.getCollection(parts[0]);
+
+        if (collection !== null) {
+            result = cdn.parseQuery(collection, parts, req.params[1], req.query);
+        }
     }
 
     if (typeof result === 'number') {
