@@ -1,5 +1,6 @@
 .idea
 .elasticbeanstalk
 node_modules
+package-lock.json
 *.log
 .ssl/ssl.*
