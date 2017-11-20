@@ -51,50 +51,69 @@ if (region.length > 10 || !region.match(/^[a-z0-9_-]+$/i)) {
     region = '';
 }
 
-// Load default collections
-if (serveDefaultIcons) {
-    const icons = require('simple-svg-icons');
-    Object.keys(icons.collections()).forEach(prefix => {
-        let filename = icons.locate(prefix),
-            data;
-        try {
-            data = fs.readFileSync(filename, 'utf8');
-            data = JSON.parse(data);
-            cdn.deOptimize(data);
-        } catch (err) {
-            console.log(err);
+// Reload key
+let reloadKey = '';
+try {
+    reloadKey = fs.readFileSync('.reload', 'utf8').trim();
+} catch (err) {
+}
+if (reloadKey.length < 8 || reloadKey.length > 64) {
+    reloadKey = '';
+}
+
+// Icons module
+const icons = serveDefaultIcons ? require('simple-svg-icons') : null;
+
+function loadIcons() {
+    cdn.clearCollections();
+    console.log('Loading collections at ' + (new Date()).toString());
+
+    // Load default collections
+    if (icons !== null) {
+        Object.keys(icons.collections()).forEach(prefix => {
+            let filename = icons.locate(prefix),
+                data;
+            try {
+                data = fs.readFileSync(filename, 'utf8');
+                data = JSON.parse(data);
+                cdn.deOptimize(data);
+            } catch (err) {
+                console.log(err);
+                return;
+            }
+            console.log('Added premade collection: ' + prefix);
+            cdn.addCollection(prefix, data);
+        });
+    }
+
+    // Add collections from "json" directory
+    let files;
+    try {
+        files = fs.readdirSync(customIconsDirectory);
+    } catch (err) {
+        files = [];
+    }
+    files.forEach(file => {
+        let list = file.split('.');
+        if (list.length !== 2 || list[1] !== 'json') {
             return;
         }
-        console.log('Added premade collection: ' + prefix);
-        cdn.addCollection(prefix, data);
+        try {
+            let data = fs.readFileSync(customIconsDirectory + '/' + file, 'utf8');
+            data = JSON.parse(data);
+            cdn.deOptimize(data);
+            console.log('Added custom collection: ' + list[0]);
+            cdn.addCollection(list[0], data);
+        } catch (err) {
+        }
     });
+
+    // Sort collections
+    cdn.sortPrefixes();
 }
 
-// Add collections from "json" directory
-let files;
-try {
-    files = fs.readdirSync(customIconsDirectory);
-} catch (err) {
-    files = [];
-}
-files.forEach(file => {
-    let list = file.split('.');
-    if (list.length !== 2 || list[1] !== 'json') {
-        return;
-    }
-    try {
-        let data = fs.readFileSync(customIconsDirectory + '/' + file, 'utf8');
-        data = JSON.parse(data);
-        cdn.deOptimize(data);
-        console.log('Added custom collection: ' + list[0]);
-        cdn.addCollection(list[0], data);
-    } catch (err) {
-
-    }
-});
-
-// Sort collections
-cdn.sortPrefixes();
+// Load icons
+loadIcons();
 
 // Disable X-Powered-By header
 app.disable('x-powered-by');
@@ -155,6 +174,16 @@ app.get('/version', (req, res) => {
     }
     body += ')';
     res.send(body);
+});
+
+// Reload collections without restarting app
+app.get('/reload', (req, res) => {
+    if (reloadKey.length && req.query && req.query.key && req.query.key === reloadKey) {
+        // Reload collections
+        process.nextTick(loadIcons);
+    }
+
+    res.sendStatus(200);
 });
 
 // Redirect home page

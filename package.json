@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2",
-    "simple-svg-cdn": "^0.3.1",
+    "simple-svg-cdn": "^0.3.2",
     "simple-svg-icons": "git+https://github.com/simplesvg/icons.git"
   }
 }
