@@ -5,4 +5,5 @@ package-lock.json
 region.txt
 .reload
 *.log
+_debug*.*
 .ssl/ssl.*

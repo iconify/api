@@ -1,16 +1,20 @@
 {
   "name": "simple-svg-website-icons",
-  "version": "0.1.0",
+  "version": "1.0.0-beta1",
   "description": "Node.js version of icons.simplesvg.com",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "mocha tests/*_test.js"
   },
   "author": "Vjacheslav Trushkin",
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2",
-    "simple-svg-cdn": "^0.3.2",
     "simple-svg-icons": "git+https://github.com/simplesvg/icons.git"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1"
   }
 }
