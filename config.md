@@ -40,6 +40,27 @@ List of directories with custom json files. By default list contains only direct
 
 True if default SimpleSVG icons set should be served.
 
+#### index-page
+
+URL to redirect browser when browsing main page. Redirection is permanent.
+
+
+## Cache controls
+
+Cache configiration is stored in "cache" object. Object properties:
+
+#### timeout
+
+Cache timeout, in seconds.
+
+#### min-refresh
+
+Minimum page refresh timeout. Usually same as "timeout" value.
+
+#### private
+
+Set to true if page cache should be treated as private.
+
 
 ## Reloading icon sets
 

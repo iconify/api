@@ -6,14 +6,6 @@
 "use strict";
 
 /*
- * Configuration
- */
-// Cache configuration
-const cache = 604800, // cache time in seconds
-    cacheMin = cache, // minimum cache refresh time in seconds
-    cachePrivate = false; // True if cache is private. Used in Cache-Control header in response
-
-/*
  *  Main stuff
  */
 const fs = require('fs'),
@@ -37,7 +29,19 @@ try {
     let customConfig = fs.readFileSync(__dirname + '/config.json', 'utf8');
     if (typeof customConfig === 'string') {
         customConfig = JSON.parse(customConfig);
-        Object.assign(config, customConfig);
+        Object.keys(customConfig).forEach(key => {
+            if (typeof config[key] !== typeof customConfig[key]) {
+                return;
+            }
+
+            if (config[key] === 'object' && !(config[key] instanceof Array)) {
+                // merge object
+                Object.assign(config[key], customConfig[key]);
+            } else {
+                // overwrite arrays and scalar variables
+                config[key] = customConfig[key];
+            }
+        });
     }
 } catch (err) {
 }
@@ -103,6 +107,25 @@ function loadIcons() {
 }
 
 /**
+ * Send cache headers
+ *
+ * @param req
+ * @param res
+ */
+function cacheHeaders(req, res) {
+    if (
+        config.cache && config.cache.timeout &&
+        (req.get('Pragma') === void 0 || req.get('Pragma').indexOf('no-cache') === -1) &&
+        (req.get('Cache-Control') === void 0 || req.get('Cache-Control').indexOf('no-cache') === -1)
+    ) {
+        res.set('Cache-Control', (config.cache.private ? 'private' : 'public') + ', max-age=' + config.cache.timeout + ', min-refresh=' + config.cache['min-refresh']);
+        if (!config.cache.private) {
+            res.set('Pragma', 'cache');
+        }
+    }
+}
+
+/**
  * Parse request
  *
  * @param {string} prefix
@@ -126,16 +149,7 @@ function parseRequest(prefix, query, ext, req, res) {
         }
 
         // Send cache header
-        if (
-            cache &&
-            (req.get('Pragma') === void 0 || req.get('Pragma').indexOf('no-cache') === -1) &&
-            (req.get('Cache-Control') === void 0 || req.get('Cache-Control').indexOf('no-cache') === -1)
-        ) {
-            res.set('Cache-Control', (cachePrivate ? 'private' : 'public') + ', max-age=' + cache + ', min-refresh=' + cacheMin);
-            if (!cachePrivate) {
-                res.set('Pragma', 'cache');
-            }
-        }
+        cacheHeaders(req, res);
 
         // Check for download
         if (result.filename !== void 0 && (req.query.download === '1' || req.query.download === 'true')) {
@@ -147,14 +161,14 @@ function parseRequest(prefix, query, ext, req, res) {
     }
 
     // Parse query
-    if (collections === null) {
+    if (loading) {
         // This means script is still loading
-        // Attempt to parse query every 100ms for up to 2 seconds
+        // Attempt to parse query every 250ms for up to 10 seconds
         let attempts = 0,
             timer = setInterval(function() {
                 attempts ++;
                 if (collections === null) {
-                    if (attempts > 20) {
+                    if (attempts > 40) {
                         clearInterval(timer);
                         res.sendStatus(503);
                     }
@@ -162,7 +176,7 @@ function parseRequest(prefix, query, ext, req, res) {
                     clearInterval(timer);
                     parse();
                 }
-            }, 100);
+            }, 250);
 
     } else {
         parse();
@@ -183,10 +197,12 @@ app.disable('x-powered-by');
 
 // CORS
 app.options('/*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding');
-    res.header('Access-Control-Max-Age', 86400);
+    if (config.cors) {
+        res.header('Access-Control-Allow-Origin', config.cors.origins);
+        res.header('Access-Control-Allow-Methods', config.cors.methods);
+        res.header('Access-Control-Allow-Headers', config.cors.headers);
+        res.header('Access-Control-Max-Age', config.cors.timeout);
+    }
     res.send(200);
 });
 
@@ -261,7 +277,7 @@ app.get('/reload', (req, res) => {
 
 // Redirect home page
 app.get('/', (req, res) => {
-    res.redirect(301, 'https://simplesvg.com/');
+    res.redirect(301, config['index-page']);
 });
 
 // Create server

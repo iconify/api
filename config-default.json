@@ -7,5 +7,17 @@
   "custom-icon-dirs": [
     "json"
   ],
-  "serve-default-icons": true
+  "serve-default-icons": true,
+  "index-page": "https://simplesvg.com/",
+  "cache": {
+    "timeout": 604800,
+    "min-refresh": 604800,
+    "private": false
+  },
+  "cors": {
+    "origins": "*",
+    "timeout": 86400,
+    "methods": "GET, OPTIONS",
+    "headers": "Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding"
+  }
 }
