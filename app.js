@@ -8,17 +8,6 @@
 /*
  * Configuration
  */
-// True if server should include default icons set
-const serveDefaultIcons = true;
-
-// Directories with json files for custom icon sets
-// Use simple-svg-tools package to create json collections
-const customIconDirectories = ['json'];
-
-// HTTP port
-// Run ssl.js for SSL support
-const port = process.env.PORT || 3000;
-
 // Cache configuration
 const cache = 604800, // cache time in seconds
     cacheMin = cache, // minimum cache refresh time in seconds
@@ -32,7 +21,7 @@ const fs = require('fs'),
     express = require('express'),
     app = express(),
 
-    // Debug stuff
+    // Configuration and version
     version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version,
 
     // Included files
@@ -41,31 +30,40 @@ const fs = require('fs'),
     // Query parser
     parseQuery = require('./src/query');
 
-// Region file to easy identify server in CDN
-let region = '';
-if (!region.length && process.env.region) {
-    region = process.env.region;
-}
+// Configuration
+let config = JSON.parse(fs.readFileSync(__dirname + '/config-default.json', 'utf8'));
+
 try {
-    region = fs.readFileSync('region.txt', 'utf8').trim();
+    let customConfig = fs.readFileSync(__dirname + '/config.json', 'utf8');
+    if (typeof customConfig === 'string') {
+        customConfig = JSON.parse(customConfig);
+        Object.assign(config, customConfig);
+    }
 } catch (err) {
-}
-if (region.length > 10 || !region.match(/^[a-z0-9_-]+$/i)) {
-    region = '';
 }
 
-// Reload key
-let reloadKey = '';
-try {
-    reloadKey = fs.readFileSync('.reload', 'utf8').trim();
-} catch (err) {
+// Port
+if (config['env-port'] && process.env.PORT) {
+    config.port = process.env.PORT;
 }
-if (reloadKey.length < 8 || reloadKey.length > 64) {
-    reloadKey = '';
+
+// Region file to easy identify server in CDN
+if (!config['env-region'] && process.env.region) {
+    config.region = process.env.region;
+}
+if (config.region.length > 10 || !config.region.match(/^[a-z0-9_-]+$/i)) {
+    config.region = '';
+    console.log('Invalid value for region config variable.');
+}
+
+// Reload secret key
+if (config['reload-secret'] === '') {
+    // Add reload-secret to config.json to be able to run /reload?key=your-secret-key that will reload collections without restarting server
+    console.log('reload-secret configuration is empty. You will not be able to update all collections without restarting server.');
 }
 
 // Icons module
-const icons = serveDefaultIcons ? require('simple-svg-icons') : null;
+let icons = config['serve-default-icons'] ? require('simple-svg-icons') : null;
 
 // Collections list
 let collections = null,
@@ -91,7 +89,7 @@ function loadIcons() {
         }
 
         // Add collections from "json" directory
-        customIconDirectories.forEach(dir => {
+        config['custom-icon-dirs'].forEach(dir => {
             newCollections.addDirectory(dir);
         });
 
@@ -230,8 +228,8 @@ app.get(/^\/([a-z0-9:-]+)\.svg$/, (req, res) => {
 // Debug information and AWS health check
 app.get('/version', (req, res) => {
     let body = 'SimpleSVG CDN version ' + version + ' (Node';
-    if (region.length) {
-        body += ', ' + region;
+    if (config.region.length) {
+        body += ', ' + config.region;
     }
     body += ')';
     res.send(body);
@@ -239,7 +237,7 @@ app.get('/version', (req, res) => {
 
 // Reload collections without restarting app
 app.get('/reload', (req, res) => {
-    if (reloadKey.length && req.query && req.query.key && req.query.key === reloadKey) {
+    if (config['reload-secret'].length && req.query && req.query.key && req.query.key === config['reload-secret']) {
         // Reload collections
         process.nextTick(() => {
             if (loading) {
@@ -256,6 +254,8 @@ app.get('/reload', (req, res) => {
         });
     }
 
+    // Send 200 response regardless of reload status, so visitor would not know if secret key was correct
+    // Testing should be done by checking new icons that should have been added by reload
     res.sendStatus(200);
 });
 
@@ -265,8 +265,8 @@ app.get('/', (req, res) => {
 });
 
 // Create server
-app.listen(port, () => {
-    console.log('Listening on port ' + port);
+app.listen(config.port, () => {
+    console.log('Listening on port ' + config.port);
 });
 
 module.exports = app;

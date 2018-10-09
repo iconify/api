@@ -1,8 +1,8 @@
 .idea
 .elasticbeanstalk
+.DS_Store
 node_modules
-region.txt
-.reload
+config.json
 *.log
 _debug*.*
 .ssl/ssl.*

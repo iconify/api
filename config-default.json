@@ -1,0 +1,11 @@
+{
+  "port": 3000,
+  "env-port": true,
+  "region": "",
+  "env-region": true,
+  "reload-secret": "",
+  "custom-icon-dirs": [
+    "json"
+  ],
+  "serve-default-icons": true
+}
