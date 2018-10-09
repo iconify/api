@@ -151,6 +151,29 @@ function sendResult(result, req, res) {
 }
 
 /**
+ * Delay response
+ *
+ * @param {function} callback
+ * @param res
+ */
+function delayResponse(callback, res) {
+    // Attempt to parse query every 250ms for up to 10 seconds
+    let attempts = 0,
+        timer = setInterval(function() {
+            attempts ++;
+            if (collections === null) {
+                if (attempts > 40) {
+                    clearInterval(timer);
+                    res.sendStatus(503);
+                }
+            } else {
+                clearInterval(timer);
+                callback();
+            }
+        }, 250);
+}
+
+/**
  * Parse request
  *
  * @param {string} prefix
@@ -174,21 +197,7 @@ function parseRequest(prefix, query, ext, req, res) {
     // Parse query
     if (collections === null) {
         // This means script is still loading
-        // Attempt to parse query every 250ms for up to 10 seconds
-        let attempts = 0,
-            timer = setInterval(function() {
-                attempts ++;
-                if (collections === null) {
-                    if (attempts > 40) {
-                        clearInterval(timer);
-                        res.sendStatus(503);
-                    }
-                } else {
-                    clearInterval(timer);
-                    parse();
-                }
-            }, 250);
-
+        delayResponse(parse, res);
     } else {
         parse();
     }
