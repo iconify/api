@@ -47,7 +47,7 @@ True if default SimpleSVG icons set should be served.
 URL to redirect browser when browsing main page. Redirection is permanent.
 
 
-## Cache controls
+## Browser cache controls
 
 Cache configiration is stored in "cache" object. Object properties:
 
