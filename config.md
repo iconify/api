@@ -34,7 +34,9 @@ If true, script will check for environment variable "REGION" and if it is set, i
 
 #### custom-icon-dirs
 
-List of directories with custom json files. By default list contains only directory "json". Directories should be relative to current working directory.
+List of directories with custom json files. By default list contains only directory "json".
+
+Use {dir} variable to specify application's directory.
 
 #### serve-default-icons
 

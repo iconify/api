@@ -94,7 +94,7 @@ function loadIcons() {
 
         // Add collections from "json" directory
         config['custom-icon-dirs'].forEach(dir => {
-            newCollections.addDirectory(dir);
+            newCollections.addDirectory(dir.replace('{dir}', __dirname));
         });
 
         newCollections.load().then(() => {
