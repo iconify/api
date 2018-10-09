@@ -161,7 +161,7 @@ function parseRequest(prefix, query, ext, req, res) {
     }
 
     // Parse query
-    if (loading) {
+    if (collections === null) {
         // This means script is still loading
         // Attempt to parse query every 250ms for up to 10 seconds
         let attempts = 0,
