@@ -10,10 +10,13 @@ class Collections {
     /**
      * Constructor
      *
-     * @param {boolean} [log] Optional function for logging loading process
+     * @param {object} config Application configuration
+     * @param {function} [log] Logging function
      */
-    constructor(log) {
+    constructor(config, log) {
         this._log = typeof log === 'function' ? log : null;
+        this._config = config;
+
         this.items = {};
         this._loadQueue = [];
     }
@@ -22,11 +25,14 @@ class Collections {
      * Add directory to loading queue
      *
      * @param {string} dir
+     * @param {string} repo
      */
-    addDirectory(dir) {
+    addDirectory(dir, repo) {
+        console.log('Loading collections for repository "' + repo + '" from directory:', dir);
         this._loadQueue.push({
             type: 'dir',
-            dir: dir.slice(-1) === '/' ? dir.slice(0, dir.length - 1) : dir
+            dir: dir.slice(-1) === '/' ? dir.slice(0, dir.length - 1) : dir,
+            repo: repo
         });
     }
 
@@ -34,11 +40,118 @@ class Collections {
      * Add file to loading queue
      *
      * @param {string} filename
+     * @param {string} repo
      */
-    addFile(filename) {
+    addFile(filename, repo) {
         this._loadQueue.push({
             type: 'file',
-            filename: filename
+            filename: filename,
+            repo: repo
+        });
+    }
+
+    /**
+     * Find collections
+     *
+     * @private
+     */
+    _findCollecitons(repo) {
+        return new Promise((fulfill, reject) => {
+            let config = this._config,
+                dirs = config._dirs,
+                iconsDir = dirs.iconsDir(repo);
+
+            if (iconsDir === '') {
+                // Nothing to add
+                fulfill();
+                return;
+            }
+
+            switch (repo) {
+                case 'simple-svg':
+                    // Get collections.json
+                    let filename = dirs.rootDir(repo) + '/collections.json';
+                    fs.readFile(filename, 'utf8', (err, data) => {
+                        if (err) {
+                            reject('Error locating collections.json for SimpleSVG default icons.');
+                            return;
+                        }
+
+                        try {
+                            data = JSON.parse(data);
+                        } catch (err) {
+                            reject('Error reading contents of' + filename);
+                            return;
+                        }
+
+                        this.addDirectory(iconsDir, repo);
+                        this.info = data;
+
+                        fulfill();
+                    });
+                    return;
+
+                default:
+                    this.addDirectory(iconsDir, repo);
+                    fulfill();
+            }
+        });
+    }
+
+    /**
+     * Find all collections and load
+     *
+     * @returns {Promise}
+     */
+    reload() {
+        return new Promise((fulfill, reject) => {
+            let promises = [
+                    this._findCollecitons('simple-svg'),
+                    this._findCollecitons('custom')
+                ];
+
+            Promise.all(promises).then(() => {
+                return this.load();
+            }).then(() => {
+                fulfill(this);
+            }).catch(err => {
+                reject(err);
+            })
+        });
+    }
+
+    /**
+     * Load only one repository
+     *
+     * @param {string} repo Repository name
+     * @returns {Promise}
+     */
+    loadRepo(repo) {
+        return new Promise((fulfill, reject) => {
+            Promise.all(this._findCollecitons(repo)).then(() => {
+                return this.load();
+            }).then(() => {
+                fulfill(this);
+            }).catch(err => {
+                reject(err);
+            })
+        });
+    }
+
+    /**
+     * Merge two collections lists, overwriting this collections with data from other collections list
+     *
+     * @param {Collections} data
+     */
+    merge(data) {
+        // Merge data
+        if (data.info !== void 0) {
+            this.info = data.info;
+        }
+
+        // Merge collections
+        Object.keys(data.items).forEach(prefix => {
+            this.items[prefix] = data.items[prefix];
         });
     }
 
@@ -57,11 +170,11 @@ class Collections {
             this._loadQueue.forEach(item => {
                 switch (item.type) {
                     case 'dir':
-                        promises.push(this._loadDir(item.dir));
+                        promises.push(this._loadDir(item.dir, item.repo));
                         break;
 
                     case 'file':
-                        promises.push(this._loadFile(item.filename));
+                        promises.push(this._loadFile(item.filename, item.repo));
                         break;
                 }
             });
@@ -78,10 +191,11 @@ class Collections {
      * Load directory
      *
      * @param {string} dir
+     * @param {string} repo
      * @returns {Promise}
      * @private
      */
-    _loadDir(dir) {
+    _loadDir(dir, repo) {
         return new Promise((fulfill, reject) => {
             fs.readdir(dir, (err, files) => {
                 if (err) {
@@ -95,7 +209,7 @@ class Collections {
                         if (file.slice(-5) !== '.json') {
                             return;
                         }
-                        promises.push(this._loadFile(dir + '/' + file));
+                        promises.push(this._loadFile(dir + '/' + file, repo));
                     });
 
                     // Load all promises
@@ -113,9 +227,10 @@ class Collections {
      * Load file
      *
      * @param {string} filename Full filename
+     * @param {string} repo
      * @returns {Promise}
      */
-    _loadFile(filename) {
+    _loadFile(filename, repo) {
         return new Promise((fulfill, reject) => {
             let file = filename.split('/').pop(),
                 fileParts = file.split('.');
@@ -127,6 +242,7 @@ class Collections {
             let prefix = fileParts[0],
                 collection = new Collection(prefix);
 
+            collection.repo = repo;
             collection.loadFile(filename).then(() => {
                 if (!collection.loaded) {
                     if (this._log !== null) {

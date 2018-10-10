@@ -6,3 +6,4 @@ config.json
 *.log
 _debug*.*
 .ssl/ssl.*
+git-repos

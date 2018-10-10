@@ -32,9 +32,9 @@ To check which server you are connected to, open /version in browser.
 
 If true, script will check for environment variable "REGION" and if it is set, it will overwrite configuration option "region"
 
-#### custom-icon-dirs
+#### custom-icon-dir
 
-List of directories with custom json files. By default list contains only directory "json".
+Directory with custom json files.
 
 Use {dir} variable to specify application's directory.
 
@@ -81,3 +81,69 @@ To reload collections follow these steps:
 This will reload all collections.
 
 Server will respond identically with "ok" message regardless of reload status to prevent visitors from trying to guess your secret key, so few seconds after reload you can verify that icons were reloaded by trying to open one of icons that were supposed to be added or removed.
+
+
+## Synchronizing icon sets with Git
+
+In addition to reloading all collections without restarting server, server can pull collections from Git service and reload collections without restarting. This can be used to push collections to server whenever its updated without downtime.
+
+There are two collections available: simple-svg and custom.
+
+All configuration options are in "sync" object in config-default.json. Use {dir} variable in directories to point to application directory.
+
+To synchronize repository send GET request to /sync?repo=simple-svg&key=your-sync-key
+Replace repo with "custom" to synchronize custom repository and key with value of sync.secret
+
+Server will respond identically with "ok" message regardless of status to prevent visitors from trying to guess your secret key.
+
+Sync function is meant to be used with GitHub web hooks function. To avoid synchronizing icon sets too often, synchronization is delayed by 60 seconds (configure "sync-delay" option to change it). This way when there are multiple commits submitted within a minute, synchronization is done only once 60 seconds after first commit.
+
+#### secret
+
+Secret key. String. This is required configuration option. Put it in config.json, not config-default.json to make sure its not commited by mistake.
+
+If "secret" is not set, entire synchronization module is disabled.
+
+#### sync-on-startup
+
+This option automatically pulls latest repositories when application is started. Possible values:
+
+* never - disabled
+* always - always synchronize all available repositories
+* missing - synchronize only repositories that are missing
+
+#### sync-delay
+
+Delay for synchronization, in seconds. See documentation above.
+
+This option does not affect synchronization on application startup.
+
+#### repeated-sync-delay
+
+If synchronization request was sent while synchronization is already in progress, this is amount of time application will wait until initializing next synchronization. Value is in seconds.
+
+#### versions
+
+Location of versions.json file that stores information about latest synchronized repositories.
+
+#### storage
+
+Location of directory where repositories will be stored.
+
+#### git
+
+Git command. You can change it if you need to customize command that is executed to clone repository. {repo} will be replaced with repository URL, {target} will be replaced with target directory.
+
+#### simple-svg
+
+URL of SimpleSVG icons repository.
+
+#### custom
+
+URL of custom icons repository.
+
+#### custom-dir
+
+Location of json files in custom repository, relative to root directory of repository.
+
+For example, if json files are located in directory "json" in your repository (like they are in simple-svg repository), set custom-dir value to "json".

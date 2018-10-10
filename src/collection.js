@@ -103,6 +103,15 @@ class Collection {
         // Add aliases and icons
         this.icons = data.icons;
         this.aliases = data.aliases === void 0 ? {} : data.aliases;
+
+        // Add characters and categories
+        if (data.chars !== void 0) {
+            this.chars = data.chars;
+        }
+        if (data.categories !== void 0) {
+            this.categories = data.categories;
+        }
+
         this.loaded = true;
     }
 

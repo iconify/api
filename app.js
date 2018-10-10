@@ -34,17 +34,18 @@ try {
                 return;
             }
 
-            if (config[key] === 'object' && !(config[key] instanceof Array)) {
+            if (typeof config[key] === 'object') {
                 // merge object
                 Object.assign(config[key], customConfig[key]);
             } else {
-                // overwrite arrays and scalar variables
+                // overwrite scalar variables
                 config[key] = customConfig[key];
             }
         });
     }
 } catch (err) {
 }
+config._dir = __dirname;
 
 // Port
 if (config['env-port'] && process.env.PORT) {
@@ -66,43 +67,88 @@ if (config['reload-secret'] === '') {
     console.log('reload-secret configuration is empty. You will not be able to update all collections without restarting server.');
 }
 
-// Icons module
-let icons = config['serve-default-icons'] ? require('simple-svg-icons') : null;
-
 // Collections list
 let collections = null,
-    loading = true;
+    loading = true,
+    anotherReload = false;
+
+// Modules
+let dirs = require('./src/dirs')(config),
+    sync = require('./src/sync')(config);
 
 /**
  * Load icons
  *
+ * @param {boolean} firstLoad
  * @returns {Promise}
  */
-function loadIcons() {
+function loadIcons(firstLoad) {
     return new Promise((fulfill, reject) => {
-        let t = Date.now(),
-            newCollections = new Collections(console.log);
+        function getCollections() {
+            let t = Date.now(),
+                newCollections = new Collections(config, console.log);
 
-        console.log('Loading collections at ' + (new Date()).toString());
-
-        // Load default collections
-        if (icons !== null) {
-            Object.keys(icons.collections()).forEach(prefix => {
-                newCollections.addFile(icons.locate(prefix));
+            console.log('Loading collections at ' + (new Date()).toString());
+            newCollections.reload().then(() => {
+                console.log('Loaded in ' + (Date.now() - t) + 'ms');
+                fulfill(newCollections);
+            }).catch(err => {
+                reject(err);
             });
         }
 
-        // Add collections from "json" directory
-        config['custom-icon-dirs'].forEach(dir => {
-            newCollections.addDirectory(dir.replace('{dir}', __dirname));
-        });
+        if (firstLoad && config.sync && config.sync['sync-on-startup']) {
+            // Synchronize repositories first
+            let promises = [];
+            dirs.keys().forEach(repo => {
+                if (sync.canSync(repo)) {
+                    switch (config.sync['sync-on-startup']) {
+                        case 'always':
+                            break;
 
-        newCollections.load().then(() => {
-            console.log('Loaded in ' + (Date.now() - t) + 'ms');
-            fulfill(newCollections);
-        }).catch(err => {
-            reject(err);
-        });
+                        case 'never':
+                            return;
+
+                        case 'missing':
+                            // Check if repository is missing
+                            if (sync.time(repo)) {
+                                return;
+                            }
+                    }
+                    promises.push(sync.sync(repo, true));
+                }
+            });
+
+            if (promises.length) {
+                console.log('Synchronizing repositories before starting...');
+            }
+            Promise.all(promises).then(() => {
+                getCollections();
+            }).catch(err => {
+                console.log(err);
+                getCollections();
+            });
+        } else {
+            getCollections();
+        }
+    });
+}
+
+function reloadIcons(firstLoad) {
+    loading = true;
+    anotherReload = false;
+    loadIcons(false).then(newCollections => {
+        collections = newCollections;
+        loading = false;
+        if (anotherReload) {
+            reloadIcons(false);
+        }
+    }).catch(err => {
+        console.log('Fatal error loading collections:', err);
+        loading = false;
+        if (anotherReload) {
+            reloadIcons(false);
+        }
     });
 }
 
@@ -204,12 +250,19 @@ function parseRequest(prefix, query, ext, req, res) {
 }
 
 // Load icons
-loadIcons().then(newCollections => {
+loadIcons(true).then(newCollections => {
     collections = newCollections;
     loading = false;
+    if (anotherReload) {
+        anotherReload = false;
+        setTimeout(() => {
+            reloadIcons(false);
+        }, 30000);
+    }
 }).catch(err => {
     console.log('Fatal error loading collections:', err);
     loading = false;
+    reloadIcons(true);
 });
 
 // Disable X-Powered-By header
@@ -277,16 +330,37 @@ app.get('/reload', (req, res) => {
         // Reload collections
         process.nextTick(() => {
             if (loading) {
+                anotherReload = true;
                 return;
             }
-            loading = true;
-            loadIcons().then(newCollections => {
-                collections = newCollections;
-                loading = false;
-            }).catch(err => {
-                console.log('Fatal error loading collections:', err);
-                loading = false;
-            });
+            reloadIcons(false);
+        });
+    }
+
+    // Send 200 response regardless of reload status, so visitor would not know if secret key was correct
+    // Testing should be done by checking new icons that should have been added by reload
+    res.sendStatus(200);
+});
+
+// Update collection without restarting app
+app.get('/sync', (req, res) => {
+    let repo = req.query.repo;
+
+    if (sync.canSync(repo) && sync.validKey(req.query.key)) {
+        if (config.sync['sync-delay']) {
+            console.log('Will start synchronizing repository "' + repo + '" in up to ' + config.sync['sync-delay'] + ' seconds...');
+        }
+        sync.sync(repo, false).then(canLoad => {
+            if (canLoad) {
+                // Refresh all icons
+                if (loading) {
+                    anotherReload = true;
+                } else {
+                    reloadIcons(false);
+                }
+            }
+        }).catch(err => {
+            console.log(err);
         });
     }
 
