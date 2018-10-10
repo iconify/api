@@ -307,7 +307,7 @@ const functions = {
 
             console.log('Cleaning up old repositories...');
 
-            // Delete all directories, but only 1 at a time to reduce load
+            // Delete all directories, but only 1 at a time to reduce loadQueue
             promiseQueue(dirs, dir => removeDir(dir)).then(() => {
                 cleaning = false;
             }).catch(err => {

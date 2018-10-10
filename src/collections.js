@@ -55,7 +55,7 @@ class Collections {
      *
      * @private
      */
-    _findCollecitons(repo) {
+    _findCollections(repo) {
         return new Promise((fulfill, reject) => {
             let config = this._config,
                 dirs = config._dirs,
@@ -99,19 +99,19 @@ class Collections {
     }
 
     /**
-     * Find all collections and load
+     * Find all collections and loadQueue
      *
      * @returns {Promise}
      */
     reload() {
         return new Promise((fulfill, reject) => {
             let promises = [
-                    this._findCollecitons('simple-svg'),
-                    this._findCollecitons('custom')
+                    this._findCollections('simple-svg'),
+                    this._findCollections('custom')
                 ];
 
             Promise.all(promises).then(() => {
-                return this.load();
+                return this.loadQueue();
             }).then(() => {
                 fulfill(this);
             }).catch(err => {
@@ -128,8 +128,8 @@ class Collections {
      */
     loadRepo(repo) {
         return new Promise((fulfill, reject) => {
-            Promise.all(this._findCollecitons(repo)).then(() => {
-                return this.load();
+            Promise.all(this._findCollections(repo)).then(() => {
+                return this.loadQueue();
             }).then(() => {
                 fulfill(this);
             }).catch(err => {
@@ -163,7 +163,7 @@ class Collections {
      *
      * @returns {Promise}
      */
-    load() {
+    loadQueue() {
         return new Promise((fulfill, reject) => {
             let promises = [];
 
@@ -246,7 +246,7 @@ class Collections {
             collection.loadFile(filename).then(() => {
                 if (!collection.loaded) {
                     if (this._log !== null) {
-                        this._log('Failed to load collection: ' + filename);
+                        this._log('Failed to loadQueue collection: ' + filename);
                     }
                     fulfill(false);
                     return;

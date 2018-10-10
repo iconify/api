@@ -32,7 +32,7 @@
             };
 
             let collection = new Collection();
-            collection.loadJSON(data); // load as object
+            collection.loadJSON(data); // loadQueue as object
 
             expect(collection.loaded).to.be.equal(true);
             expect(collection.prefix).to.be.equal('foo');
@@ -62,7 +62,7 @@
             };
 
             let collection = new Collection('foo');
-            collection.loadJSON(JSON.stringify(data)); // load as string
+            collection.loadJSON(JSON.stringify(data)); // loadQueue as string
 
             expect(collection.loaded).to.be.equal(true);
             expect(collection.prefix).to.be.equal('foo');
