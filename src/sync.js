@@ -1,12 +1,14 @@
 "use strict";
 
 const fs = require('fs'),
-    child_process = require('child_process');
+    child_process = require('child_process'),
+    promiseQueue = require('./promise');
 
 const repos = ['simple-svg', 'custom'];
 
 let synchronized = {},
     active = false,
+    cleaning = false,
     synchronizing = {},
     reSync = {},
     syncQueue = {};
@@ -18,7 +20,7 @@ let config, dirs, _baseDir, _repoDir, _versionsFile;
  *
  * @param repo
  */
-let startSync = repo => {
+const startSync = repo => {
     if (syncQueue[repo] === void 0) {
         return;
     }
@@ -73,7 +75,81 @@ let startSync = repo => {
     });
 };
 
-let functions = {
+/**
+ * Remove file
+ *
+ * @param {string} file
+ * @returns {Promise<any>}
+ */
+const removeFile = file => new Promise((fulfill, reject) => {
+    fs.unlink(file, err => {
+        // if (err) {
+        //     console.log(err);
+        // }
+        fulfill();
+    })
+});
+
+/**
+ * Remove directory with sub-directories and files
+ *
+ * @param {string} dir
+ * @returns {Promise<any>}
+ */
+const removeDir = dir => new Promise((fulfill, reject) => {
+    function done() {
+        fs.rmdir(dir, err => {
+            // if (err) {
+            //     console.log(err);
+            // }
+            fulfill();
+        });
+    }
+
+    fs.readdir(dir, (err, files) => {
+        if (err) {
+            // fulfill instead of rejecting
+            fulfill();
+            return;
+        }
+
+        let children = {};
+
+        files.forEach(file => {
+            let filename = dir + '/' + file,
+                stats = fs.lstatSync(filename);
+
+            if (stats.isDirectory()) {
+                children[filename] = true;
+                return;
+            }
+
+            if (stats.isFile() || stats.isSymbolicLink()) {
+                children[filename] = false;
+            }
+        });
+
+        promiseQueue(Object.keys(children), file => {
+            if (children[file]) {
+                return removeDir(file);
+            } else {
+                return removeFile(file);
+            }
+        }).then(() => {
+            done();
+        }).catch(err => {
+            console.log(err);
+            done();
+        });
+    });
+});
+
+/**
+ * Exported functions
+ *
+ * @type {object}
+ */
+const functions = {
     /**
      * Get root directory of repository
      *
@@ -191,8 +267,54 @@ let functions = {
         }
     }),
 
+    /**
+     * Remove old files
+     */
     cleanup: () => {
-        console.log('Cleaning up old repositories...');
+        if (cleaning) {
+            return;
+        }
+        cleaning = true;
+
+        fs.readdir(_baseDir, (err, files) => {
+            if (err) {
+                cleaning = false;
+                return;
+            }
+
+            let dirs = [];
+            files.forEach(file => {
+                let parts = file.split('.');
+                if (parts.length !== 2 || synchronized[parts[0]] === void 0) {
+                    return;
+                }
+
+                let repo = parts.shift(),
+                    time = parseInt(parts.shift());
+
+                if (time > (synchronized[repo] - 3600 * 1000)) {
+                    // wait 1 hour before deleting old repository
+                    return;
+                }
+
+                dirs.push(_baseDir + '/' + file);
+            });
+
+            if (!dirs.length) {
+                cleaning = false;
+                return;
+            }
+
+            console.log('Cleaning up old repositories...');
+
+            // Delete all directories, but only 1 at a time to reduce load
+            promiseQueue(dirs, dir => removeDir(dir)).then(() => {
+                cleaning = false;
+            }).catch(err => {
+                console.log(err);
+                cleaning = false;
+            });
+        });
     }
 };
 
