@@ -89,7 +89,7 @@ function loadIcons(firstLoad) {
                 newCollections = new Collections(config, console.log);
 
             console.log('Loading collections at ' + (new Date()).toString());
-            newCollections.reload().then(() => {
+            newCollections.reload(dirs.getRepos()).then(() => {
                 console.log('Loaded in ' + (Date.now() - t) + 'ms');
                 fulfill(newCollections);
             }).catch(err => {

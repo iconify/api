@@ -32,7 +32,7 @@ To check which server you are connected to, open /version in browser.
 
 If true, script will check for environment variable "REGION" and if it is set, it will overwrite configuration option "region"
 
-#### custom-icon-dir
+#### custom-icons-dir
 
 Directory with custom json files.
 

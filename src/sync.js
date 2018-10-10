@@ -4,8 +4,6 @@ const fs = require('fs'),
     child_process = require('child_process'),
     promiseQueue = require('./promise');
 
-const repos = ['simple-svg', 'custom'];
-
 let synchronized = {},
     active = false,
     cleaning = false,
@@ -13,7 +11,7 @@ let synchronized = {},
     reSync = {},
     syncQueue = {};
 
-let config, dirs, _baseDir, _repoDir, _versionsFile;
+let config, dirs, repos, _baseDir, _repoDir, _versionsFile;
 
 /**
  * Start synchronization
@@ -397,6 +395,7 @@ function init() {
 module.exports = appConfig => {
     config = appConfig;
     dirs = config._dirs;
+    repos = dirs.getRepos();
     init();
 
     config._sync = functions;

@@ -17,6 +17,8 @@ By default server will be running on port 3000. You can change port and other co
 
 File config.json is the same as config-default.json, but contains only values you have customized. See [config.md](config.md)
 
+It is better to run server on obscure port such as 3000 hidden behind firewall and use nginx reverse proxy. This way you can offload connection handling to nginx and you can easily use SSL.
+
 
 ### Node vs PHP
 

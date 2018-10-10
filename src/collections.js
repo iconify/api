@@ -103,12 +103,9 @@ class Collections {
      *
      * @returns {Promise}
      */
-    reload() {
+    reload(repos) {
         return new Promise((fulfill, reject) => {
-            let promises = [
-                    this._findCollections('simple-svg'),
-                    this._findCollections('custom')
-                ];
+            let promises = repos.map(repo => this._findCollections(repo));
 
             Promise.all(promises).then(() => {
                 return this.loadQueue();

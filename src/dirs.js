@@ -2,6 +2,8 @@
 
 let config, _dirs;
 
+let repos;
+
 const functions = {
     /**
      * Get root directory of repository
@@ -25,11 +27,9 @@ const functions = {
                 dir = functions.rootDir(repo);
                 return dir === '' ? '' : dir + '/json';
 
-            case 'custom':
+            default:
                 return functions.rootDir(repo);
         }
-
-        return '';
     },
 
     /**
@@ -40,8 +40,8 @@ const functions = {
      */
     setRootDir: (repo, dir) => {
         let extraKey = repo + '-dir';
-        if (config[extraKey] !== void 0 && config[extraKey] !== '') {
-            let extra = config[extraKey];
+        if (config.sync && config.sync[extraKey] !== void 0 && config.sync[extraKey] !== '') {
+            let extra = config.sync[extraKey];
             if (extra.slice(0, 1) !== '/') {
                 extra = '/' + extra;
             }
@@ -58,21 +58,31 @@ const functions = {
      *
      * @returns {string[]}
      */
-    keys: () => Object.keys(_dirs)
+    keys: () => Object.keys(_dirs),
+
+    /**
+     * Get all repositories
+     *
+     * @returns {string[]}
+     */
+    getRepos: () => repos,
 };
 
 module.exports = appConfig => {
     config = appConfig;
     _dirs = {};
+    repos = [];
 
     // Set default directories
     if (config['serve-default-icons']) {
         let icons = require('simple-svg-icons');
+        repos.push('simple-svg');
         _dirs['simple-svg'] = icons.rootDir();
     }
 
-    if (config['custom-icon-dir']) {
-        _dirs['custom'] = config['custom-icon-dir'].replace('{dir}', config._dir);
+    if (config['custom-icons-dir']) {
+        repos.push('custom');
+        _dirs['custom'] = config['custom-icons-dir'].replace('{dir}', config._dir);
     }
 
     config._dirs = functions;

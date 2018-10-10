@@ -4,7 +4,7 @@
   "region": "",
   "env-region": true,
   "reload-secret": "",
-  "custom-icon-dir": "{dir}/json",
+  "custom-icons-dir": "{dir}/json",
   "serve-default-icons": true,
   "index-page": "https://simplesvg.com/",
   "cache": {
