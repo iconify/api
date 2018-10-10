@@ -1,7 +1,5 @@
 /**
  * Main file to run in Node.js
- *
- * Run ssl.js instead of you want SSL support.
  */
 "use strict";
 
