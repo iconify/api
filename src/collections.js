@@ -136,23 +136,6 @@ class Collections {
     }
 
     /**
-     * Merge two collections lists, overwriting this collections with data from other collections list
-     *
-     * @param {Collections} data
-     */
-    merge(data) {
-        // Merge data
-        if (data.info !== void 0) {
-            this.info = data.info;
-        }
-
-        // Merge collections
-        Object.keys(data.items).forEach(prefix => {
-            this.items[prefix] = data.items[prefix];
-        });
-    }
-
-    /**
      * Load queue
      *
      * Promise will never reject because single file should not break app,
