@@ -240,7 +240,8 @@ class Collections {
                 collection = new Collection(prefix);
 
             collection.repo = repo;
-            collection.loadFile(filename).then(() => {
+            collection.loadFile(filename, prefix).then(result => {
+                collection = result;
                 if (!collection.loaded) {
                     if (this._log !== null) {
                         this._log('Failed to loadQueue collection: ' + filename);

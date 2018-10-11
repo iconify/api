@@ -12,6 +12,8 @@ const defaultAttributes = {
     vFlip: false
 };
 
+let cache = {};
+
 /**
  * Class to represent one collection of icons
  */
@@ -119,17 +121,33 @@ class Collection {
      * Load collection from file
      *
      * @param {string} file File or JSON
+     * @param {string} [defaultPrefix]
      * @returns {Promise}
      */
-    loadFile(file) {
+    loadFile(file, defaultPrefix) {
         return new Promise((fulfill, reject) => {
             // Load file
             fs.readFile(file, 'utf8', (err, data) => {
                 if (err) {
                     reject(err);
                 } else {
+                    let checkCache = typeof defaultPrefix === 'string';
+
+                    // Check cache
+                    if (checkCache && cache[defaultPrefix] !== void 0 && cache[defaultPrefix].length === file.length) {
+                        // If JSON file has same length, assume its the same file. Do not bother with hashing
+                        fulfill(cache[defaultPrefix].collection);
+                        return;
+                    }
+
                     this.loadJSON(data);
                     if (this.loaded) {
+                        if (checkCache) {
+                            cache[defaultPrefix] = {
+                                length: file.length,
+                                collection: this
+                            };
+                        }
                         fulfill(this);
                     } else {
                         reject();
