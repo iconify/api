@@ -312,6 +312,11 @@ app.get(/^\/([a-z0-9:-]+)\.svg$/, (req, res) => {
     res.sendStatus(404);
 });
 
+// Disable crawling
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send('User-agent: *\nDisallow: /');
+});
+
 // Debug information and AWS health check
 app.get('/version', (req, res) => {
     let body = 'SimpleSVG CDN version ' + version + ' (Node';
