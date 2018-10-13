@@ -159,7 +159,16 @@ class Collections {
                 }
             });
 
-            Promise.all(promises).then(() => {
+            Promise.all(promises).then(res => {
+                let total = 0;
+                res.forEach(count => {
+                    if (typeof count === 'number') {
+                        total += count;
+                    }
+                });
+                if (this._log !== null) {
+                    this._log('Loaded ' + total + ' icons');
+                }
                 fulfill(this);
             }).catch(err => {
                 reject(err);
@@ -194,7 +203,13 @@ class Collections {
 
                     // Load all promises
                     Promise.all(promises).then(res => {
-                        fulfill(true);
+                        let total = 0;
+                        res.forEach(count => {
+                            if (typeof count === 'number') {
+                                total += count;
+                            }
+                        });
+                        fulfill(total);
                     }).catch(err => {
                         fulfill(false);
                     });
@@ -254,7 +269,7 @@ class Collections {
                 if (this._log !== null) {
                     this._log('Loaded collection ' + prefix + ' from ' + file + ' (' + count + ' icons)');
                 }
-                fulfill(true);
+                fulfill(count);
             }).catch(() => {
                 fulfill(false);
             });
