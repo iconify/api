@@ -1,6 +1,6 @@
 {
   "name": "simple-svg-website-icons",
-  "version": "1.0.0-beta4",
+  "version": "1.0.0-beta5",
   "description": "Node.js version of icons.simplesvg.com",
   "main": "app.js",
   "scripts": {
