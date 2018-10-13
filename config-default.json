@@ -28,7 +28,8 @@
     "secret": "",
     "simple-svg": "git@github.com:simplesvg/icons.git",
     "custom": "",
-    "custom-dir": ""
+    "custom-dir": "",
+    "rm": "rm -rf {dir}"
   },
   "mail": {
     "active": false,

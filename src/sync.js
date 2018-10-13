@@ -97,7 +97,9 @@ const removeFile = file => new Promise((fulfill, reject) => {
 const removeDir = dir => new Promise((fulfill, reject) => {
     function done() {
         fs.rmdir(dir, err => {
-            config.log('Error deleting directory ' + dir, dir, false);
+            if (err) {
+                config.log('Error deleting directory ' + dir, dir, false);
+            }
             fulfill();
         });
     }
@@ -136,6 +138,64 @@ const removeDir = dir => new Promise((fulfill, reject) => {
         }).catch(err => {
             config.log('Error recursively removing directory ' + dir + '\n' + util.format(err), 'rmdir-' + dir, true);
             done();
+        });
+    });
+});
+
+/**
+ * Remove directory with sub-directories and files
+ *
+ * @param {string} dir
+ * @returns {Promise<any>}
+ */
+const rmDir = dir => new Promise((fulfill, reject) => {
+    function oldMethod() {
+        removeDir(dir).then(() => {
+            fulfill();
+        }).catch(err => {
+            reject(err);
+        });
+    }
+
+    if (!config.sync.rm) {
+        oldMethod();
+        return;
+    }
+
+    fs.lstat(dir, (err, stats) => {
+        if (err) {
+            if (err.code && err.code === 'ENOENT') {
+                // No such file/directory
+                fulfill();
+                return;
+            }
+            // Unknown error
+            config.log('Error checking directory ' + dir + '\n' + util.format(err), 'rmd-' + dir, true);
+            fulfill(false);
+            return;
+        }
+
+        // Attempt to remove using exec()
+        let cmd = config.sync.rm.replace('{dir}', '"' + dir + '"');
+        child_process.exec(cmd, {
+            cwd: _baseDir,
+            env: process.env,
+            uid: process.getuid()
+        }, (error, stdout, stderr) => {
+            if (error) {
+                // rmdir didn't work? Attempt to remove each file
+                oldMethod();
+                return;
+            }
+
+            // Make sure directory is removed
+            fs.lstat(dir, (err, stats) => {
+                if (err && err.code && err.code === 'ENOENT') {
+                    fulfill();
+                    return;
+                }
+                oldMethod();
+            });
         });
     });
 });
@@ -304,7 +364,7 @@ const functions = {
             console.log('Cleaning up old repositories...');
 
             // Delete all directories, but only 1 at a time to reduce loadQueue
-            promiseQueue(dirs, dir => removeDir(dir)).then(() => {
+            promiseQueue(dirs, dir => rmDir(dir)).then(() => {
                 cleaning = false;
             }).catch(err => {
                 config.log('Error cleaning up old files:\n' + util.format(err), 'cleanup', true);
