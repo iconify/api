@@ -11,10 +11,8 @@ class Collections {
      * Constructor
      *
      * @param {object} config Application configuration
-     * @param {function} [log] Logging function
      */
-    constructor(config, log) {
-        this._log = typeof log === 'function' ? log : null;
+    constructor(config) {
         this._config = config;
 
         this.items = {};
@@ -139,7 +137,7 @@ class Collections {
      * Load queue
      *
      * Promise will never reject because single file should not break app,
-     * it will log failures using "log" function from constructor
+     * it will log failures instead
      *
      * @returns {Promise}
      */
@@ -166,9 +164,7 @@ class Collections {
                         total += count;
                     }
                 });
-                if (this._log !== null) {
-                    this._log('Loaded ' + total + ' icons');
-                }
+                console.log('Loaded ' + total + ' icons');
                 fulfill(this);
             }).catch(err => {
                 reject(err);
@@ -188,9 +184,7 @@ class Collections {
         return new Promise((fulfill, reject) => {
             fs.readdir(dir, (err, files) => {
                 if (err) {
-                    if (this._log !== null) {
-                        this._log('Error loading directory: ' + dir);
-                    }
+                    this._config.log('Error reading directory: ' + dir + '\n' + util.format(err), 'collections-' + dir, true);
                     fulfill(false);
                 } else {
                     let promises = [];
@@ -241,34 +235,26 @@ class Collections {
             collection.loadFile(filename, prefix).then(result => {
                 collection = result;
                 if (!collection.loaded) {
-                    if (this._log !== null) {
-                        this._log('Failed to loadQueue collection: ' + filename);
-                    }
+                    this._config.log('Failed to load collection: ' + filename, 'collection-load-' + filename, true);
                     fulfill(false);
                     return;
                 }
 
                 if (collection.prefix !== prefix) {
-                    if (this._log !== null) {
-                        this._log('Collection prefix does not match: ' + collection.prefix + ' in file ' + file);
-                    }
+                    this._config.log('Collection prefix does not match: ' + collection.prefix + ' in file ' + filename, 'collection-prefix-' + filename, true);
                     fulfill(false);
                     return;
                 }
 
                 let count = Object.keys(collection.icons).length;
                 if (!count) {
-                    if (this._log !== null) {
-                        this._log('Collection is empty: ' + file);
-                    }
+                    this._config.log('Collection is empty: ' + filename, 'collection-empty-' + filename, true);
                     fulfill(false);
                     return;
                 }
 
                 this.items[prefix] = collection;
-                if (this._log !== null) {
-                    this._log('Loaded collection ' + prefix + ' from ' + file + ' (' + count + ' icons)');
-                }
+                console.log('Loaded collection ' + prefix + ' from ' + file + ' (' + count + ' icons)');
                 fulfill(count);
             }).catch(() => {
                 fulfill(false);

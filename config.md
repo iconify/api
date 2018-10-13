@@ -147,3 +147,44 @@ URL of custom icons repository.
 Location of json files in custom repository, relative to root directory of repository.
 
 For example, if json files are located in directory "json" in your repository (like they are in simple-svg repository), set custom-dir value to "json".
+
+
+## Logging errors
+
+Server can automatically email you if something happens, so you don't need to check logs.
+
+Email configuration is in "mail" object of config.json. To activate email logging set "mail.active" to "true", set correct from and to addresses and SMTP settings.
+
+#### active
+
+Set to true to enable logging to email.
+
+#### throttle
+
+Number of seconds to delay email sending. 
+
+Default is 30 seconds. All error messages within 30 seconds will be combined to one email instead of sending multiple emails.
+
+#### repeat
+
+This option prevents script from sending similar errors too often. Value is number of minutes. Default value is 180 (3 hours).
+
+#### from
+
+Sender email address. Set this to valid email address.
+
+#### to
+
+Received email address. Set this to valid email address.
+
+#### subject
+
+Subject of emails. All emails will have same subject.
+
+If you are running SimpleSVG icons app on multiple servers, use different subjects for different servers to identify which server email came from.
+
+#### transport
+
+SMTP settings.
+
+If you are using secure connection, set "secure" to true and "port" to 465, unless you are running SMTP server on different port.

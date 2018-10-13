@@ -45,6 +45,9 @@ try {
 }
 config._dir = __dirname;
 
+// Enable logging module
+require('./src/log')(config);
+
 // Port
 if (config['env-port'] && process.env.PORT) {
     config.port = process.env.PORT;
@@ -56,7 +59,7 @@ if (!config['env-region'] && process.env.region) {
 }
 if (config.region.length > 10 || !config.region.match(/^[a-z0-9_-]+$/i)) {
     config.region = '';
-    console.log('Invalid value for region config variable.');
+    config.log('Invalid value for region config variable.', 'config-region', true);
 }
 
 // Reload secret key
@@ -84,7 +87,7 @@ function loadIcons(firstLoad) {
     return new Promise((fulfill, reject) => {
         function getCollections() {
             let t = Date.now(),
-                newCollections = new Collections(config, console.log);
+                newCollections = new Collections(config);
 
             console.log('Loading collections at ' + (new Date()).toString());
             newCollections.reload(dirs.getRepos()).then(() => {
@@ -142,7 +145,7 @@ function reloadIcons(firstLoad) {
             reloadIcons(false);
         }
     }).catch(err => {
-        console.log('Fatal error loading collections:', err);
+        config.log('Fatal error loading collections:\n' + util.format(err), null, true);
         loading = false;
         if (anotherReload) {
             reloadIcons(false);
@@ -258,7 +261,7 @@ loadIcons(true).then(newCollections => {
         }, 30000);
     }
 }).catch(err => {
-    console.log('Fatal error loading collections:', err);
+    config.log('Fatal error loading collections:\n' + util.format(err), null, true);
     loading = false;
     reloadIcons(true);
 });
@@ -363,7 +366,7 @@ app.get('/sync', (req, res) => {
                 }
             }
         }).catch(err => {
-            console.log(err);
+            config.log('Error synchronizing repository "' + repo + '":\n' + util.format(err), 'sync-' + repo, true);
         });
     }
 

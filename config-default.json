@@ -29,5 +29,22 @@
     "simple-svg": "git@github.com:simplesvg/icons.git",
     "custom": "",
     "custom-dir": ""
+  },
+  "mail": {
+    "active": false,
+    "throttle": 30,
+    "repeat": 180,
+    "from": "noreply@localhost",
+    "to": "noreply@localhost",
+    "subject": "SimpleSVG icons log",
+    "transport": {
+      "host": "smtp.ethereal.email",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "username",
+        "pass": "password"
+      }
+    }
   }
 }

@@ -58,7 +58,7 @@ const startSync = repo => {
         uid: process.getuid()
     }, (error, stdout, stderr) => {
         if (error) {
-            console.error('Error executing git', error);
+            config.log('Error executing git:' + util.format(error), cmd, true);
             done(false);
             return;
         }
@@ -81,9 +81,9 @@ const startSync = repo => {
  */
 const removeFile = file => new Promise((fulfill, reject) => {
     fs.unlink(file, err => {
-        // if (err) {
-        //     console.log(err);
-        // }
+        if (err) {
+            config.log('Error deleting file ' + file, file, false);
+        }
         fulfill();
     })
 });
@@ -97,9 +97,7 @@ const removeFile = file => new Promise((fulfill, reject) => {
 const removeDir = dir => new Promise((fulfill, reject) => {
     function done() {
         fs.rmdir(dir, err => {
-            // if (err) {
-            //     console.log(err);
-            // }
+            config.log('Error deleting directory ' + dir, dir, false);
             fulfill();
         });
     }
@@ -136,7 +134,7 @@ const removeDir = dir => new Promise((fulfill, reject) => {
         }).then(() => {
             done();
         }).catch(err => {
-            console.log(err);
+            config.log('Error recursively removing directory ' + dir + '\n' + util.format(err), 'rmdir-' + dir, true);
             done();
         });
     });
@@ -193,7 +191,7 @@ const functions = {
 
         fs.writeFile(_versionsFile, JSON.stringify(data, null, 4), 'utf8', err => {
             if (err) {
-                console.error('Error saving versions.json', err);
+                config.error('Error saving versions.json\n' + util.format(err), 'version-' + _versionsFile, true);
             }
         });
     },
@@ -309,7 +307,7 @@ const functions = {
             promiseQueue(dirs, dir => removeDir(dir)).then(() => {
                 cleaning = false;
             }).catch(err => {
-                console.log(err);
+                config.log('Error cleaning up old files:\n' + util.format(err), 'cleanup', true);
                 cleaning = false;
             });
         });
@@ -387,7 +385,7 @@ function init() {
         } catch (err) {
         }
 
-        console.error('Error loading latest collections: directory does not exist:', dir);
+        config.log('Error loading latest collections: directory does not exist: ' + dir, 'missing-' + dir, true);
     });
     setTimeout(functions.cleanup, 60000);
 }
