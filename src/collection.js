@@ -134,7 +134,7 @@ class Collection {
                     let checkCache = typeof defaultPrefix === 'string';
 
                     // Check cache
-                    if (checkCache && cache[defaultPrefix] !== void 0 && cache[defaultPrefix].length === file.length) {
+                    if (checkCache && cache[defaultPrefix] !== void 0 && cache[defaultPrefix].length === data.length) {
                         // If JSON file has same length, assume its the same file. Do not bother with hashing
                         fulfill(cache[defaultPrefix].collection);
                         return;
@@ -144,7 +144,7 @@ class Collection {
                     if (this.loaded) {
                         if (checkCache) {
                             cache[defaultPrefix] = {
-                                length: file.length,
+                                length: data.length,
                                 collection: this
                             };
                         }
