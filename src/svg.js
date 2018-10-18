@@ -261,6 +261,10 @@ module.exports = (item, props) => {
     if (transformations.length) {
         body = '<g transform="' + transformations.join(' ') + '">' + body + '</g>';
     }
+    if (props.box === true || props.box === 'true' || props.box === '1') {
+        // Add transparent bounding box
+        body += '<rect x="' + box.left + '" y="' + box.top + '" width="' + box.width + '" height="' + box.height + '" fill="rgba(0, 0, 0, 0)" />';
+    }
 
     let svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"';
     Object.keys(attributes).forEach(attr => {
