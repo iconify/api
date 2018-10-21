@@ -1,3 +1,12 @@
+/**
+ * This file is part of the @iconify/api package.
+ *
+ * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 "use strict";
 
 const generateSVG = require('./svg');
@@ -58,7 +67,7 @@ module.exports = (collection, query, ext, params) => {
                         return 400;
                     }
                 } else {
-                    callback = 'SimpleSVG._loaderCallback';
+                    callback = 'Iconify._loaderCallback';
                 }
                 return {
                     type: 'application/javascript; charset=utf-8',

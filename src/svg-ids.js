@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-cdn package.
+ * This file is part of the @iconify/api package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
@@ -47,7 +47,7 @@ module.exports = body => {
         return body;
     }
 
-    prefix = 'SimpleSVGId-' + Date.now().toString(16) + '-' + (Math.random() * 0x1000000 | 0).toString(16) + '-';
+    prefix = 'IconifyId-' + Date.now().toString(16) + '-' + (Math.random() * 0x1000000 | 0).toString(16) + '-';
 
     // Replace with unique ids
     ids.forEach(function(id) {

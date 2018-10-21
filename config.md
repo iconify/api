@@ -40,7 +40,7 @@ Use {dir} variable to specify application's directory.
 
 #### serve-default-icons
 
-True if default SimpleSVG icons set should be served.
+True if default Iconify icons set should be served.
 
 #### index-page
 
@@ -66,7 +66,7 @@ Set to true if page cache should be treated as private.
 
 ## Reloading icon sets
 
-SimpleSVG icons server has ability to reload collections without restarting server. That allows to run server uninterrupted during icon sets updates.
+Iconify API has ability to reload collections without restarting server. That allows to run server uninterrupted during icon sets updates.
 
 
 #### reload-secret
@@ -87,11 +87,11 @@ Server will respond identically with "ok" message regardless of reload status to
 
 In addition to reloading all collections without restarting server, server can pull collections from Git service and reload collections without restarting. This can be used to push collections to server whenever its updated without downtime.
 
-There are two collections available: simple-svg and custom.
+There are two collections available: iconify and custom.
 
 All configuration options are in "sync" object in config-default.json. Use {dir} variable in directories to point to application directory.
 
-To synchronize repository send GET request to /sync?repo=simple-svg&key=your-sync-key
+To synchronize repository send GET request to /sync?repo=iconify&key=your-sync-key
 Replace repo with "custom" to synchronize custom repository and key with value of sync.secret
 
 Server will respond identically with "ok" message regardless of status to prevent visitors from trying to guess your secret key.
@@ -134,9 +134,9 @@ Location of directory where repositories will be stored.
 
 Git command. You can change it if you need to customize command that is executed to clone repository. {repo} will be replaced with repository URL, {target} will be replaced with target directory.
 
-#### simple-svg
+#### iconify
 
-URL of SimpleSVG icons repository.
+URL of Iconify icons repository.
 
 #### custom
 
@@ -146,7 +146,7 @@ URL of custom icons repository.
 
 Location of json files in custom repository, relative to root directory of repository.
 
-For example, if json files are located in directory "json" in your repository (like they are in simple-svg repository), set custom-dir value to "json".
+For example, if json files are located in directory "json" in your repository (like they are in iconify repository), set custom-dir value to "json".
 
 
 ## Logging errors
@@ -181,7 +181,7 @@ Received email address. Set this to valid email address.
 
 Subject of emails. All emails will have same subject.
 
-If you are running SimpleSVG icons app on multiple servers, use different subjects for different servers to identify which server email came from.
+If you are running Iconify API on multiple servers, use different subjects for different servers to identify which server email came from.
 
 #### transport
 

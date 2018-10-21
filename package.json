@@ -1,7 +1,7 @@
 {
-  "name": "simple-svg-website-icons",
-  "version": "1.0.0-beta7",
-  "description": "Node.js version of icons.simplesvg.com",
+  "version": "1.0.0-beta8",
+  "description": "Node.js version of api.iconify.design",
+  "private": true,
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -9,10 +9,16 @@
   },
   "author": "Vjacheslav Trushkin",
   "license": "MIT",
+  "bugs": "https://github.com/iconify-design/api.js/issues",
+  "homepage": "https://github.com/iconify-design/api.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/iconify-design/api.js.git"
+  },
   "dependencies": {
     "express": "^4.16.4",
     "nodemailer": "^4.6.8",
-    "simple-svg-icons": "^2.0.0"
+    "@iconify/json": "*"
   },
   "devDependencies": {
     "chai": "^4.2.0",

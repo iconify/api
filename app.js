@@ -322,7 +322,7 @@ app.get('/robots.txt', (req, res) => {
 
 // Debug information and AWS health check
 app.get('/version', (req, res) => {
-    let body = 'SimpleSVG CDN version ' + version + ' (Node';
+    let body = 'Iconify API version ' + version + ' (Node';
     if (config.region.length) {
         body += ', ' + config.region;
     }

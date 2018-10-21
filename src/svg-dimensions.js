@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-cdn package.
+ * This file is part of the @iconify/api package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *

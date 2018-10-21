@@ -1,3 +1,12 @@
+/**
+ * This file is part of the @iconify/api package.
+ *
+ * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 "use strict";
 
 let config, _dirs;
@@ -23,7 +32,7 @@ const functions = {
         let dir;
 
         switch (repo) {
-            case 'simple-svg':
+            case 'iconify':
                 dir = functions.rootDir(repo);
                 return dir === '' ? '' : dir + '/json';
 
@@ -75,9 +84,9 @@ module.exports = appConfig => {
 
     // Set default directories
     if (config['serve-default-icons']) {
-        let icons = require('simple-svg-icons');
-        repos.push('simple-svg');
-        _dirs['simple-svg'] = icons.rootDir();
+        let icons = require('@iconify/json');
+        repos.push('iconify');
+        _dirs['iconify'] = icons.rootDir();
     }
 
     if (config['custom-icons-dir']) {

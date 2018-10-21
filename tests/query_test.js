@@ -61,7 +61,7 @@
                 icons: 'alias1'
             })).to.be.eql({
                 type: 'application/javascript; charset=utf-8',
-                body: 'SimpleSVG._loaderCallback({"prefix":"test","icons":{"icon2":{"body":"<icon2 />","width":24,"height":24}},"aliases":{"alias1":{"parent":"icon2","hFlip":true}}})'
+                body: 'Iconify._loaderCallback({"prefix":"test","icons":{"icon2":{"body":"<icon2 />","width":24,"height":24}},"aliases":{"alias1":{"parent":"icon2","hFlip":true}}})'
             });
 
             // Query collection without prefix, json
@@ -104,7 +104,7 @@
             let result = parseQuery(collection2, 'icon3', 'svg', {
                 color: 'red',
                 rotate: '90deg'
-            }).body.replace(/SimpleSVGId-[0-9a-f]+-[0-9a-f]+-[0-9]+/g, 'some-id');
+            }).body.replace(/IconifyId-[0-9a-f]+-[0-9a-f]+-[0-9]+/g, 'some-id');
 
             expect(result).to.be.equal('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g transform="rotate(90 12 12)"><defs><foo id="some-id" /></defs><bar use="url(#some-id)" fill="red" stroke="red" /></g></svg>');
         });

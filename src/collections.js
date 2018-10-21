@@ -1,3 +1,12 @@
+/**
+ * This file is part of the @iconify/api package.
+ *
+ * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 "use strict";
 
 const fs = require('fs');
@@ -66,12 +75,12 @@ class Collections {
             }
 
             switch (repo) {
-                case 'simple-svg':
+                case 'iconify':
                     // Get collections.json
                     let filename = dirs.rootDir(repo) + '/collections.json';
                     fs.readFile(filename, 'utf8', (err, data) => {
                         if (err) {
-                            reject('Error locating collections.json for SimpleSVG default icons.');
+                            reject('Error locating collections.json for Iconify default icons.');
                             return;
                         }
 

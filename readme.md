@@ -1,8 +1,8 @@
-# SimpleSVG icons website
+# Iconify.design API
 
-This code runs on icons.simplesvg.com that is used to serve collections and SVG images.
+This code runs on api.iconify.design that is used to serve collections and SVG images.
 
-PHP version is available at https://github.com/simplesvg/website-icons.php
+PHP version is available at https://github.com/iconify-design/api.php
 
 
 ### How to use it
