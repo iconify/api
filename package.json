@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-beta8",
+  "version": "1.0.0-beta9",
   "description": "Node.js version of api.iconify.design",
   "private": true,
   "main": "app.js",
