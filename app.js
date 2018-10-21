@@ -7,6 +7,8 @@
  *  Main stuff
  */
 const fs = require('fs'),
+    util = require('util'),
+
     // Express stuff
     express = require('express'),
     app = express(),
