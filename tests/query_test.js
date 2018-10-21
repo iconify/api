@@ -61,7 +61,7 @@
                 icons: 'alias1'
             })).to.be.eql({
                 type: 'application/javascript; charset=utf-8',
-                body: 'Iconify._loaderCallback({"prefix":"test","icons":{"icon2":{"body":"<icon2 />","width":24,"height":24}},"aliases":{"alias1":{"parent":"icon2","hFlip":true}}})'
+                body: 'SimpleSVG._loaderCallback({"prefix":"test","icons":{"icon2":{"body":"<icon2 />","width":24,"height":24}},"aliases":{"alias1":{"parent":"icon2","hFlip":true}}})'
             });
 
             // Query collection without prefix, json

@@ -67,7 +67,7 @@ module.exports = (collection, query, ext, params) => {
                         return 400;
                     }
                 } else {
-                    callback = 'Iconify._loaderCallback';
+                    callback = 'SimpleSVG._loaderCallback';
                 }
                 return {
                     type: 'application/javascript; charset=utf-8',
