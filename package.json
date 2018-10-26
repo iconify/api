@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-beta9",
+  "version": "1.0.0-rc1",
   "description": "Node.js version of api.iconify.design",
   "private": true,
   "main": "app.js",
@@ -16,7 +16,7 @@
     "url": "git+ssh://git@github.com/iconify-design/api.js.git"
   },
   "dependencies": {
-    "@iconify/json": "^1.0.1",
+    "@iconify/json": "^1.0.4",
     "express": "^4.16.4",
     "nodemailer": "^4.6.8"
   },

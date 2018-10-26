@@ -351,7 +351,7 @@ app.get('/reload', (req, res) => {
 });
 
 // Update collection without restarting app
-app.get('/sync', (req, res) => {
+let syncRequest = (req, res) => {
     let repo = req.query.repo;
 
     if (sync.canSync(repo) && sync.validKey(req.query.key)) {
@@ -375,7 +375,9 @@ app.get('/sync', (req, res) => {
     // Send 200 response regardless of reload status, so visitor would not know if secret key was correct
     // Testing should be done by checking new icons that should have been added by reload
     res.sendStatus(200);
-});
+};
+app.get('/sync', syncRequest);
+app.post('/sync', syncRequest);
 
 // Redirect home page
 app.get('/', (req, res) => {
