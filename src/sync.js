@@ -10,6 +10,7 @@
 "use strict";
 
 const fs = require('fs'),
+    util = require('util'),
     child_process = require('child_process'),
     promiseQueue = require('./promise');
 
