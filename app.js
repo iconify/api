@@ -83,19 +83,42 @@ let dirs = require('./src/dirs')(config),
  * Load icons
  *
  * @param {boolean} firstLoad
+ * @param {object} [logger]
  * @returns {Promise}
  */
-function loadIcons(firstLoad) {
+function loadIcons(firstLoad, logger) {
+    let newLogger = false;
+
+    if (!firstLoad && !logger) {
+        logger = new config.Logger('Reloading collections at ' + (new Date()).toString(), 90);
+        newLogger = true;
+    }
+
     return new Promise((fulfill, reject) => {
+        function log(message) {
+            if (logger) {
+                logger.log(message, true);
+            } else {
+                console.log(message);
+            }
+        }
+
         function getCollections() {
             let t = Date.now(),
                 newCollections = new Collections(config);
 
             console.log('Loading collections at ' + (new Date()).toString());
-            newCollections.reload(dirs.getRepos()).then(() => {
-                console.log('Loaded in ' + (Date.now() - t) + 'ms');
+            newCollections.reload(dirs.getRepos(), logger).then(() => {
+                log('Loaded in ' + (Date.now() - t) + 'ms');
+                if (newLogger) {
+                    logger.send();
+                }
                 fulfill(newCollections);
             }).catch(err => {
+                log('Error loading collections: ' + util.format(err));
+                if (logger) {
+                    logger.send();
+                }
                 reject(err);
             });
         }
@@ -118,12 +141,16 @@ function loadIcons(firstLoad) {
                                 return;
                             }
                     }
-                    promises.push(sync.sync(repo, true));
+                    if (!logger) {
+                        logger = new config.Logger('Synchronizing repositories at startup', 120);
+                    }
+                    logger.log('Adding repository "' + repo + '" to queue');
+                    promises.push(sync.sync(repo, true, logger));
                 }
             });
 
             if (promises.length) {
-                console.log('Synchronizing repositories before starting...');
+                log('Synchronizing repositories before starting...');
             }
             Promise.all(promises).then(() => {
                 getCollections();
@@ -137,20 +164,23 @@ function loadIcons(firstLoad) {
     });
 }
 
-function reloadIcons(firstLoad) {
+function reloadIcons(firstLoad, logger) {
     loading = true;
     anotherReload = false;
-    loadIcons(false).then(newCollections => {
+    loadIcons(false, logger).then(newCollections => {
         collections = newCollections;
         loading = false;
         if (anotherReload) {
-            reloadIcons(false);
+            reloadIcons(false, logger);
         }
     }).catch(err => {
         config.log('Fatal error loading collections:\n' + util.format(err), null, true);
+        if (logger && logger.active) {
+            logger.log('Fatal error loading collections:\n' + util.format(err));
+        }
         loading = false;
         if (anotherReload) {
-            reloadIcons(false);
+            reloadIcons(false, logger);
         }
     });
 }
@@ -358,13 +388,13 @@ let syncRequest = (req, res) => {
         if (config.sync['sync-delay']) {
             console.log('Will start synchronizing repository "' + repo + '" in up to ' + config.sync['sync-delay'] + ' seconds...');
         }
-        sync.sync(repo, false).then(canLoad => {
-            if (canLoad) {
+        sync.sync(repo, false).then(result => {
+            if (result.result) {
                 // Refresh all icons
                 if (loading) {
                     anotherReload = true;
                 } else {
-                    reloadIcons(false);
+                    reloadIcons(false, result.logger);
                 }
             }
         }).catch(err => {

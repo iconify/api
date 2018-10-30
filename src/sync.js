@@ -27,15 +27,16 @@ let config, dirs, repos, _baseDir, _repoDir, _versionsFile;
  * Start synchronization
  *
  * @param repo
+ * @param logger
  */
-const startSync = repo => {
+const startSync = (repo, logger) => {
     if (syncQueue[repo] === void 0) {
         return;
     }
 
     function done(success) {
         if (success) {
-            console.log('Saved latest version of repository "' + repo + '" to', targetDir);
+            logger.log('Saved latest version of repository "' + repo + '" to ' + targetDir, true);
             synchronized[repo] = t;
             functions.saveVersions();
             dirs.setRootDir(repo, targetDir);
@@ -46,14 +47,20 @@ const startSync = repo => {
         syncQueue[repo].forEach((done, index) => {
             if (index > 0) {
                 // Send false to all promises except first one to avoid loading collections several times
-                done(false);
+                done({
+                    result: false,
+                    logger: logger
+                });
             } else {
-                done(success);
+                done({
+                    result: success,
+                    logger: logger
+                });
             }
         });
     }
 
-    console.log('Synchronizing repository "' + repo + '" ...');
+    logger.log('Synchronizing repository "' + repo + '" ...', true);
     synchronizing[repo] = true;
 
     let t = Date.now(),
@@ -68,7 +75,12 @@ const startSync = repo => {
         uid: process.getuid()
     }, (error, stdout, stderr) => {
         if (error) {
-            config.log('Error executing git:' + util.format(error), cmd, true);
+            if (logger.active) {
+                logger.log('Error executing git:' + util.format(error), true);
+                logger.send();
+            } else {
+                config.log('Error executing git:' + util.format(error), cmd, true);
+            }
             done(false);
             return;
         }
@@ -271,19 +283,20 @@ const functions = {
      *
      * @param {string} repo
      * @param {boolean} [immediate]
+     * @param {*} [logger]
      * @returns {Promise<any>}
      */
-    sync: (repo, immediate) => new Promise((fulfill, reject) => {
+    sync: (repo, immediate, logger) => new Promise((fulfill, reject) => {
         let finished = false,
             attempts = 0;
 
-        function done(loadCollections) {
+        function done(result) {
             if (finished) {
                 return;
             }
 
             finished = true;
-            fulfill(loadCollections);
+            fulfill(result);
         }
 
         function nextAttempt() {
@@ -293,7 +306,7 @@ const functions = {
 
             if (synchronizing[repo]) {
                 // Another repository is still being synchronized?
-                console.log('Cannot start repository synchronization because sync is already in progress.');
+                logger.log('Cannot start repository synchronization because sync is already in progress.', true);
                 attempts ++;
                 if (attempts > 3) {
                     done(false);
@@ -304,10 +317,16 @@ const functions = {
             }
 
             // Start synchronizing
-            startSync(repo);
+            startSync(repo, logger);
+        }
+
+        if (!logger) {
+            logger = new config.Logger('Synchronizing repository "' + repo + '" at '  + (new Date()).toString(), (immediate ? 0 : config.sync['sync-delay']) + 90);
         }
 
         if (!active) {
+            logger.log('Cannot synchronize repositories.');
+            logger.send();
             reject('Cannot synchronize repositories.');
             return;
         }
@@ -322,6 +341,7 @@ const functions = {
 
         if (synchronizing[repo]) {
             // Wait until previous sync operation is over
+            logger.log('Another sync is in progress. Waiting for ' + config.sync['repeated-sync-delay'] + ' seconds before next attempt.');
             setTimeout(nextAttempt, config.sync['repeated-sync-delay'] * 1000);
             attempts ++;
         } else if (immediate === true) {
@@ -329,6 +349,7 @@ const functions = {
             nextAttempt();
         } else {
             // Wait a bit to avoid multiple synchronizations
+            logger.log('Waiting for ' + config.sync['sync-delay'] + ' before starting synchronization.');
             setTimeout(nextAttempt, config.sync['sync-delay'] * 1000);
         }
     }),

@@ -34,9 +34,15 @@ class Collections {
      *
      * @param {string} dir
      * @param {string} repo
+     * @param {object} [logger]
      */
-    addDirectory(dir, repo) {
-        console.log('Loading collections for repository "' + repo + '" from directory:', dir);
+    addDirectory(dir, repo, logger) {
+        let message = 'Loading collections for repository "' + repo + '" from directory: ' + dir;
+        if (logger) {
+            logger.log(message, true)
+        } else {
+            console.log(message);
+        }
         this._loadQueue.push({
             type: 'dir',
             dir: dir.slice(-1) === '/' ? dir.slice(0, dir.length - 1) : dir,
@@ -63,7 +69,7 @@ class Collections {
      *
      * @private
      */
-    _findCollections(repo) {
+    _findCollections(repo, logger) {
         return new Promise((fulfill, reject) => {
             let config = this._config,
                 dirs = config._dirs,
@@ -81,18 +87,26 @@ class Collections {
                     let filename = dirs.rootDir(repo) + '/collections.json';
                     fs.readFile(filename, 'utf8', (err, data) => {
                         if (err) {
-                            reject('Error locating collections.json for Iconify default icons.');
+                            let message = 'Error locating collections.json for Iconify default icons.\n' + util.format(err);
+                            if (logger) {
+                                logger.log(message);
+                            }
+                            reject(message);
                             return;
                         }
 
                         try {
                             data = JSON.parse(data);
                         } catch (err) {
-                            reject('Error reading contents of' + filename);
+                            let message = 'Error reading contents of' + filename + '\n' + util.format(err);
+                            if (logger) {
+                                logger.log(message);
+                            }
+                            reject(message);
                             return;
                         }
 
-                        this.addDirectory(iconsDir, repo);
+                        this.addDirectory(iconsDir, repo, logger);
                         this.info = data;
 
                         fulfill();
@@ -100,7 +114,7 @@ class Collections {
                     return;
 
                 default:
-                    this.addDirectory(iconsDir, repo);
+                    this.addDirectory(iconsDir, repo, logger);
                     fulfill();
             }
         });
@@ -109,14 +123,16 @@ class Collections {
     /**
      * Find all collections and loadQueue
      *
+     * @param {Array} repos
+     * @param {object} [logger]
      * @returns {Promise}
      */
-    reload(repos) {
+    reload(repos, logger) {
         return new Promise((fulfill, reject) => {
-            let promises = repos.map(repo => this._findCollections(repo));
+            let promises = repos.map(repo => this._findCollections(repo, logger));
 
             Promise.all(promises).then(() => {
-                return this.loadQueue();
+                return this.loadQueue(logger);
             }).then(() => {
                 fulfill(this);
             }).catch(err => {
@@ -129,12 +145,13 @@ class Collections {
      * Load only one repository
      *
      * @param {string} repo Repository name
+     * @param {object} [logger]
      * @returns {Promise}
      */
-    loadRepo(repo) {
+    loadRepo(repo, logger) {
         return new Promise((fulfill, reject) => {
-            Promise.all(this._findCollections(repo)).then(() => {
-                return this.loadQueue();
+            Promise.all(this._findCollections(repo, logger)).then(() => {
+                return this.loadQueue(logger);
             }).then(() => {
                 fulfill(this);
             }).catch(err => {
@@ -149,20 +166,21 @@ class Collections {
      * Promise will never reject because single file should not break app,
      * it will log failures instead
      *
+     * @param {object} [logger]
      * @returns {Promise}
      */
-    loadQueue() {
+    loadQueue(logger) {
         return new Promise((fulfill, reject) => {
             let promises = [];
 
             this._loadQueue.forEach(item => {
                 switch (item.type) {
                     case 'dir':
-                        promises.push(this._loadDir(item.dir, item.repo));
+                        promises.push(this._loadDir(item.dir, item.repo, logger));
                         break;
 
                     case 'file':
-                        promises.push(this._loadFile(item.filename, item.repo));
+                        promises.push(this._loadFile(item.filename, item.repo, logger));
                         break;
                 }
             });
@@ -174,7 +192,12 @@ class Collections {
                         total += count;
                     }
                 });
-                console.log('Loaded ' + total + ' icons');
+                let message = 'Loaded ' + total + ' icons';
+                if (logger) {
+                    logger.log(message, true);
+                } else {
+                    console.log(message);
+                }
                 fulfill(this);
             }).catch(err => {
                 reject(err);
@@ -187,14 +210,15 @@ class Collections {
      *
      * @param {string} dir
      * @param {string} repo
+     * @param {object} [logger]
      * @returns {Promise}
      * @private
      */
-    _loadDir(dir, repo) {
+    _loadDir(dir, repo, logger) {
         return new Promise((fulfill, reject) => {
             fs.readdir(dir, (err, files) => {
                 if (err) {
-                    this._config.log('Error reading directory: ' + dir + '\n' + util.format(err), 'collections-' + dir, true);
+                    this._config.log('Error reading directory: ' + dir + '\n' + util.format(err), 'collections-' + dir, true, logger);
                     fulfill(false);
                 } else {
                     let promises = [];
@@ -227,9 +251,10 @@ class Collections {
      *
      * @param {string} filename Full filename
      * @param {string} repo
+     * @param {object} [logger]
      * @returns {Promise}
      */
-    _loadFile(filename, repo) {
+    _loadFile(filename, repo, logger) {
         return new Promise((fulfill, reject) => {
             let file = filename.split('/').pop(),
                 fileParts = file.split('.');
@@ -245,26 +270,31 @@ class Collections {
             collection.loadFile(filename, prefix).then(result => {
                 collection = result;
                 if (!collection.loaded) {
-                    this._config.log('Failed to load collection: ' + filename, 'collection-load-' + filename, true);
+                    this._config.log('Failed to load collection: ' + filename, 'collection-load-' + filename, true, logger);
                     fulfill(false);
                     return;
                 }
 
                 if (collection.prefix !== prefix) {
-                    this._config.log('Collection prefix does not match: ' + collection.prefix + ' in file ' + filename, 'collection-prefix-' + filename, true);
+                    this._config.log('Collection prefix does not match: ' + collection.prefix + ' in file ' + filename, 'collection-prefix-' + filename, true, logger);
                     fulfill(false);
                     return;
                 }
 
                 let count = Object.keys(collection.icons).length;
                 if (!count) {
-                    this._config.log('Collection is empty: ' + filename, 'collection-empty-' + filename, true);
+                    this._config.log('Collection is empty: ' + filename, 'collection-empty-' + filename, true, logger);
                     fulfill(false);
                     return;
                 }
 
                 this.items[prefix] = collection;
-                console.log('Loaded collection ' + prefix + ' from ' + file + ' (' + count + ' icons)');
+                let message = 'Loaded collection ' + prefix + ' from ' + file + ' (' + count + ' icons)';
+                if (logger) {
+                    logger.log(message, true);
+                } else {
+                    console.log(message);
+                }
                 fulfill(count);
             }).catch(() => {
                 fulfill(false);
