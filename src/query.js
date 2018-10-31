@@ -9,7 +9,19 @@
 
 "use strict";
 
-const generateSVG = require('./svg');
+const SVG = require('@iconify/json-tools').SVG;
+
+/**
+ * Generate SVG string
+ *
+ * @param {object} icon
+ * @param {object} [params]
+ * @returns {string}
+ */
+function generateSVG(icon, params) {
+    let svg = new SVG(icon);
+    return svg.getSVG(params);
+}
 
 /**
  * Regexp for checking callback attribute
@@ -33,7 +45,7 @@ module.exports = (collection, query, ext, params) => {
         case 'svg':
             // Generate SVG
             // query = icon name
-            let icon = collection.getIcon(query);
+            let icon = collection.getIconData(query);
             if (icon === null) {
                 return 404;
             }
@@ -51,10 +63,10 @@ module.exports = (collection, query, ext, params) => {
 
             let result = collection.getIcons(params.icons.split(','));
 
-            if (!Object.keys(result.icons).length) {
+            if (result === null || !Object.keys(result.icons).length) {
                 return 404;
             }
-            if (!Object.keys(result.aliases).length) {
+            if (result.aliases !== void 0 && !Object.keys(result.aliases).length) {
                 delete result.aliases;
             }
             result = JSON.stringify(result);

@@ -11,7 +11,7 @@
 
 const fs = require('fs');
 const util = require('util');
-const Collection = require('./collection');
+const Collection = require('@iconify/json-tools').Collection;
 
 /**
  * Class to represent collection of collections
@@ -264,24 +264,24 @@ class Collections {
             }
 
             let prefix = fileParts[0],
-                collection = new Collection(prefix);
+                collection = new Collection();
 
             collection.repo = repo;
-            collection.loadFile(filename, prefix).then(result => {
+            collection.loadFromFileAsync(filename, prefix).then(result => {
                 collection = result;
-                if (!collection.loaded) {
+                if (collection.prefix() === false) {
                     this._config.log('Failed to load collection: ' + filename, 'collection-load-' + filename, true, logger);
                     fulfill(false);
                     return;
                 }
 
-                if (collection.prefix !== prefix) {
-                    this._config.log('Collection prefix does not match: ' + collection.prefix + ' in file ' + filename, 'collection-prefix-' + filename, true, logger);
+                if (collection.prefix() !== prefix) {
+                    this._config.log('Collection prefix does not match: ' + collection.prefix() + ' in file ' + filename, 'collection-prefix-' + filename, true, logger);
                     fulfill(false);
                     return;
                 }
 
-                let count = Object.keys(collection.icons).length;
+                let count = collection.listIcons(false).length;
                 if (!count) {
                     this._config.log('Collection is empty: ' + filename, 'collection-empty-' + filename, true, logger);
                     fulfill(false);
@@ -296,7 +296,7 @@ class Collections {
                     console.log(message);
                 }
                 fulfill(count);
-            }).catch(() => {
+            }).catch(err => {
                 fulfill(false);
             });
         });

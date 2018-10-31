@@ -5,7 +5,7 @@
         expect = chai.expect,
         should = chai.should();
 
-    const Collection = require('../src/collection'),
+    const Collection = require('@iconify/json-tools').Collection,
         parseQuery = require('../src/query');
 
     let collection1 = new Collection('test');
