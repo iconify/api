@@ -5,7 +5,7 @@
         expect = chai.expect,
         should = chai.should();
 
-    describe('Testing splitting query string', () => {
+    describe('Splitting query string', () => {
         it('3 part requests', () => {
             const exp = /^\/([a-z0-9-]+)\/([a-z0-9-]+)\.(js|json|svg)$/;
 

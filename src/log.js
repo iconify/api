@@ -9,167 +9,116 @@
 
 "use strict";
 
-const nodemailer = require('nodemailer');
+const util = require('util');
+
+const defaultOptions = {
+    // True if message should be copied to stdout or stderr
+    log: true,
+
+    // Logger object for event logging (combines multiple messages for one big log)
+    logger: null,
+
+    // Unique key. If set, message with that key will be sent by mail only once. Used to avoid sending too many emails
+    key: null,
+
+    // Console object
+    console: console
+};
+
+// List of notices that are sent only once per session
+let logged = {};
+
+// List of throttled messages
+let throttled = null;
 
 /**
- * Inject logging function as config.log()
+ * Send throttled messages
  *
- * @param config
+ * @param app
  */
-module.exports = config => {
-    if (config.mail && config.mail.active) {
-        let logged = {},
-            mailError = false,
-            throttled = false,
-            throttledData = [],
-            repeat = Math.max(config.mail.repeat, 15) * 60 * 1000; // convert minutes to ms, no less than 15 minutes
+const sendQueue = app => {
+    let text = throttled.join('\n\n- - - - - - - - - - -\n\n');
+    throttled = null;
+    app.mail(text);
+};
 
-        /**
-         * Send message
-         *
-         * @param message
-         */
-        let sendMail = message => {
-            // Create transport
-            let transporter = nodemailer.createTransport(config.mail.transport);
+/**
+ * Log message. This function combines multiple logging methods, so it can be called only once instead of calling
+ * multiple log() functions.
+ *
+ * Message will be sent to console.log or console.error and sent by email.
+ *
+ * @param {object} app
+ * @param {boolean} error
+ * @param {string} message
+ * @param {object|boolean} [options]
+ */
+module.exports = (app, error, message, options) => {
+    options = Object.assign({}, defaultOptions, options === void 0 ? {} : (typeof options === 'boolean' ? {
+        log: options
+    }: options));
 
-            // Set data
-            let mailOptions = {
-                from: config.mail.from,
-                to: config.mail.to,
-                subject: config.mail.subject,
-                text: message
-            };
-
-            // Send email
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                    if (mailError === false) {
-                        console.error('Error sending mail (this messages will not show up again on further email errors until app is restarted):');
-                        console.error(err);
-                        mailError = true;
-                    }
-                }
-            });
-        };
-
-        /**
-         * Send messages queue
-         */
-        let sendQueue = () => {
-            let mailOptions = throttledData.join('\n\n- - - - - - - - - - -\n\n');
-
-            throttled = false;
-            throttledData = [];
-
-            sendMail(mailOptions);
-        };
-
-        console.log('Logging to email is active. If you do not receive emails with errors, check configuration options.');
-
-        /**
-         *
-         * @param {string} message
-         * @param {string} [key] Unique key to identify logging message to avoid sending too many duplicate emails
-         * @param {boolean} [copyToConsole] True if log should be copied to console
-         * @param {object} [logger] Logger instance to copy message to
-         */
-        config.log = (message, key, copyToConsole, logger) => {
-            if (copyToConsole) {
-                console.error('\x1b[31m' + message + '\x1b[0m');
-            }
-            if (logger) {
-                logger.log(message);
-            }
-
-            // Do not send same email more than once within "repeat" minutes
-            let time = Date.now() / repeat;
-            if (typeof key === 'string') {
-                if (logged[key] === time) {
-                    return;
-                }
-                logged[key] = time;
-            }
-
-            // Throttle
-            throttledData.push(message);
-            if (config.mail.throttle) {
-                if (!throttled) {
-                    throttled = true;
-                    setTimeout(sendQueue, config.mail.throttle * 1000);
-                }
-            } else {
-                sendQueue();
-            }
-        };
-
-        /**
-         * Class for logging
-         *
-         * @type {Logger}
-         */
-        config.Logger = class {
-            /**
-             * Create new logger
-             *
-             * @param {string} subject
-             * @param {number} [delay] Automatically send log after "delay" seconds
-             */
-            constructor(subject, delay) {
-                this.active = true;
-                this.subject = subject;
-                this.messages = [subject];
-                if (delay) {
-                    setTimeout(() => {
-                        if (this.messages.length) {
-                            this.send();
-                        }
-                    }, delay * 1000);
-                }
-            }
-
-            /**
-             * Log message
-             *
-             * @param {string} message
-             * @param {boolean} [sendToConsole]
-             */
-            log(message, sendToConsole) {
-                if (sendToConsole === true) {
-                    console.log(message);
-                }
-                this.messages.push(message);
-            }
-
-            /**
-             * Send logged messages
-             */
-            send() {
-                if (!this.messages.length) {
-                    return;
-                }
-
-                sendMail(this.messages.join("\n"));
-                this.messages = [];
-            }
-        };
-    } else {
-        console.log('Logging to email is not active.');
-        config.log = (message, key, copyToConsole, logger) => {
-            if (copyToConsole) {
-                console.error('\x1b[35m' + message + '\x1b[0m');
-            }
-        };
-        config.Logger = class {
-            constructor(subject) {
-                this.active = false;
-            }
-            log(message, sendToConsole) {
-                if (sendToConsole === true) {
-                    console.log(message);
-                }
-            }
-            send() {}
-        };
+    // Convert to test
+    if (typeof message !== 'string') {
+        message = util.format(message);
     }
+
+    // Get time stamp
+    let time = new Date();
+    time = (time.getUTCHours() > 10 ? '[' : '[0') + time.getUTCHours() + (time.getUTCMinutes() > 9 ? ':' : ':0') + time.getUTCMinutes() + (time.getUTCSeconds() > 9 ? ':' : ':0') + time.getUTCSeconds() + '] ';
+
+    // Copy message to console
+    if (options.log || !app.mail) {
+        if (error) {
+            options.console.error(time + '\x1b[31m' + message + '\x1b[0m');
+        } else {
+            options.console.log(time + message);
+        }
+    }
+
+    if (!app.mail) {
+        return;
+    }
+    message = time + message;
+
+    // Copy to mail logger
+    if (options.logger) {
+        options.logger[error ? 'error' : 'log'](message);
+        return;
+    }
+
+    // Send email if its a error and has not been sent before
+    if (!error) {
+        return;
+    }
+    if (options.key) {
+        let time = Date.now() / 1000,
+            repeat;
+
+        try {
+            repeat = app.config.mail.repeat;
+        } catch (err) {
+            repeat = 0;
+        }
+
+        if (logged[options.key]) {
+            if (!repeat || logged[options.key] > time) {
+                return;
+            }
+        }
+        logged[options.key] = repeat ? time + repeat : true;
+    }
+
+    // Add message to throttled data
+    if (throttled === null) {
+        throttled = [];
+        let delay;
+        try {
+            delay = app.config.mail.throttle;
+        } catch (err) {
+            delay = 60;
+        }
+        setTimeout(sendQueue.bind(null, app), delay * 1000)
+    }
+    throttled.push(message);
 };

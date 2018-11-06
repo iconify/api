@@ -9,18 +9,37 @@
 
 "use strict";
 
-let config, _dirs;
+const fs = require('fs');
 
-let repos;
+/**
+ * Directories storage.
+ * This module is responsible for storing and updating locations of collections
+ *
+ * @param app
+ * @returns {object}
+ */
+module.exports = app => {
+    let functions = {},
+        dirs = {},
+        custom = {},
+        repos = [],
+        storageDir = null,
+        versionsFile = null;
 
-const functions = {
     /**
      * Get root directory of repository
      *
      * @param {string} repo
      * @returns {string}
      */
-    rootDir: repo => _dirs[repo] === void 0 ? '' : _dirs[repo],
+    functions.rootDir = repo => dirs[repo] === void 0 ? '' : dirs[repo];
+
+    /**
+     * Get storage directory
+     *
+     * @return {string}
+     */
+    functions.storageDir = () => storageDir;
 
     /**
      * Get icons directory
@@ -28,7 +47,7 @@ const functions = {
      * @param {string} repo
      * @returns {string}
      */
-    iconsDir: repo => {
+    functions.iconsDir = repo => {
         let dir;
 
         switch (repo) {
@@ -39,18 +58,24 @@ const functions = {
             default:
                 return functions.rootDir(repo);
         }
-    },
+    };
 
     /**
      * Set root directory for repository
      *
-     * @param repo
-     * @param dir
+     * @param {string} repo
+     * @param {string} dir
      */
-    setRootDir: (repo, dir) => {
-        let extraKey = repo + '-dir';
-        if (config.sync && config.sync[extraKey] !== void 0 && config.sync[extraKey] !== '') {
-            let extra = config.sync[extraKey];
+    functions.setRootDir = (repo, dir) => {
+        // Append additional directory from config
+        let extra;
+        try {
+            extra = app.config.sync[repo + '-dir'];
+        } catch (err) {
+            extra = '';
+        }
+
+        if (extra !== void 0 && extra !== '') {
             if (extra.slice(0, 1) !== '/') {
                 extra = '/' + extra;
             }
@@ -59,41 +84,107 @@ const functions = {
             }
             dir += extra;
         }
-        _dirs[repo] = dir;
-    },
+
+        // Set directory
+        dirs[repo] = dir;
+    };
+
+    /**
+     * Set root directory for repository using repository time
+     *
+     * @param {string} repo
+     * @param {number} time
+     * @param {boolean} [save] True if new versions.json should be saved
+     */
+    functions.setSynchronizedRepoDir = (repo, time, save) => {
+        let dir = storageDir + '/' + repo + '.' + time;
+        custom[repo] = time;
+        functions.setRootDir(repo, dir);
+        if (save === true) {
+            fs.writeFileSync(versionsFile, JSON.stringify(custom, null, 4), 'utf8');
+        }
+    };
 
     /**
      * Get all repositories
      *
      * @returns {string[]}
      */
-    keys: () => Object.keys(_dirs),
+    functions.keys = () => Object.keys(dirs);
 
     /**
      * Get all repositories
      *
      * @returns {string[]}
      */
-    getRepos: () => repos,
-};
+    functions.getRepos = () => repos;
 
-module.exports = appConfig => {
-    config = appConfig;
-    _dirs = {};
-    repos = [];
+    /**
+     * Check if repository has been synchronized
+     *
+     * @param {string} repo
+     * @return {boolean}
+     */
+    functions.synchronized = repo => custom[repo] === true;
+
+    /**
+     * Initialize
+     */
+
+    // Get synchronized repositories
+    let cached = {};
+    app.config.canSync = false;
+    try {
+        if (app.config.sync.versions && app.config.sync.storage) {
+            // Set storage directory and versions.json location
+            storageDir = app.config.sync.storage.replace('{dir}', app.root);
+            versionsFile = app.config.sync.versions.replace('{dir}', app.root);
+            app.config.canSync = true;
+
+            // Try getting latest repositories
+            cached = fs.readFileSync(versionsFile, 'utf8');
+            cached = JSON.parse(cached);
+        }
+    } catch (err) {
+        if (typeof cached !== 'object') {
+            cached = {};
+        }
+    }
+
+    if (storageDir !== null) {
+        try {
+            fs.mkdirSync(storageDir);
+        } catch (err) {
+        }
+    }
 
     // Set default directories
-    if (config['serve-default-icons']) {
-        let icons = require('@iconify/json');
-        repos.push('iconify');
-        _dirs['iconify'] = icons.rootDir();
+    if (app.config['serve-default-icons']) {
+        let key = 'iconify';
+        if (cached && cached[key]) {
+            repos.push(key);
+            functions.setSynchronizedRepoDir(key, cached[key], false);
+        } else {
+            let icons;
+            try {
+                icons = require('@iconify/json');
+                repos.push(key);
+                dirs[key] = icons.rootDir();
+            } catch (err) {
+                app.error('Cannot load Iconify icons because @iconify/json package is not installed');
+            }
+        }
     }
 
-    if (config['custom-icons-dir']) {
-        repos.push('custom');
-        _dirs['custom'] = config['custom-icons-dir'].replace('{dir}', config._dir);
+    if (app.config['custom-icons-dir']) {
+        let key = 'custom';
+        repos.push(key);
+        if (cached[key]) {
+            functions.setSynchronizedRepoDir(key, cached[key], false);
+        } else {
+            dirs[key] = app.config['custom-icons-dir'].replace('{dir}', app.root);
+        }
     }
 
-    config._dirs = functions;
     return functions;
 };

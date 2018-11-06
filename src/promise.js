@@ -17,16 +17,18 @@
  * @returns {Promise<any>}
  */
 module.exports = (list, callback) => new Promise((fulfill, reject) => {
-    let results = [];
+    let results = [],
+        index = -1,
+        total = list.length;
 
     function next() {
-        let item = list.shift();
-        if (item === void 0) {
+        index ++;
+        if (index === total) {
             fulfill(results);
             return;
         }
 
-        let promise = callback(item);
+        let promise = callback(list[index]);
         if (promise === null) {
             // skip
             next();

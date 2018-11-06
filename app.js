@@ -1,422 +1,207 @@
 /**
- * Main file to run in Node.js
+ * This file is part of the @iconify/api package.
+ *
+ * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 "use strict";
 
-/*
- *  Main stuff
- */
+// Load required modules
 const fs = require('fs'),
     util = require('util'),
+    express = require('express');
 
-    // Express stuff
-    express = require('express'),
-    app = express(),
+// Log uncaught exceptions to stderr
+process.on('uncaughtException', function (err) {
+    console.error('Uncaught exception:', err);
+});
 
-    // Configuration and version
-    version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version,
+// Create application
+let app = {
+    root: __dirname
+};
 
-    // Included files
-    Collections = require('./src/collections'),
-
-    // Query parser
-    parseQuery = require('./src/query');
-
-// Configuration
-let config = JSON.parse(fs.readFileSync(__dirname + '/config-default.json', 'utf8'));
+/**
+ * Load config.json and config-default.json
+ */
+app.config = JSON.parse(fs.readFileSync(__dirname + '/config-default.json', 'utf8'));
 
 try {
     let customConfig = fs.readFileSync(__dirname + '/config.json', 'utf8');
     if (typeof customConfig === 'string') {
-        customConfig = JSON.parse(customConfig);
-        Object.keys(customConfig).forEach(key => {
-            if (typeof config[key] !== typeof customConfig[key]) {
-                return;
-            }
+        try {
+            customConfig = JSON.parse(customConfig);
+            Object.keys(customConfig).forEach(key => {
+                if (typeof app.config[key] !== typeof customConfig[key]) {
+                    return;
+                }
 
-            if (typeof config[key] === 'object') {
-                // merge object
-                Object.assign(config[key], customConfig[key]);
-            } else {
-                // overwrite scalar variables
-                config[key] = customConfig[key];
-            }
-        });
+                if (typeof app.config[key] === 'object') {
+                    // merge object
+                    Object.assign(app.config[key], customConfig[key]);
+                } else {
+                    // overwrite scalar variables
+                    app.config[key] = customConfig[key];
+                }
+            });
+        } catch (err) {
+            console.error('Error parsing config.json', err);
+        }
     }
 } catch (err) {
+    console.log('Missing config.json. Using default API configuration');
 }
-config._dir = __dirname;
 
-// Enable logging module
-require('./src/log')(config);
+// Add logging and mail modules
+app.mail = require('./src/mail').bind(this, app);
 
+let log = require('./src/log');
+app.log = log.bind(this, app, false);
+app.error = log.bind(this, app, true);
+
+app.logger = require('./src/logger').bind(this, app);
+
+/**
+ * Validate configuration
+ */
 // Port
-if (config['env-port'] && process.env.PORT) {
-    config.port = process.env.PORT;
+if (app.config['env-port'] && process.env.PORT) {
+    app.config.port = process.env.PORT;
 }
 
 // Region file to easy identify server in CDN
-if (!config['env-region'] && process.env.region) {
-    config.region = process.env.region;
+if (!app.config['env-region'] && process.env.region) {
+    app.config.region = process.env.region;
 }
-if (config.region.length > 10 || !config.region.match(/^[a-z0-9_-]+$/i)) {
-    config.region = '';
-    config.log('Invalid value for region config variable.', 'config-region', true);
+if (app.config.region.length > 10 || !app.config.region.match(/^[a-z0-9_-]+$/i)) {
+    app.config.region = '';
+    app.error('Invalid value for region config variable.');
 }
 
 // Reload secret key
-if (config['reload-secret'] === '') {
+if (app.config['reload-secret'] === '') {
     // Add reload-secret to config.json to be able to run /reload?key=your-secret-key that will reload collections without restarting server
     console.log('reload-secret configuration is empty. You will not be able to update all collections without restarting server.');
 }
 
-// Collections list
-let collections = null,
-    loading = true,
-    anotherReload = false;
-
-// Modules
-let dirs = require('./src/dirs')(config),
-    sync = require('./src/sync')(config);
-
 /**
- * Load icons
- *
- * @param {boolean} firstLoad
- * @param {object} [logger]
- * @returns {Promise}
+ * Continue loading modules
  */
-function loadIcons(firstLoad, logger) {
-    let newLogger = false;
 
-    if (!firstLoad && !logger) {
-        logger = new config.Logger('Reloading collections at ' + (new Date()).toString(), 90);
-        newLogger = true;
-    }
+// Get version
+app.version = JSON.parse(fs.readFileSync(__dirname + '/package.json', 'utf8')).version;
 
-    return new Promise((fulfill, reject) => {
-        function log(message) {
-            if (logger) {
-                logger.log(message, true);
-            } else {
-                console.log(message);
-            }
+// Files helper
+app.fs = require('./src/files')(app);
+
+// JSON loader
+app.loadJSON = require('./src/json').bind(this, app);
+
+// Add directories storage
+app.dirs = require('./src/dirs')(app);
+if (!app.dirs.getRepos().length) {
+    console.error('No repositories found. Make sure either Iconify or custom repository is set in configuration.');
+    return;
+}
+
+// Collections
+app.collections = {};
+app.reload = require('./src/reload').bind(this, app);
+
+// Sync module
+app.sync = require('./src/sync').bind(this, app);
+
+// API request and response handlers
+app.response = require('./src/response').bind(this, app);
+app.iconsRequest = require('./src/request-icons').bind(this, app);
+app.miscRequest = require('./src/request').bind(this, app);
+
+// Start application
+require('./src/startup')(app).then(() => {
+
+    // Create HTTP server
+    app.server = express();
+
+    // Disable X-Powered-By header
+    app.server.disable('x-powered-by');
+
+    // CORS
+    app.server.options('/*', (req, res) => {
+        if (app.config.cors) {
+            res.header('Access-Control-Allow-Origin', app.config.cors.origins);
+            res.header('Access-Control-Allow-Methods', app.config.cors.methods);
+            res.header('Access-Control-Allow-Headers', app.config.cors.headers);
+            res.header('Access-Control-Max-Age', app.config.cors.timeout);
         }
-
-        function getCollections() {
-            let t = Date.now(),
-                newCollections = new Collections(config);
-
-            console.log('Loading collections at ' + (new Date()).toString());
-            newCollections.reload(dirs.getRepos(), logger).then(() => {
-                log('Loaded in ' + (Date.now() - t) + 'ms');
-                if (newLogger) {
-                    logger.send();
-                }
-                fulfill(newCollections);
-            }).catch(err => {
-                log('Error loading collections: ' + util.format(err));
-                if (logger) {
-                    logger.send();
-                }
-                reject(err);
-            });
-        }
-
-        if (firstLoad && config.sync && config.sync['sync-on-startup']) {
-            // Synchronize repositories first
-            let promises = [];
-            dirs.keys().forEach(repo => {
-                if (sync.canSync(repo)) {
-                    switch (config.sync['sync-on-startup']) {
-                        case 'always':
-                            break;
-
-                        case 'never':
-                            return;
-
-                        case 'missing':
-                            // Check if repository is missing
-                            if (sync.time(repo)) {
-                                return;
-                            }
-                    }
-                    if (!logger) {
-                        logger = new config.Logger('Synchronizing repositories at startup', 120);
-                    }
-                    logger.log('Adding repository "' + repo + '" to queue');
-                    promises.push(sync.sync(repo, true, logger));
-                }
-            });
-
-            if (promises.length) {
-                log('Synchronizing repositories before starting...');
-            }
-            Promise.all(promises).then(() => {
-                getCollections();
-            }).catch(err => {
-                console.log(err);
-                getCollections();
-            });
-        } else {
-            getCollections();
-        }
+        res.send(200);
     });
-}
 
-function reloadIcons(firstLoad, logger) {
-    loading = true;
-    anotherReload = false;
-    loadIcons(false, logger).then(newCollections => {
-        collections = newCollections;
-        loading = false;
-        if (anotherReload) {
-            reloadIcons(false, logger);
-        }
-    }).catch(err => {
-        config.log('Fatal error loading collections:\n' + util.format(err), null, true);
-        if (logger && logger.active) {
-            logger.log('Fatal error loading collections:\n' + util.format(err));
-        }
-        loading = false;
-        if (anotherReload) {
-            reloadIcons(false, logger);
-        }
+    // GET 3 part request
+    app.server.get(/^\/([a-z0-9-]+)\/([a-z0-9-]+)\.(js|json|svg)$/, (req, res) => {
+        // prefix/icon.svg
+        // prefix/icons.json
+        app.iconsRequest(req, res, req.params[0], req.params[1], req.params[2]);
     });
-}
 
-/**
- * Send cache headers
- *
- * @param req
- * @param res
- */
-function cacheHeaders(req, res) {
-    if (
-        config.cache && config.cache.timeout &&
-        (req.get('Pragma') === void 0 || req.get('Pragma').indexOf('no-cache') === -1) &&
-        (req.get('Cache-Control') === void 0 || req.get('Cache-Control').indexOf('no-cache') === -1)
-    ) {
-        res.set('Cache-Control', (config.cache.private ? 'private' : 'public') + ', max-age=' + config.cache.timeout + ', min-refresh=' + config.cache['min-refresh']);
-        if (!config.cache.private) {
-            res.set('Pragma', 'cache');
-        }
-    }
-}
+    // GET 2 part JS/JSON request
+    app.server.get(/^\/([a-z0-9-]+)\.(js|json)$/, (req, res) => {
+        // prefix.json
+        app.iconsRequest(req, res, req.params[0], 'icons', req.params[1]);
+    });
 
-/**
- * Send result object generated by query parser
- *
- * @param {object} result
- * @param req
- * @param res
- */
-function sendResult(result, req, res) {
-    if (typeof result === 'number') {
-        res.sendStatus(result);
-        return;
-    }
+    // GET 2 part SVG request
+    app.server.get(/^\/([a-z0-9:-]+)\.svg$/, (req, res) => {
+        let parts = req.params[0].split(':');
 
-    // Send cache header
-    cacheHeaders(req, res);
-
-    // Check for download
-    if (result.filename !== void 0 && (req.query.download === '1' || req.query.download === 'true')) {
-        res.set('Content-Disposition', 'attachment; filename="' + result.filename + '"');
-    }
-
-    // Send data
-    res.type(result.type).send(result.body);
-}
-
-/**
- * Delay response
- *
- * @param {function} callback
- * @param res
- */
-function delayResponse(callback, res) {
-    // Attempt to parse query every 250ms for up to 10 seconds
-    let attempts = 0,
-        timer = setInterval(function() {
-            attempts ++;
-            if (collections === null) {
-                if (attempts > 40) {
-                    clearInterval(timer);
-                    res.sendStatus(503);
-                }
-            } else {
-                clearInterval(timer);
-                callback();
-            }
-        }, 250);
-}
-
-/**
- * Parse request
- *
- * @param {string} prefix
- * @param {string} query
- * @param {string} ext
- * @param {object} req
- * @param {object} res
- */
-function parseRequest(prefix, query, ext, req, res) {
-    function parse() {
-        let result = 404,
-            collection = collections.find(prefix);
-
-        if (collection !== null) {
-            result = parseQuery(collection, query, ext, req.query);
-        }
-
-        sendResult(result, req, res);
-    }
-
-    // Parse query
-    if (collections === null) {
-        // This means script is still loading
-        delayResponse(parse, res);
-    } else {
-        parse();
-    }
-}
-
-// Load icons
-loadIcons(true).then(newCollections => {
-    collections = newCollections;
-    loading = false;
-    if (anotherReload) {
-        anotherReload = false;
-        setTimeout(() => {
-            reloadIcons(false);
-        }, 30000);
-    }
-}).catch(err => {
-    config.log('Fatal error loading collections:\n' + util.format(err), null, true);
-    loading = false;
-    reloadIcons(true);
-});
-
-// Disable X-Powered-By header
-app.disable('x-powered-by');
-
-// CORS
-app.options('/*', (req, res) => {
-    if (config.cors) {
-        res.header('Access-Control-Allow-Origin', config.cors.origins);
-        res.header('Access-Control-Allow-Methods', config.cors.methods);
-        res.header('Access-Control-Allow-Headers', config.cors.headers);
-        res.header('Access-Control-Max-Age', config.cors.timeout);
-    }
-    res.send(200);
-});
-
-// GET 3 part request
-app.get(/^\/([a-z0-9-]+)\/([a-z0-9-]+)\.(js|json|svg)$/, (req, res) => {
-    // prefix/icon.svg
-    // prefix/icons.json
-    parseRequest(req.params[0], req.params[1], req.params[2], req, res);
-});
-
-// GET 2 part JS/JSON request
-app.get(/^\/([a-z0-9-]+)\.(js|json)$/, (req, res) => {
-    // prefix.json
-    parseRequest(req.params[0], 'icons', req.params[1], req, res);
-});
-
-// GET 2 part SVG request
-app.get(/^\/([a-z0-9:-]+)\.svg$/, (req, res) => {
-    let parts = req.params[0].split(':');
-
-    if (parts.length === 2) {
-        // prefix:icon.svg
-        parseRequest(parts[0], parts[1], 'svg', req, res);
-        return;
-    }
-
-    if (parts.length === 1) {
-        parts = parts[0].split('-');
-        if (parts.length > 1) {
-            // prefix-icon.svg
-            parseRequest(parts.shift(), parts.join('-'), 'svg', req, res);
+        if (parts.length === 2) {
+            // prefix:icon.svg
+            app.iconsRequest(req, res, parts[0], parts[1], 'svg');
             return;
         }
-    }
 
-    res.sendStatus(404);
-});
-
-// Disable crawling
-app.get('/robots.txt', (req, res) => {
-    res.type('text/plain').send('User-agent: *\nDisallow: /');
-});
-
-// Debug information and AWS health check
-app.get('/version', (req, res) => {
-    let body = 'Iconify API version ' + version + ' (Node';
-    if (config.region.length) {
-        body += ', ' + config.region;
-    }
-    body += ')';
-    res.send(body);
-});
-
-// Reload collections without restarting app
-app.get('/reload', (req, res) => {
-    if (config['reload-secret'].length && req.query && req.query.key && req.query.key === config['reload-secret']) {
-        // Reload collections
-        process.nextTick(() => {
-            if (loading) {
-                anotherReload = true;
+        if (parts.length === 1) {
+            parts = parts[0].split('-');
+            if (parts.length > 1) {
+                // prefix-icon.svg
+                app.iconsRequest(req, res, parts.shift(), parts.join('-'), 'svg');
                 return;
             }
-            reloadIcons(false);
-        });
-    }
-
-    // Send 200 response regardless of reload status, so visitor would not know if secret key was correct
-    // Testing should be done by checking new icons that should have been added by reload
-    res.sendStatus(200);
-});
-
-// Update collection without restarting app
-let syncRequest = (req, res) => {
-    let repo = req.query.repo;
-
-    if (sync.canSync(repo) && sync.validKey(req.query.key)) {
-        if (config.sync['sync-delay']) {
-            console.log('Will start synchronizing repository "' + repo + '" in up to ' + config.sync['sync-delay'] + ' seconds...');
         }
-        sync.sync(repo, false).then(result => {
-            if (result.result) {
-                // Refresh all icons
-                if (loading) {
-                    anotherReload = true;
-                } else {
-                    reloadIcons(false, result.logger);
-                }
-            }
-        }).catch(err => {
-            config.log('Error synchronizing repository "' + repo + '":\n' + util.format(err), 'sync-' + repo, true);
-        });
-    }
 
-    // Send 200 response regardless of reload status, so visitor would not know if secret key was correct
-    // Testing should be done by checking new icons that should have been added by reload
-    res.sendStatus(200);
-};
-app.get('/sync', syncRequest);
-app.post('/sync', syncRequest);
+        app.response(req, res, 404);
+    });
 
-// Redirect home page
-app.get('/', (req, res) => {
-    res.redirect(301, config['index-page']);
+    // Send robots.txt that disallows everything
+    app.server.get('/robots.txt', (req, res) => app.miscRequest(req, res, 'robots'));
+    app.server.post('/robots.txt', (req, res) => app.miscRequest(req, res, 'robots'));
+
+    // API version information
+    app.server.get('/version', (req, res) => app.miscRequest(req, res, 'version'));
+
+    // Reload collections without restarting app
+    app.server.get('/reload', (req, res) => app.miscRequest(req, res, 'reload'));
+    app.server.post('/reload', (req, res) => app.miscRequest(req, res, 'reload'));
+
+    // Get latest collection from Git repository
+    app.server.get('/sync', (req, res) => app.miscRequest(req, res, 'sync'));
+    app.server.post('/sync', (req, res) => app.miscRequest(req, res, 'sync'));
+
+    // Redirect home page
+    app.server.get('/', (req, res) => {
+        res.redirect(301, app.config['index-page']);
+    });
+
+    // Create server
+    app.server.listen(app.config.port, () => {
+        app.log('Listening on port ' + app.config.port);
+    });
+
+}).catch(err => {
+    console.error(err);
 });
 
-// Create server
-app.listen(config.port, () => {
-    console.log('Listening on port ' + config.port);
-});
 
-module.exports = app;
+

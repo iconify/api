@@ -161,7 +161,7 @@ Set to true to enable logging to email.
 
 #### throttle
 
-Number of seconds to delay email sending. 
+Number of seconds to delay email sending.
 
 Default is 30 seconds. All error messages within 30 seconds will be combined to one email instead of sending multiple emails.
 

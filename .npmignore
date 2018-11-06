@@ -1,11 +1,8 @@
 .idea
 .git
-.reload
 .DS_Store
 config.json
 node_modules
 npm-debug.log
 tests
-debug
-_debug*.*
 git-repos

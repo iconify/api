@@ -9,484 +9,155 @@
 
 "use strict";
 
-const fs = require('fs'),
-    util = require('util'),
-    child_process = require('child_process'),
-    promiseQueue = require('./promise');
+const fs = require('fs');
+const util = require('util');
+const child_process = require('child_process');
 
-let synchronized = {},
-    active = false,
-    cleaning = false,
-    synchronizing = {},
-    reSync = {},
-    syncQueue = {};
-
-let config, dirs, repos, _baseDir, _repoDir, _versionsFile;
-
-/**
- * Start synchronization
- *
- * @param repo
- * @param logger
- */
-const startSync = (repo, logger) => {
-    if (syncQueue[repo] === void 0) {
-        return;
-    }
-
-    function done(success) {
-        if (success) {
-            logger.log('Saved latest version of repository "' + repo + '" to ' + targetDir, true);
-            synchronized[repo] = t;
-            functions.saveVersions();
-            dirs.setRootDir(repo, targetDir);
-            setTimeout(functions.cleanup, 300000);
-        }
-        synchronizing[repo] = false;
-
-        syncQueue[repo].forEach((done, index) => {
-            if (index > 0) {
-                // Send false to all promises except first one to avoid loading collections several times
-                done({
-                    result: false,
-                    logger: logger
-                });
-            } else {
-                done({
-                    result: success,
-                    logger: logger
-                });
-            }
-        });
-    }
-
-    logger.log('Synchronizing repository "' + repo + '" ...', true);
-    synchronizing[repo] = true;
-
-    let t = Date.now(),
-        targetDir = _baseDir + '/' + repo + '.' + t,
-        repoURL = config.sync[repo],
-        cmd = config.sync.git.replace('{target}', '"' + targetDir + '"').replace('{repo}', '"' + repoURL + '"');
-
-    reSync[repo] = false;
-    child_process.exec(cmd, {
-        cwd: _baseDir,
-        env: process.env,
-        uid: process.getuid()
-    }, (error, stdout, stderr) => {
-        if (error) {
-            if (logger.active) {
-                logger.log('Error executing git:' + util.format(error), true);
-                logger.send();
-            } else {
-                config.log('Error executing git:' + util.format(error), cmd, true);
-            }
-            done(false);
-            return;
-        }
-
-        if (reSync[repo]) {
-            // Another sync event was asked while cloning repository. Do it again
-            startSync(repo);
-            return;
-        }
-
-        done(true);
-    });
+const defaultOptions = {
+    logger: null,
+    noDelay: false,
+    reload: true
 };
 
-/**
- * Remove file
- *
- * @param {string} file
- * @returns {Promise<any>}
- */
-const removeFile = file => new Promise((fulfill, reject) => {
-    fs.unlink(file, err => {
-        if (err) {
-            config.log('Error deleting file ' + file, file, false);
-        }
-        fulfill();
-    })
-});
+let active = {},
+    queued = {};
 
-/**
- * Remove directory with sub-directories and files
- *
- * @param {string} dir
- * @returns {Promise<any>}
- */
-const removeDir = dir => new Promise((fulfill, reject) => {
-    function done() {
-        fs.rmdir(dir, err => {
-            if (err) {
-                config.log('Error deleting directory ' + dir, dir, false);
-            }
-            fulfill();
-        });
+class Sync {
+    constructor(app, repo, options) {
+        this.app = app;
+        this.repo = repo;
+        this.options = options;
     }
 
-    fs.readdir(dir, (err, files) => {
-        if (err) {
-            // fulfill instead of rejecting
-            fulfill();
-            return;
-        }
+    sync() {
+        return new Promise((fulfill, reject) => {
+            this.app.log('Synchronizing repository "' + this.repo + '"...', this.options);
 
-        let children = {};
+            let time = Date.now(),
+                root = this.app.dirs.storageDir(),
+                targetDir = root + '/' + this.repo + '.' + time,
+                repoURL = this.app.config.sync[this.repo],
+                cmd = this.app.config.sync.git.replace('{target}', '"' + targetDir + '"').replace('{repo}', '"' + repoURL + '"');
 
-        files.forEach(file => {
-            let filename = dir + '/' + file,
-                stats = fs.lstatSync(filename);
-
-            if (stats.isDirectory()) {
-                children[filename] = true;
-                return;
-            }
-
-            if (stats.isFile() || stats.isSymbolicLink()) {
-                children[filename] = false;
-            }
-        });
-
-        promiseQueue(Object.keys(children), file => {
-            if (children[file]) {
-                return removeDir(file);
-            } else {
-                return removeFile(file);
-            }
-        }).then(() => {
-            done();
-        }).catch(err => {
-            config.log('Error recursively removing directory ' + dir + '\n' + util.format(err), 'rmdir-' + dir, true);
-            done();
-        });
-    });
-});
-
-/**
- * Remove directory with sub-directories and files
- *
- * @param {string} dir
- * @returns {Promise<any>}
- */
-const rmDir = dir => new Promise((fulfill, reject) => {
-    function oldMethod() {
-        removeDir(dir).then(() => {
-            fulfill();
-        }).catch(err => {
-            reject(err);
-        });
-    }
-
-    if (!config.sync.rm) {
-        oldMethod();
-        return;
-    }
-
-    fs.lstat(dir, (err, stats) => {
-        if (err) {
-            if (err.code && err.code === 'ENOENT') {
-                // No such file/directory
-                fulfill();
-                return;
-            }
-            // Unknown error
-            config.log('Error checking directory ' + dir + '\n' + util.format(err), 'rmd-' + dir, true);
-            fulfill(false);
-            return;
-        }
-
-        // Attempt to remove using exec()
-        let cmd = config.sync.rm.replace('{dir}', '"' + dir + '"');
-        child_process.exec(cmd, {
-            cwd: _baseDir,
-            env: process.env,
-            uid: process.getuid()
-        }, (error, stdout, stderr) => {
-            if (error) {
-                // rmdir didn't work? Attempt to remove each file
-                oldMethod();
-                return;
-            }
-
-            // Make sure directory is removed
-            fs.lstat(dir, (err, stats) => {
-                if (err && err.code && err.code === 'ENOENT') {
-                    fulfill();
+            child_process.exec(cmd, {
+                cwd: root,
+                env: process.env,
+                uid: process.getuid()
+            }, (error, stdout, stderr) => {
+                if (error) {
+                    reject('Error executing git:' + util.format(error));
                     return;
                 }
-                oldMethod();
+
+                // Done. Set new directory and reload collections
+                this.app.dirs.setSynchronizedRepoDir(this.repo, time, true);
+
+                fulfill(true);
             });
         });
-    });
-});
-
-/**
- * Exported functions
- *
- * @type {object}
- */
-const functions = {
-    /**
-     * Get root directory of repository
-     *
-     * @param {string} repo
-     * @returns {string|null}
-     */
-    root: repo => synchronized[repo] ? _baseDir + '/' + repo + '.' + synchronized[repo] : null,
-
-    /**
-     * Check if repository can be synchronized
-     *
-     * @param {string} repo
-     * @returns {boolean}
-     */
-    canSync: repo => active && synchronized[repo] !== void 0,
-
-    /**
-     * Get last synchronization time
-     *
-     * @param {string} repo
-     * @returns {number}
-     */
-    time: repo => active && synchronized[repo] !== void 0 ? synchronized[repo] : 0,
-
-    /**
-     * Check if key is valid
-     *
-     * @param {string} key
-     * @returns {boolean}
-     */
-    validKey: key => typeof key === 'string' && key.length && key === config.sync.secret,
-
-    /**
-     * Save versions.json
-     */
-    saveVersions: () => {
-        let data = {};
-        Object.keys(synchronized).forEach(repo => {
-            if (synchronized[repo]) {
-                data[repo] = synchronized[repo];
-            }
-        });
-
-        fs.writeFile(_versionsFile, JSON.stringify(data, null, 4), 'utf8', err => {
-            if (err) {
-                config.error('Error saving versions.json\n' + util.format(err), 'version-' + _versionsFile, true);
-            }
-        });
-    },
+    }
 
     /**
      * Synchronize repository
      *
-     * @param {string} repo
-     * @param {boolean} [immediate]
-     * @param {*} [logger]
-     * @returns {Promise<any>}
+     * @param app
+     * @param repo
+     * @param options
+     * @param fulfill
+     * @param reject
      */
-    sync: (repo, immediate, logger) => new Promise((fulfill, reject) => {
-        let finished = false,
-            attempts = 0;
+    static sync(app, repo, options, fulfill, reject) {
+        active[repo] = true;
+        queued[repo] = false;
 
-        function done(result) {
-            if (finished) {
-                return;
-            }
-
-            finished = true;
-            fulfill(result);
-        }
-
-        function nextAttempt() {
-            if (finished) {
-                return;
-            }
-
-            if (synchronizing[repo]) {
-                // Another repository is still being synchronized?
-                logger.log('Cannot start repository synchronization because sync is already in progress.', true);
-                attempts ++;
-                if (attempts > 3) {
-                    done(false);
-                } else {
-                    setTimeout(nextAttempt, config.sync['repeated-sync-delay'] * 1000);
+        let sync = new Sync(app, repo, options);
+        sync.sync(fulfill, reject).then(() => {
+            active[repo] = false;
+            if (queued[repo]) {
+                // Retry
+                let retryDelay;
+                try {
+                    retryDelay = app.config.sync['repeated-sync-delay'];
+                } catch (err) {
+                    retryDelay = 60;
                 }
+                app.log('Repository "' + repo + '" has finished synchronizing, but there is another sync request queued. Will do another sync in ' + retryDelay + ' seconds.', options);
+
+                setTimeout(() => {
+                    Sync.sync(app, repo, options, fulfill, reject);
+                }, retryDelay * 1000);
                 return;
             }
 
-            // Start synchronizing
-            startSync(repo, logger);
-        }
-
-        if (!logger) {
-            logger = new config.Logger('Synchronizing repository "' + repo + '" at '  + (new Date()).toString(), (immediate ? 0 : config.sync['sync-delay']) + 90);
-        }
-
-        if (!active) {
-            logger.log('Cannot synchronize repositories.');
-            logger.send();
-            reject('Cannot synchronize repositories.');
-            return;
-        }
-
-        // Add to queue
-        reSync[repo] = true;
-        if (syncQueue[repo] === void 0) {
-            syncQueue[repo] = [done];
-        } else {
-            syncQueue[repo].push(done);
-        }
-
-        if (synchronizing[repo]) {
-            // Wait until previous sync operation is over
-            logger.log('Another sync is in progress. Waiting for ' + config.sync['repeated-sync-delay'] + ' seconds before next attempt.');
-            setTimeout(nextAttempt, config.sync['repeated-sync-delay'] * 1000);
-            attempts ++;
-        } else if (immediate === true) {
-            // Start immediately
-            nextAttempt();
-        } else {
-            // Wait a bit to avoid multiple synchronizations
-            logger.log('Waiting for ' + config.sync['sync-delay'] + ' before starting synchronization.');
-            setTimeout(nextAttempt, config.sync['sync-delay'] * 1000);
-        }
-    }),
-
-    /**
-     * Remove old files
-     */
-    cleanup: () => {
-        if (cleaning) {
-            return;
-        }
-        cleaning = true;
-
-        fs.readdir(_baseDir, (err, files) => {
-            if (err) {
-                cleaning = false;
-                return;
+            // Done
+            app.log('Completed synchronization of repository "' + repo + '".', options);
+            if (options.reload && !queued[repo]) {
+                app.reload(repo, options).then(() => {
+                    fulfill(true);
+                }).catch(err => {
+                    reject(err);
+                });
+            } else {
+                fulfill(true);
             }
-
-            let dirs = [];
-            files.forEach(file => {
-                let parts = file.split('.');
-                if (parts.length !== 2 || synchronized[parts[0]] === void 0) {
-                    return;
-                }
-
-                let repo = parts.shift(),
-                    time = parseInt(parts.shift());
-
-                if (time > (synchronized[repo] - 3600 * 1000)) {
-                    // wait 1 hour before deleting old repository
-                    return;
-                }
-
-                dirs.push(_baseDir + '/' + file);
-            });
-
-            if (!dirs.length) {
-                cleaning = false;
-                return;
-            }
-
-            console.log('Cleaning up old repositories...');
-
-            // Delete all directories, but only 1 at a time to reduce loadQueue
-            promiseQueue(dirs, dir => rmDir(dir)).then(() => {
-                cleaning = false;
-            }).catch(err => {
-                config.log('Error cleaning up old files:\n' + util.format(err), 'cleanup', true);
-                cleaning = false;
-            });
-        });
+        }).catch(err => {
+            reject(err);
+        })
     }
-};
-
-/**
- * Initialize. Find active repositories
- */
-function init() {
-    if (!config.sync || !config.sync.versions || !config.sync.storage) {
-        // Synchronization is inactive
-        return;
-    }
-
-    if (!config.sync.secret) {
-        // Cannot sync without secret word
-        console.log('Repositories synchronization is not possible because "secret" is empty. Check config.md for details.');
-        return;
-    }
-
-    // Check active repositories
-    repos.forEach(repo => {
-        if (!config.sync[repo]) {
-            return;
-        }
-
-        synchronized[repo] = 0;
-        synchronizing[repo] = false;
-    });
-
-    if (!Object.keys(synchronized).length) {
-        // Nothing was found
-        console.log('Repositories synchronization is not possible because no active repositories were found. Check config.md for details.');
-        return;
-    }
-
-    // Try to create base directory
-    _baseDir = config.sync.storage.replace('{dir}', config._dir);
-    try {
-        fs.mkdirSync(_baseDir);
-    } catch (err) {
-    }
-
-    // Check for versions.json
-    _versionsFile = config.sync.versions.replace('{dir}', config._dir);
-    active = true;
-
-    let data;
-    try {
-        data = fs.readFileSync(_versionsFile, 'utf8');
-        data = JSON.parse(data);
-    } catch (err) {
-        // Nothing to parse
-        return;
-    }
-
-    Object.keys(data).forEach(key => {
-        let dir;
-
-        if (synchronized[key] === void 0) {
-            return;
-        }
-
-        dir = _baseDir + '/' + key + '.' + data[key];
-        try {
-            let stat = fs.lstatSync(dir);
-            if (stat && stat.isDirectory()) {
-                // Found directory
-                synchronized[key] = data[key];
-                dirs.setRootDir(key, dir);
-                console.log('Icons will be loaded from ' + dir + ' instead of default location.');
-                return;
-            }
-        } catch (err) {
-        }
-
-        config.log('Error loading latest collections: directory does not exist: ' + dir, 'missing-' + dir, true);
-    });
-    setTimeout(functions.cleanup, 60000);
 }
 
-module.exports = appConfig => {
-    config = appConfig;
-    dirs = config._dirs;
-    repos = dirs.getRepos();
-    init();
+module.exports = (app, repo, options) => new Promise((fulfill, reject) => {
+    // Options
+    options = Object.assign({}, defaultOptions, typeof options !== 'object' ? options : {});
 
-    config._sync = functions;
-    return functions;
-};
+    // Check if synchronization is disabled
+    if (!app.config.canSync || !app.config.sync[repo] || !app.config.sync.git) {
+        reject('Synchronization is disabled.');
+        return;
+    }
+
+    // Check if repository sync is already in queue
+    if (queued[repo]) {
+        app.log('Repository "' + repo + '" is already in synchronization queue.', options);
+        fulfill(false);
+        return;
+    }
+
+    let delay, retryDelay;
+    try {
+        delay = app.config.sync['sync-delay'];
+        retryDelay = app.config.sync['repeated-sync-delay'];
+    } catch (err) {
+        delay = 60;
+        retryDelay = 60;
+    }
+    if (options.noDelay) {
+        delay = 0;
+    }
+
+    // Add to queue
+    queued[repo] = true;
+
+    // Check if repository is already being synchronized
+    if (active[repo]) {
+        app.log('Repository "' + repo + '" is already being synchronized. Will do another sync ' + retryDelay + ' seconds after previous sync completes.', options);
+        fulfill(false);
+        return;
+    }
+
+    // Create logger if its missing
+    if (!options.logger) {
+        options.logger = app.logger('Synchronizing repository: ' + repo, delay + 15);
+    }
+
+    // Start time
+    if (!delay) {
+        Sync.sync(app, repo, options, fulfill, reject);
+    } else {
+        app.log('Repository "' + repo + '" will start synchronizing in ' + delay + ' seconds.', options);
+        setTimeout(() => {
+            Sync.sync(app, repo, options, fulfill, reject);
+        }, delay * 1000);
+    }
+});
+

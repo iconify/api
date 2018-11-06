@@ -7,6 +7,7 @@
   "custom-icons-dir": "{dir}/json",
   "serve-default-icons": true,
   "index-page": "https://iconify.design/",
+  "json-loader": "parse",
   "cache": {
     "timeout": 604800,
     "min-refresh": 604800,
@@ -21,7 +22,7 @@
   "sync": {
     "sync-on-startup": "missing",
     "sync-delay": 60,
-    "repeated-sync-delay": 600,
+    "repeated-sync-delay": 60,
     "versions": "{dir}/git-repos/versions.json",
     "storage": "{dir}/git-repos",
     "git": "git clone {repo} --depth 1 --no-tags {target}",
