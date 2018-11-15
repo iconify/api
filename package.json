@@ -24,7 +24,7 @@
     "mocha": "^5.2.0"
   },
   "optionalDependencies": {
-    "@iconify/json": "^1.0.8",
+    "@iconify/json": "*",
     "JSONStream": "^1.3.5",
     "event-stream": "^4.0.1",
     "nodemailer": "^4.6.8"
