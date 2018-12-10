@@ -12,7 +12,7 @@ Do not edit config-default.json unless you are making your own fork of project. 
 then add custom configuration variables to it.
 
 
-## Server configiration
+## Server configuration
 
 #### port
 
@@ -49,7 +49,7 @@ URL to redirect browser when browsing main page. Redirection is permanent.
 
 ## Browser cache controls
 
-Cache configiration is stored in "cache" object. Object properties:
+Cache configuration is stored in "cache" object. Object properties:
 
 #### timeout
 
