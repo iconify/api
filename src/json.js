@@ -13,7 +13,7 @@ const fs = require('fs');
 const util = require('util');
 
 // List of imported modules
-let imported = {};
+let imported = Object.create(null);
 
 /**
  * Import json file

@@ -19,9 +19,9 @@ const defaultOptions = {
     logger: null
 };
 
-let repoItems = {},
-    collectionRepos = {},
-    hashes = {},
+let repoItems = Object.create(null),
+    collectionRepos = Object.create(null),
+    hashes = Object.create(null),
     nextReload = 0;
 
 class Loader {
@@ -257,7 +257,7 @@ class Loader {
  */
 module.exports = (app, repos, options) => new Promise((fulfill, reject) => {
     // Options
-    options = Object.assign({}, defaultOptions, typeof options === 'object' ? options : {});
+    options = Object.assign(Object.create(null), defaultOptions, typeof options === 'object' ? options : Object.create(null));
 
     // Get list of repositories to reload
     let availableRepos = app.dirs.getRepos();

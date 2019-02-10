@@ -19,8 +19,8 @@ const defaultOptions = {
     reload: true
 };
 
-let active = {},
-    queued = {};
+let active = Object.create(null),
+    queued = Object.create(null);
 
 class Sync {
     constructor(app, repo, options) {
@@ -108,7 +108,7 @@ class Sync {
 
 module.exports = (app, repo, options) => new Promise((fulfill, reject) => {
     // Options
-    options = Object.assign({}, defaultOptions, typeof options !== 'object' ? options : {});
+    options = Object.assign(Object.create(null), defaultOptions, typeof options !== 'object' ? options : Object.create(null));
 
     // Check if synchronization is disabled
     if (!app.config.canSync || !app.config.sync[repo] || !app.config.sync.git) {

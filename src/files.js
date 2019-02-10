@@ -28,7 +28,7 @@ let functions = {
             if (err) {
                 _app.error('Error deleting file ' + file, Object.assign({
                     key: 'unlink-' + file
-                }, typeof options === 'object' ? options : {}));
+                }, typeof options === 'object' ? options : Object.create(null)));
             }
             fulfill();
         })
@@ -42,7 +42,7 @@ let functions = {
      * @return {Promise<any>}
      */
     rmdir: (dir, options) => new Promise((fulfill, reject) => {
-        options = typeof options === 'object' ? options : {};
+        options = typeof options === 'object' ? options : Object.create(null);
 
         function done() {
             fs.rmdir(dir, err => {
@@ -62,7 +62,7 @@ let functions = {
                 return;
             }
 
-            let children = {};
+            let children = Object.create(null);
 
             files.forEach(file => {
                 let filename = dir + '/' + file,

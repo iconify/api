@@ -19,9 +19,9 @@ const fs = require('fs');
  * @returns {object}
  */
 module.exports = app => {
-    let functions = {},
-        dirs = {},
-        custom = {},
+    let functions = Object.create(null),
+        dirs = Object.create(null),
+        custom = Object.create(null),
         repos = [],
         storageDir = null,
         versionsFile = null;
@@ -132,7 +132,7 @@ module.exports = app => {
      */
 
     // Get synchronized repositories
-    let cached = {};
+    let cached = Object.create(null);
     app.config.canSync = false;
     try {
         if (app.config.sync.versions && app.config.sync.storage) {
@@ -147,7 +147,7 @@ module.exports = app => {
         }
     } catch (err) {
         if (typeof cached !== 'object') {
-            cached = {};
+            cached = Object.create(null);
         }
     }
 

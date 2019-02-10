@@ -108,7 +108,7 @@ if (!app.dirs.getRepos().length) {
 }
 
 // Collections
-app.collections = {};
+app.collections = Object.create(null);
 app.reload = require('./src/reload').bind(this, app);
 
 // Sync module

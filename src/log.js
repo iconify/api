@@ -26,7 +26,7 @@ const defaultOptions = {
 };
 
 // List of notices that are sent only once per session
-let logged = {};
+let logged = Object.create(null);
 
 // List of throttled messages
 let throttled = null;
@@ -54,7 +54,7 @@ const sendQueue = app => {
  * @param {object|boolean} [options]
  */
 module.exports = (app, error, message, options) => {
-    options = Object.assign({}, defaultOptions, options === void 0 ? {} : (typeof options === 'boolean' ? {
+    options = Object.assign(Object.create(null), defaultOptions, options === void 0 ? Object.create(null) : (typeof options === 'boolean' ? {
         log: options
     }: options));
 
