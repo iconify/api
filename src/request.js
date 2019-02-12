@@ -45,7 +45,7 @@ module.exports = (app, req, res, query) => {
             app.response(req, res, 200);
 
             // Do stuff
-            if (app.config['reload-secret'].length && req.query && req.query.key && req.query.key === app.config['reload-secret'] && !app.reloading) {
+            if (app.config['reload-secret'].length && req.query && typeof req.query.key === 'string' && req.query.key === app.config['reload-secret'] && !app.reloading) {
                 process.nextTick(() => {
                     app.reload(false).then(() => {
                     }).catch(err => {
@@ -60,7 +60,7 @@ module.exports = (app, req, res, query) => {
             app.response(req, res, 200);
 
             let repo = req.query.repo;
-            if (!app.config.canSync || !app.config.sync[repo] || !app.config.sync.git || !app.config.sync.secret) {
+            if (typeof repo !== 'string' || !app.config.canSync || !app.config.sync[repo] || !app.config.sync.git || !app.config.sync.secret) {
                 return;
             }
 
