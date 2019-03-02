@@ -243,6 +243,7 @@ class Loader {
             if (item.repo === 'iconify') {
                 this.reloadInfo = true;
             }
+
             fulfill(collection);
         });
     }

@@ -16,7 +16,7 @@
     "url": "git+ssh://git@github.com/iconify-design/api.js.git"
   },
   "dependencies": {
-    "@iconify/json-tools": "^1.0.5",
+    "@iconify/json-tools": "^1.0.6",
     "express": "^4.16.4"
   },
   "devDependencies": {
