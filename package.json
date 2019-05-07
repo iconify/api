@@ -9,11 +9,11 @@
   },
   "author": "Vjacheslav Trushkin",
   "license": "MIT",
-  "bugs": "https://github.com/iconify-design/api.js/issues",
-  "homepage": "https://github.com/iconify-design/api.js",
+  "bugs": "https://github.com/iconify/api.js/issues",
+  "homepage": "https://github.com/iconify/api.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/iconify-design/api.js.git"
+    "url": "git+ssh://git@github.com/iconify/api.js.git"
   },
   "dependencies": {
     "@iconify/json-tools": "^1.0.6",

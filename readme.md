@@ -1,8 +1,8 @@
-# Iconify.design API
+# Iconify API
 
 This code runs on api.iconify.design that is used to serve collections and SVG images.
 
-PHP version is available at https://github.com/iconify-design/api.php
+PHP version is available at https://github.com/iconify/api.php
 
 
 ### How to use it
