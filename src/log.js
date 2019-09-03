@@ -65,7 +65,7 @@ module.exports = (app, error, message, options) => {
 
     // Get time stamp
     let time = new Date();
-    time = (time.getUTCHours() > 10 ? '[' : '[0') + time.getUTCHours() + (time.getUTCMinutes() > 10 ? ':' : ':0') + time.getUTCMinutes() + (time.getUTCSeconds() > 9 ? ':' : ':0') + time.getUTCSeconds() + '] ';
+    time = (time.getUTCHours() > 9 ? '[' : '[0') + time.getUTCHours() + (time.getUTCMinutes() > 9 ? ':' : ':0') + time.getUTCMinutes() + (time.getUTCSeconds() > 9 ? ':' : ':0') + time.getUTCSeconds() + '] ';
 
     // Copy message to console
     if (options.log || !app.mail) {
