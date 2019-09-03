@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Node.js version of api.iconify.design",
   "private": true,
   "main": "app.js",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@iconify/json-tools": "^1.0.6",
-    "express": "^4.16.4"
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
