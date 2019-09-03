@@ -174,7 +174,7 @@ class Loader {
                 this.app.log('Loaded ' + total + ' icons from ' + loaded + (loaded > 1 ? ' collections ' : ' collection ') + (skipped ? '(no changes in ' + skipped + (skipped > 1 ? ' collections) ' : ' collection) ') : '') + 'in ' + (Date.now() - this.start) / 1000 + ' seconds.', this.options);
 
                 if (this.reloadInfo) {
-                    return this.getInfo();
+                    return this.getCollectionsJSON();
                 }
 
             }).then(() => {
@@ -190,7 +190,7 @@ class Loader {
      *
      * @return {Promise<any>}
      */
-    getInfo() {
+    getCollectionsJSON() {
         return new Promise((fulfill, reject) => {
             let filename = this.app.dirs.rootDir('iconify') + '/collections.json';
             fs.readFile(filename, 'utf8', (err, data) => {
@@ -206,7 +206,7 @@ class Loader {
                     return;
                 }
 
-                this.app.info = data;
+                this.app.collectionsJSON = data;
                 fulfill();
             });
         });
