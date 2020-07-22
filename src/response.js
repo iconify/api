@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 /**
  * Regexp for checking callback attribute
@@ -26,62 +26,84 @@ const callbackMatch = /^[a-z0-9_.]+$/i;
  * @param result
  */
 module.exports = (app, req, res, result) => {
-    if (typeof result === 'number') {
-        // Send error
-        res.sendStatus(result);
-        return;
-    }
+	if (typeof result === 'number') {
+		// Send error
+		res.sendStatus(result);
+		return;
+	}
 
-    // Convert JSON(P) response
-    if (result.body === void 0 && result.data !== void 0) {
-        if (typeof result.data === 'object') {
-            result.body = (req.query.pretty === '1' || req.query.pretty === 'true') ? JSON.stringify(result.data, null, 4) : JSON.stringify(result.data);
-        }
+	// Convert JSON(P) response
+	if (result.body === void 0 && result.data !== void 0) {
+		if (typeof result.data === 'object') {
+			result.body =
+				req.query.pretty === '1' || req.query.pretty === 'true'
+					? JSON.stringify(result.data, null, 4)
+					: JSON.stringify(result.data);
+		}
 
-        if (result.js === void 0) {
-            result.js = req.query.callback !== void 0;
-        }
+		if (result.js === void 0) {
+			result.js = req.query.callback !== void 0;
+		}
 
-        if (result.js === true) {
-            let callback;
-            if (result.callback === void 0 && req.query.callback !== void 0) {
-                callback = req.query.callback;
-                if (!callback.match(callbackMatch)) {
-                    // Invalid callback
-                    res.sendStatus(400);
-                    return;
-                }
-            } else {
-                callback = result.callback === void 0 ? result.defaultCallback : result.callback;
-                if (callback === void 0) {
-                    res.sendStatus(400);
-                    return;
-                }
-            }
-            result.body = callback + '(' + result.body + ');';
-            result.type = 'application/javascript; charset=utf-8';
-        } else {
-            result.type = 'application/json; charset=utf-8';
-        }
-    }
+		if (result.js === true) {
+			let callback;
+			if (result.callback === void 0 && req.query.callback !== void 0) {
+				callback = req.query.callback;
+				if (!callback.match(callbackMatch)) {
+					// Invalid callback
+					res.sendStatus(400);
+					return;
+				}
+			} else {
+				callback =
+					result.callback === void 0
+						? result.defaultCallback
+						: result.callback;
+				if (callback === void 0) {
+					res.sendStatus(400);
+					return;
+				}
+			}
+			result.body = callback + '(' + result.body + ');';
+			result.type = 'application/javascript; charset=utf-8';
+		} else {
+			result.type = 'application/json; charset=utf-8';
+		}
+	}
 
-    // Send cache header
-    if (
-        app.config.cache && app.config.cache.timeout &&
-        (req.get('Pragma') === void 0 || req.get('Pragma').indexOf('no-cache') === -1) &&
-        (req.get('Cache-Control') === void 0 || req.get('Cache-Control').indexOf('no-cache') === -1)
-    ) {
-        res.set('Cache-Control', (app.config.cache.private ? 'private' : 'public') + ', max-age=' + app.config.cache.timeout + ', min-refresh=' + app.config.cache['min-refresh']);
-        if (!app.config.cache.private) {
-            res.set('Pragma', 'cache');
-        }
-    }
+	// Send cache header
+	if (
+		app.config.cache &&
+		app.config.cache.timeout &&
+		(req.get('Pragma') === void 0 ||
+			req.get('Pragma').indexOf('no-cache') === -1) &&
+		(req.get('Cache-Control') === void 0 ||
+			req.get('Cache-Control').indexOf('no-cache') === -1)
+	) {
+		res.set(
+			'Cache-Control',
+			(app.config.cache.private ? 'private' : 'public') +
+				', max-age=' +
+				app.config.cache.timeout +
+				', min-refresh=' +
+				app.config.cache['min-refresh']
+		);
+		if (!app.config.cache.private) {
+			res.set('Pragma', 'cache');
+		}
+	}
 
-    // Check for download
-    if (result.filename !== void 0 && (req.query.download === '1' || req.query.download === 'true')) {
-        res.set('Content-Disposition', 'attachment; filename="' + result.filename + '"');
-    }
+	// Check for download
+	if (
+		result.filename !== void 0 &&
+		(req.query.download === '1' || req.query.download === 'true')
+	) {
+		res.set(
+			'Content-Disposition',
+			'attachment; filename="' + result.filename + '"'
+		);
+	}
 
-    // Send data
-    res.type(result.type).send(result.body);
+	// Send data
+	res.type(result.type).send(result.body);
 };

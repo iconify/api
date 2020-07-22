@@ -7,47 +7,51 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 class Logger {
-    constructor(app, subject, delay) {
-        this.app = app;
-        this.subject = subject;
-        this.messages = [];
-        this.delay = typeof delay === 'number' ? Math.min(Math.max(delay, 15), 300) : 60;
-        this.throttled = false;
-    }
+	constructor(app, subject, delay) {
+		this.app = app;
+		this.subject = subject;
+		this.messages = [];
+		this.delay =
+			typeof delay === 'number' ? Math.min(Math.max(delay, 15), 300) : 60;
+		this.throttled = false;
+	}
 
-    send() {
-        if (this.messages.length) {
-            this.app.mail((this.subject ? this.subject + '\n\n' : '') + this.messages.join('\n'));
-            this.messages = [];
-        }
-    }
+	send() {
+		if (this.messages.length) {
+			this.app.mail(
+				(this.subject ? this.subject + '\n\n' : '') +
+					this.messages.join('\n')
+			);
+			this.messages = [];
+		}
+	}
 
-    queue() {
-        if (!this.throttled) {
-            this.throttled = true;
-            setTimeout(() => {
-                this.send();
-                this.throttled = false;
-            }, this.delay * 1000);
-        }
-    }
+	queue() {
+		if (!this.throttled) {
+			this.throttled = true;
+			setTimeout(() => {
+				this.send();
+				this.throttled = false;
+			}, this.delay * 1000);
+		}
+	}
 
-    log(message) {
-        this.messages.push(message);
-        if (!this.throttled) {
-            this.queue();
-        }
-    }
+	log(message) {
+		this.messages.push(message);
+		if (!this.throttled) {
+			this.queue();
+		}
+	}
 
-    error(message) {
-        this.messages.push(message);
-        if (!this.throttled) {
-            this.queue();
-        }
-    }
+	error(message) {
+		this.messages.push(message);
+		if (!this.throttled) {
+			this.queue();
+		}
+	}
 }
 
 /**

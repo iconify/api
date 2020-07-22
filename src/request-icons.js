@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const SVG = require('@iconify/json-tools').SVG;
 
@@ -19,8 +19,8 @@ const SVG = require('@iconify/json-tools').SVG;
  * @returns {string}
  */
 function generateSVG(icon, params) {
-    let svg = new SVG(icon);
-    return svg.getSVG(params);
+	let svg = new SVG(icon);
+	return svg.getSVG(params);
 }
 
 /**
@@ -42,54 +42,57 @@ const _callbackMatch = /^[a-z0-9_.]+$/i;
  * @param {string} ext Extension
  */
 module.exports = (app, req, res, prefix, query, ext) => {
-    if (app.collections[prefix] === void 0) {
-        app.response(req, res, 404);
-        return;
-    }
+	if (app.collections[prefix] === void 0) {
+		app.response(req, res, 404);
+		return;
+	}
 
-    let collection = app.collections[prefix],
-        params = req.query;
+	let collection = app.collections[prefix],
+		params = req.query;
 
-    let parse = () => {
-        switch (ext) {
-            case 'svg':
-                // Generate SVG
-                // query = icon name
-                let icon = collection.getIconData(query);
-                if (icon === null) {
-                    return 404;
-                }
-                return {
-                    filename: query + '.svg',
-                    type: 'image/svg+xml; charset=utf-8',
-                    body: generateSVG(icon, params)
-                };
+	let parse = () => {
+		switch (ext) {
+			case 'svg':
+				// Generate SVG
+				// query = icon name
+				let icon = collection.getIconData(query);
+				if (icon === null) {
+					return 404;
+				}
+				return {
+					filename: query + '.svg',
+					type: 'image/svg+xml; charset=utf-8',
+					body: generateSVG(icon, params),
+				};
 
-            case 'js':
-            case 'json':
-                if (query !== 'icons' || typeof params.icons !== 'string') {
-                    return 404;
-                }
+			case 'js':
+			case 'json':
+				if (query !== 'icons' || typeof params.icons !== 'string') {
+					return 404;
+				}
 
-                let result = collection.getIcons(params.icons.split(','));
+				let result = collection.getIcons(params.icons.split(','));
 
-                if (result === null || !Object.keys(result.icons).length) {
-                    return 404;
-                }
-                if (result.aliases !== void 0 && !Object.keys(result.aliases).length) {
-                    delete result.aliases;
-                }
+				if (result === null || !Object.keys(result.icons).length) {
+					return 404;
+				}
+				if (
+					result.aliases !== void 0 &&
+					!Object.keys(result.aliases).length
+				) {
+					delete result.aliases;
+				}
 
-                return {
-                    js: ext === 'js',
-                    defaultCallback: 'SimpleSVG._loaderCallback',
-                    data: result
-                };
+				return {
+					js: ext === 'js',
+					defaultCallback: 'SimpleSVG._loaderCallback',
+					data: result,
+				};
 
-            default:
-                return 404;
-        }
-    };
+			default:
+				return 404;
+		}
+	};
 
-    app.response(req, res, parse());
+	app.response(req, res, parse());
 };
