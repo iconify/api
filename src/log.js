@@ -36,10 +36,48 @@ let throttled = null;
  *
  * @param app
  */
-const sendQueue = app => {
+const sendQueue = (app) => {
 	let text = throttled.join('\n\n- - - - - - - - - - -\n\n');
 	throttled = null;
 	app.mail(text);
+};
+
+const months = {
+	0: 'Jan',
+	1: 'Feb',
+	2: 'Mar',
+	3: 'Apr',
+	4: 'May',
+	5: 'June',
+	6: 'July',
+	7: 'Aug',
+	8: 'Sep',
+	9: 'Oct',
+	10: 'Nov',
+	11: 'Dec',
+};
+
+const logTime = () => {
+	let time = new Date();
+
+	let result = '[';
+	// Add date
+	result +=
+		time.getUTCDate() +
+		' ' +
+		months[time.getUTCMonth()] +
+		' ' +
+		time.getUTCFullYear();
+	// Add time
+	result +=
+		(time.getUTCHours() > 9 ? ' ' : ' 0') +
+		time.getUTCHours() +
+		(time.getUTCMinutes() > 9 ? ':' : ':0') +
+		time.getUTCMinutes() +
+		(time.getUTCSeconds() > 9 ? ':' : ':0') +
+		time.getUTCSeconds();
+	result += '] ';
+	return result;
 };
 
 /**
@@ -72,15 +110,7 @@ module.exports = (app, error, message, options) => {
 	}
 
 	// Get time stamp
-	let time = new Date();
-	time =
-		(time.getUTCHours() > 9 ? '[' : '[0') +
-		time.getUTCHours() +
-		(time.getUTCMinutes() > 9 ? ':' : ':0') +
-		time.getUTCMinutes() +
-		(time.getUTCSeconds() > 9 ? ':' : ':0') +
-		time.getUTCSeconds() +
-		'] ';
+	let time = logTime();
 
 	// Copy message to console
 	if (options.log || !app.mail) {
