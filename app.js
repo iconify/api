@@ -37,11 +37,10 @@ try {
 		try {
 			customConfig = JSON.parse(customConfig);
 			Object.keys(customConfig).forEach((key) => {
-				if (typeof app.config[key] !== typeof customConfig[key]) {
-					return;
-				}
-
-				if (typeof app.config[key] === 'object') {
+				if (
+					typeof app.config[key] === 'object' &&
+					typeof customConfig[key] === 'object'
+				) {
 					// merge object
 					Object.assign(app.config[key], customConfig[key]);
 				} else {
