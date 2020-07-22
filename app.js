@@ -15,7 +15,7 @@ const fs = require('fs'),
 	express = require('express');
 
 // Log uncaught exceptions to stderr
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
 	console.error('Uncaught exception:', err);
 });
 
@@ -36,7 +36,7 @@ try {
 	if (typeof customConfig === 'string') {
 		try {
 			customConfig = JSON.parse(customConfig);
-			Object.keys(customConfig).forEach(key => {
+			Object.keys(customConfig).forEach((key) => {
 				if (typeof app.config[key] !== typeof customConfig[key]) {
 					return;
 				}
@@ -75,8 +75,12 @@ if (app.config['env-port'] && process.env.PORT) {
 }
 
 // Region file to easy identify server in CDN
-if (!app.config['env-region'] && process.env.region) {
-	app.config.region = process.env.region;
+if (app.config['env-region']) {
+	if (process.env.region) {
+		app.config.region = process.env.region;
+	} else if (process.env.REGION) {
+		app.config.region = process.env.REGION;
+	}
 }
 if (
 	app.config.region.length > 10 ||
@@ -248,6 +252,6 @@ require('./src/startup')(app)
 			app.log('Listening on port ' + app.config.port);
 		});
 	})
-	.catch(err => {
+	.catch((err) => {
 		console.error(err);
 	});
