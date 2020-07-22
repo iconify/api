@@ -28,6 +28,12 @@ const callbackMatch = /^[a-z0-9_.]+$/i;
 module.exports = (app, req, res, result) => {
 	if (typeof result === 'number') {
 		// Send error
+		if (app.config.cors) {
+			res.header('Access-Control-Allow-Origin', app.config.cors.origins);
+			res.header('Access-Control-Allow-Methods', app.config.cors.methods);
+			res.header('Access-Control-Allow-Headers', app.config.cors.headers);
+			res.header('Access-Control-Max-Age', app.config.cors.timeout);
+		}
 		res.sendStatus(result);
 		return;
 	}
@@ -69,6 +75,14 @@ module.exports = (app, req, res, result) => {
 		} else {
 			result.type = 'application/json; charset=utf-8';
 		}
+	}
+
+	// CORS
+	if (app.config.cors) {
+		res.header('Access-Control-Allow-Origin', app.config.cors.origins);
+		res.header('Access-Control-Allow-Methods', app.config.cors.methods);
+		res.header('Access-Control-Allow-Headers', app.config.cors.headers);
+		res.header('Access-Control-Max-Age', app.config.cors.timeout);
 	}
 
 	// Send cache header

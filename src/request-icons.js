@@ -71,11 +71,24 @@ module.exports = (app, req, res, prefix, query, ext) => {
 					return 404;
 				}
 
-				let result = collection.getIcons(params.icons.split(','));
+				let icons = params.icons.split(',');
+				let result = collection.getIcons(icons, true);
 
-				if (result === null || !Object.keys(result.icons).length) {
-					return 404;
+				// Return 404 for JSON query, data for JS query
+				if (result === null) {
+					if (ext === 'json') {
+						return 404;
+					}
+					return {
+						js: ext === 'js',
+						defaultCallback: 'SimpleSVG._loaderCallback',
+						data: {
+							prefix: prefix,
+							not_found: icons,
+						},
+					};
 				}
+
 				if (
 					result.aliases !== void 0 &&
 					!Object.keys(result.aliases).length

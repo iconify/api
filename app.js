@@ -82,8 +82,9 @@ if (app.config['env-region']) {
 	}
 }
 if (
-	app.config.region.length > 10 ||
-	!app.config.region.match(/^[a-z0-9_-]+$/i)
+	app.config.region !== '' &&
+	(app.config.region.length > 10 ||
+		!app.config.region.match(/^[a-z0-9_-]+$/i))
 ) {
 	app.config.region = '';
 	app.error('Invalid value for region config variable.');
