@@ -25,6 +25,6 @@
 	},
 	"optionalDependencies": {
 		"@iconify/json": "*",
-		"nodemailer": "^4.6.8"
+		"nodemailer": "^6.4.16"
 	}
 }
