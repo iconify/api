@@ -69,8 +69,7 @@
 						body: '<icon2 />',
 					},
 					'test2-icon3': {
-						body:
-							'<defs><foo id="bar" /></defs><bar use="url(#bar)" fill="currentColor" stroke="currentColor" />',
+						body: '<defs><foo id="bar" /></defs><bar use="url(#bar)" fill="currentColor" stroke="currentColor" />',
 					},
 				},
 				aliases: {
@@ -159,8 +158,7 @@
 			expect(parseQuery('test1', 'icon1', 'svg', {})).to.be.eql({
 				filename: 'icon1.svg',
 				type: 'image/svg+xml; charset=utf-8',
-				body:
-					'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.25em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 30 24" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"><icon1 fill="currentColor" /></svg>',
+				body: '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.25em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 30 24"><icon1 fill="currentColor" /></svg>',
 			});
 
 			// Icon with custom attributes
@@ -171,8 +169,7 @@
 			).to.be.eql({
 				filename: 'alias1.svg',
 				type: 'image/svg+xml; charset=utf-8',
-				body:
-					'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"><g transform="translate(24 0) scale(-1 1)"><icon2 /></g></svg>',
+				body: '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g transform="translate(24 0) scale(-1 1)"><icon2 /></g></svg>',
 			});
 
 			// Icon with id replacement
@@ -182,7 +179,7 @@
 			}).body.replace(/IconifyId-[0-9a-f]+-[0-9a-f]+-[0-9]+/g, 'some-id');
 
 			expect(result).to.be.equal(
-				'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"><g transform="rotate(90 12 12)"><defs><foo id="some-id" /></defs><bar use="url(#some-id)" fill="red" stroke="red" /></g></svg>'
+				'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g transform="rotate(90 12 12)"><defs><foo id="some-id" /></defs><bar use="url(#some-id)" fill="red" stroke="red" /></g></svg>'
 			);
 		});
 	});

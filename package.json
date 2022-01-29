@@ -16,15 +16,15 @@
 		"url": "https://github.com/iconify/api.js.git"
 	},
 	"dependencies": {
-		"@iconify/json-tools": "^1.0.6",
-		"express": "^4.17.1"
+		"@iconify/json-tools": "^1.0.10",
+		"express": "^4.17.2"
 	},
 	"devDependencies": {
-		"chai": "^4.2.0",
-		"mocha": "^5.2.0"
+		"chai": "^4.3.6",
+		"mocha": "^9.2.0"
 	},
 	"optionalDependencies": {
 		"@iconify/json": "*",
-		"nodemailer": "^4.6.8"
+		"nodemailer": "^6.7.2"
 	}
 }
