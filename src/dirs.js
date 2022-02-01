@@ -10,6 +10,7 @@
 'use strict';
 
 const fs = require('fs');
+const { dirname } = require('path');
 
 /**
  * Directories storage.
@@ -18,7 +19,7 @@ const fs = require('fs');
  * @param app
  * @returns {object}
  */
-module.exports = app => {
+module.exports = (app) => {
 	let functions = Object.create(null),
 		dirs = Object.create(null),
 		custom = Object.create(null),
@@ -32,7 +33,7 @@ module.exports = app => {
 	 * @param {string} repo
 	 * @returns {string}
 	 */
-	functions.rootDir = repo => (dirs[repo] === void 0 ? '' : dirs[repo]);
+	functions.rootDir = (repo) => (dirs[repo] === void 0 ? '' : dirs[repo]);
 
 	/**
 	 * Get storage directory
@@ -47,7 +48,7 @@ module.exports = app => {
 	 * @param {string} repo
 	 * @returns {string}
 	 */
-	functions.iconsDir = repo => {
+	functions.iconsDir = (repo) => {
 		let dir;
 
 		switch (repo) {
@@ -129,7 +130,7 @@ module.exports = app => {
 	 * @param {string} repo
 	 * @return {boolean}
 	 */
-	functions.synchronized = repo => custom[repo] === true;
+	functions.synchronized = (repo) => custom[repo] === true;
 
 	/**
 	 * Initialize
@@ -168,11 +169,12 @@ module.exports = app => {
 			repos.push(key);
 			functions.setSynchronizedRepoDir(key, cached[key], false);
 		} else {
-			let icons;
 			try {
-				icons = require('@iconify/json');
+				const iconDir = dirname(
+					require.resolve('@iconify/json/package.json')
+				);
 				repos.push(key);
-				dirs[key] = icons.rootDir();
+				dirs[key] = iconDir;
 			} catch (err) {
 				app.error(
 					'Cannot load Iconify icons because @iconify/json package is not installed'
