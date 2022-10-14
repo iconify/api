@@ -15,6 +15,9 @@ export interface AppConfig {
 	// HTTP headers to send
 	headers: string[];
 
+	// Host
+	host: string;
+
 	// Port
 	port: number;
 

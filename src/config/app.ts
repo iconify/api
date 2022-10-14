@@ -25,8 +25,8 @@ export const appConfig: AppConfig = {
 		'Cache-Control: public, max-age=604800, min-refresh=604800',
 	],
 
-	// Port
-	// To set custom options for listener, such as IP address, edit `src/http/index.ts`
+	// Host and port for server
+	host: '0.0.0.0',
 	port: 3000,
 
 	// Log stuff

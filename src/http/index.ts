@@ -135,8 +135,9 @@ export async function startHTTPServer() {
 	});
 
 	// Start it
-	console.log('Listening on port', appConfig.port);
+	console.log('Listening on', appConfig.host + ':' + appConfig.port);
 	server.listen({
+		host: appConfig.host,
 		port: appConfig.port,
 	});
 }
