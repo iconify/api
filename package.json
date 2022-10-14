@@ -14,7 +14,8 @@
 	"packageManager": "pnpm@7.13.4",
 	"scripts": {
 		"build": "tsc -b",
-		"test": "vitest --config vitest.config.mjs"
+		"test": "vitest --config vitest.config.mjs",
+		"start": "node lib/index.js"
 	},
 	"dependencies": {
 		"@iconify/tools": "^2.1.0",
