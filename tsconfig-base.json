@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "ES2019",
+		"module": "CommonJS",
+		"strict": true,
+		"skipLibCheck": true,
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"importsNotUsedAsValues": "error",
+		"resolveJsonModule": true,
+		"declaration": true
+	}
+}

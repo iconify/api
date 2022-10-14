@@ -1,0 +1,36 @@
+{
+	"mdi": {
+		"name": "Material Design Icons",
+		"total": 7134,
+		"author": {
+			"name": "Austin Andrews",
+			"url": "https://github.com/Templarian/MaterialDesign"
+		},
+		"license": {
+			"title": "Apache 2.0",
+			"spdx": "Apache-2.0",
+			"url": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE"
+		},
+		"samples": ["account-check", "bell-alert-outline", "calendar-edit"],
+		"height": 24,
+		"category": "General",
+		"palette": false
+	},
+	"mdi-light": {
+		"name": "Material Design Light",
+		"total": 267,
+		"author": {
+			"name": "Austin Andrews",
+			"url": "https://github.com/Templarian/MaterialDesignLight"
+		},
+		"license": {
+			"title": "Open Font License",
+			"spdx": "OFL-1.1",
+			"url": "https://github.com/Templarian/MaterialDesignLight/blob/master/LICENSE.md"
+		},
+		"samples": ["cart", "home", "login"],
+		"height": 24,
+		"category": "General",
+		"palette": false
+	}
+}

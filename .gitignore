@@ -1,0 +1,9 @@
+.idea
+.vscode
+.DS_Store
+.env
+*.map
+tsconfig.tsbuildinfo
+/node_modules
+/lib
+/cache

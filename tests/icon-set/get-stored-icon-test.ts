@@ -1,0 +1,141 @@
+import type { ExtendedIconifyIcon, IconifyIcons, IconifyJSON } from '@iconify/types';
+import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage';
+import { getStoredIconData } from '../../lib/data/icon-set/utils/get-icon';
+import { createStorage } from '../../lib/data/storage/create';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage';
+import { loadFixture, uniqueCacheDir } from '../helpers';
+
+describe('Loading icon data from storage', () => {
+	test('Testing mdi', async () => {
+		const iconSet = JSON.parse(await loadFixture('json/mdi.json')) as IconifyJSON;
+
+		function store(): Promise<StoredIconSet> {
+			return new Promise((fulfill, reject) => {
+				// Create storage
+				const dir = uniqueCacheDir();
+				const cacheDir = '{cache}/' + dir;
+				const storage = createStorage<IconifyIcons>({
+					cacheDir,
+					maxCount: 2,
+				});
+
+				// Split icon set
+				storeLoadedIconSet(iconSet, fulfill, storage, {
+					chunkSize: 5000,
+					minIconsPerChunk: 10,
+				});
+			});
+		}
+		const storedIconSet = await store();
+
+		function getIcon(name: string): Promise<ExtendedIconifyIcon | null> {
+			return new Promise((fulfill, reject) => {
+				getStoredIconData(storedIconSet, name, (data) => {
+					try {
+						fulfill(data);
+					} catch (err) {
+						reject(err);
+					}
+				});
+			});
+		}
+
+		// Icons
+		expect(await getIcon('abacus')).toEqual({
+			body: iconSet.icons['abacus'].body,
+			width: 24,
+			height: 24,
+		});
+
+		expect(await getIcon('account-off')).toEqual({
+			body: iconSet.icons['account-off'].body,
+			width: 24,
+			height: 24,
+		});
+
+		// Aliases
+		expect(await getIcon('123')).toEqual({
+			body: iconSet.icons['numeric'].body,
+			width: 24,
+			height: 24,
+		});
+
+		// Missing icons
+		expect(await getIcon('foo')).toBeNull();
+	});
+
+	test('Testing complex aliases', async () => {
+		const iconSet: IconifyJSON = {
+			prefix: 'test',
+			icons: {
+				foo: {
+					body: '<g id="main" />',
+					width: 16,
+					height: 16,
+				},
+			},
+			aliases: {
+				'bar': {
+					parent: 'foo',
+					hFlip: true,
+				},
+				'bar-wide': {
+					parent: 'bar',
+					width: 24,
+					left: -4,
+				},
+			},
+			width: 24,
+		};
+
+		function store(): Promise<StoredIconSet> {
+			return new Promise((fulfill, reject) => {
+				// Create storage
+				const dir = uniqueCacheDir();
+				const cacheDir = '{cache}/' + dir;
+				const storage = createStorage<IconifyIcons>({
+					cacheDir,
+					maxCount: 2,
+				});
+
+				// Split icon set
+				storeLoadedIconSet(iconSet, fulfill, storage, {
+					chunkSize: 0,
+					minIconsPerChunk: 10,
+				});
+			});
+		}
+		const storedIconSet = await store();
+
+		function getIcon(name: string): Promise<ExtendedIconifyIcon | null> {
+			return new Promise((fulfill, reject) => {
+				getStoredIconData(storedIconSet, name, (data) => {
+					try {
+						fulfill(data);
+					} catch (err) {
+						reject(err);
+					}
+				});
+			});
+		}
+
+		// Icons
+		expect(await getIcon('foo')).toEqual({
+			body: '<g id="main" />',
+			width: 16,
+			height: 16,
+		});
+
+		// Aliases
+		expect(await getIcon('bar-wide')).toEqual({
+			body: '<g id="main" />',
+			left: -4,
+			width: 24,
+			height: 16,
+			hFlip: true,
+		});
+
+		// Missing icons
+		expect(await getIcon('invalid-icon')).toBeNull();
+	});
+});

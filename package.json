@@ -1,0 +1,32 @@
+{
+	"name": "@iconify/api",
+	"description": "Node.js version of api.iconify.design",
+	"author": "Vjacheslav Trushkin",
+	"license": "MIT",
+	"private": true,
+	"version": "3.0.0-dev",
+	"bugs": "https://github.com/iconify/api.js/issues",
+	"homepage": "https://github.com/iconify/api.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/iconify/api.js.git"
+	},
+	"packageManager": "pnpm@7.13.4",
+	"scripts": {
+		"build": "tsc -b",
+		"test": "vitest --config vitest.config.mjs"
+	},
+	"dependencies": {
+		"@iconify/tools": "^2.1.0",
+		"@iconify/types": "^2.0.0",
+		"@iconify/utils": "^2.0.0",
+		"dotenv": "^16.0.2",
+		"fastify": "^4.6.0"
+	},
+	"devDependencies": {
+		"@types/jest": "^29.0.3",
+		"@types/node": "^18.7.18",
+		"typescript": "^4.8.3",
+		"vitest": "^0.23.2"
+	}
+}
