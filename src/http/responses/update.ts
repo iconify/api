@@ -59,6 +59,6 @@ export function generateUpdateResponse(query: FastifyRequest['query'], res: Fast
 		});
 	}
 
-	// Fake 404
-	res.send(404);
+	// Send same message regardless of status
+	res.send('ok');
 }
