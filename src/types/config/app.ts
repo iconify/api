@@ -23,4 +23,13 @@ export interface AppConfig {
 
 	// Logging
 	log: boolean;
+
+	// Allow update
+	allowUpdate: boolean;
+
+	// Update key
+	updateRequiredParam: string;
+
+	// Update check throttling
+	updateThrottle: number;
 }

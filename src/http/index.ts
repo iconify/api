@@ -5,6 +5,7 @@ import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '..
 import { generateIconsDataResponse } from './responses/icons';
 import { generateLastModifiedResponse } from './responses/modified';
 import { generateSVGResponse } from './responses/svg';
+import { generateUpdateResponse } from './responses/update';
 import { initVersionResponse, versionResponse } from './responses/version';
 
 /**
@@ -103,6 +104,14 @@ export async function startHTTPServer() {
 		runWhenLoaded(() => {
 			generateLastModifiedResponse(req.query, res);
 		});
+	});
+
+	// Update icon sets
+	server.get('/update', (req, res) => {
+		generateUpdateResponse(req.query, res);
+	});
+	server.post('/update', (req, res) => {
+		generateUpdateResponse(req.query, res);
 	});
 
 	// Options

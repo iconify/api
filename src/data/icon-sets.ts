@@ -84,3 +84,26 @@ export function updateIconSets(): number {
 	prefixes = Array.from(newPrefixes);
 	return prefixes.length;
 }
+
+/**
+ * Trigger update
+ */
+export function triggerIconSetsUpdate() {
+	if (!importers) {
+		return;
+	}
+	console.log('Checking for updates...');
+
+	(async () => {
+		let updated = false;
+		for (let i = 0; i < importers?.length; i++) {
+			updated = (await importers[i].checkForUpdate()) || updated;
+		}
+		return updated;
+	})()
+		.then((updated) => {
+			console.log(updated ? 'Update complete' : 'Nothing to update');
+			updateIconSets();
+		})
+		.catch(console.error);
+}

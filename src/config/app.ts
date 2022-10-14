@@ -31,6 +31,17 @@ export const appConfig: AppConfig = {
 
 	// Log stuff
 	log: true,
+
+	// Enable update
+	allowUpdate: true,
+
+	// Required parameter to include in `/update` query to trigger update
+	// Value must match environment variable `APP_UPDATE_SECRET`
+	updateRequiredParam: 'secret',
+
+	// Update check throttling
+	// Delay to wait between successful update request and actual update
+	updateThrottle: 60,
 };
 
 /**
