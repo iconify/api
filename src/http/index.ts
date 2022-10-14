@@ -3,6 +3,7 @@ import { appConfig } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
 import { generateIconsDataResponse } from './responses/icons';
+import { generateLastModifiedResponse } from './responses/modified';
 import { generateSVGResponse } from './responses/svg';
 import { initVersionResponse, versionResponse } from './responses/version';
 
@@ -94,6 +95,13 @@ export async function startHTTPServer() {
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').js', (req, res) => {
 		runWhenLoaded(() => {
 			generateIconsDataResponse((req.params as PrefixParams).prefix, true, req.query, res);
+		});
+	});
+
+	// Last modification time
+	server.get('/last-modified', (req, res) => {
+		runWhenLoaded(() => {
+			generateLastModifiedResponse(req.query, res);
 		});
 	});
 
