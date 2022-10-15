@@ -115,7 +115,7 @@ export function searchSplitRecordsTreeForSet<T>(tree: SplitDataTree<T>, keywords
 	function search(tree: SplitDataTree<T>, keywords: string[]) {
 		if (!tree.split) {
 			// Not split
-			map.set(tree.match, keywords);
+			map.set(tree.match, keywords.concat(map.get(tree.match) || []));
 			return;
 		}
 
@@ -140,7 +140,7 @@ export function searchSplitRecordsTreeForSet<T>(tree: SplitDataTree<T>, keywords
 			search(tree.next, next);
 		}
 		if (matches.length) {
-			map.set(tree.match, matches);
+			map.set(tree.match, matches.concat(map.get(tree.match) || []));
 		}
 	}
 	search(tree, keywords);
