@@ -2,6 +2,7 @@ import fastify, { FastifyReply } from 'fastify';
 import { appConfig } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
+import { generateAPIv1IconsListResponse } from './responses/collection-v1';
 import { generateAPIv2CollectionResponse } from './responses/collection-v2';
 import { generateCollectionsListResponse } from './responses/collections';
 import { generateIconsDataResponse } from './responses/icons';
@@ -119,6 +120,18 @@ export async function startHTTPServer() {
 	server.get('/collection', (req, res) => {
 		runWhenLoaded(() => {
 			generateAPIv2CollectionResponse(req.query, res);
+		});
+	});
+
+	// Icons list, API v1
+	server.get('/list-icons', (req, res) => {
+		runWhenLoaded(() => {
+			generateAPIv1IconsListResponse(req.query, res, false);
+		});
+	});
+	server.get('/list-icons-categorized', (req, res) => {
+		runWhenLoaded(() => {
+			generateAPIv1IconsListResponse(req.query, res, true);
 		});
 	});
 

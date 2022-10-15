@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { generateIconSetIconsTree } from '../../data/icon-set/lists/icons';
 import { iconSets } from '../../data/icon-sets';
 import type { APIv2CollectionResponse } from '../../types/server/v2';
 import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
