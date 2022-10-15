@@ -2,6 +2,7 @@ import fastify, { FastifyReply } from 'fastify';
 import { appConfig } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
+import { generateCollectionsListResponse } from './responses/collections';
 import { generateIconsDataResponse } from './responses/icons';
 import { generateLastModifiedResponse } from './responses/modified';
 import { generateSVGResponse } from './responses/svg';
@@ -103,6 +104,13 @@ export async function startHTTPServer() {
 	server.get('/last-modified', (req, res) => {
 		runWhenLoaded(() => {
 			generateLastModifiedResponse(req.query, res);
+		});
+	});
+
+	// Icon sets list
+	server.get('/collections', (req, res) => {
+		runWhenLoaded(() => {
+			generateCollectionsListResponse(req.query, res);
 		});
 	});
 

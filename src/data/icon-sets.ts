@@ -16,13 +16,25 @@ export function setImporters(items: Importer[]) {
 /**
  * All prefixes, sorted
  */
-let prefixes: string[] = [];
+let allPrefixes: string[] = [];
+let prefixesWithInfo: string[] = [];
+let visiblePrefixes: string[] = [];
 
 /**
  * Get all prefixes
  */
-export function getPrefixes(): string[] {
-	return prefixes;
+type GetPrefixes = 'all' | 'info' | 'visible';
+export function getPrefixes(type: GetPrefixes = 'all'): string[] {
+	switch (type) {
+		case 'all':
+			return allPrefixes;
+
+		case 'info':
+			return prefixesWithInfo;
+
+		case 'visible':
+			return visiblePrefixes;
+	}
 }
 
 /**
@@ -45,6 +57,8 @@ export function updateIconSets(): number {
 
 	const newLoadedIconSets: Set<StoredIconSet> = new Set();
 	const newPrefixes: Set<string> = new Set();
+	const newPrefixesWithInfo: Set<string> = new Set();
+	const newVisiblePrefixes: Set<string> = new Set();
 
 	importers.forEach((importer, importerIndex) => {
 		const data = importer.data;
@@ -63,7 +77,16 @@ export function updateIconSets(): number {
 
 			// Add prefix, but delete it first to keep order
 			newPrefixes.delete(prefix);
+			newPrefixesWithInfo.delete(prefix);
+			newVisiblePrefixes.delete(prefix);
+
 			newPrefixes.add(prefix);
+			if (item.info) {
+				newPrefixesWithInfo.add(prefix);
+				if (!item.info.hidden) {
+					newVisiblePrefixes.add(prefix);
+				}
+			}
 
 			// Set data
 			iconSets[prefix] = {
@@ -81,8 +104,10 @@ export function updateIconSets(): number {
 	loadedIconSets = newLoadedIconSets;
 
 	// Update prefixes
-	prefixes = Array.from(newPrefixes);
-	return prefixes.length;
+	allPrefixes = Array.from(newPrefixes);
+	prefixesWithInfo = Array.from(newPrefixesWithInfo);
+	visiblePrefixes = Array.from(newVisiblePrefixes);
+	return allPrefixes.length;
 }
 
 /**

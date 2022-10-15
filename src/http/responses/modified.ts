@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets';
 import type { LastModifiedAPIResponse } from '../../types/server/modified';
 import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
-import { filterPrefixes } from '../helpers/prefixes';
+import { filterPrefixesByPrefix } from '../helpers/prefixes';
 
 /**
  * Generate icons data
@@ -17,7 +17,7 @@ export function generateLastModifiedResponse(query: FastifyRequest['query'], res
 	}
 
 	// Filter prefixes
-	const prefixes = filterPrefixes(getPrefixes(), q, false);
+	const prefixes = filterPrefixesByPrefix(getPrefixes(), q, false);
 
 	// Generate result
 	const lastModified = Object.create(null) as Record<string, number>;

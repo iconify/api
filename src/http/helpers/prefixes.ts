@@ -7,12 +7,16 @@ interface MatchPrefixesParams {
 }
 
 /**
- * Filter prefixes
+ * Filter prefixes by name
  *
  * returnEmpty = true -> if no filter params set, returns empty array
  * returnEmpty = false -> if no filter params set, returns all filters
  */
-export function filterPrefixes(prefixes: string[], params: MatchPrefixesParams, returnEmpty: boolean): string[] {
+export function filterPrefixesByPrefix(
+	prefixes: string[],
+	params: MatchPrefixesParams,
+	returnEmpty: boolean
+): string[] {
 	const exactMatch = params.prefix;
 	if (exactMatch) {
 		// Exact match
