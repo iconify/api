@@ -1,6 +1,6 @@
-import type { IconifyInfo } from '@iconify/types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets';
+import type { APIv2CollectionsResponse } from '../../types/server/v2';
 import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
 import { filterPrefixesByPrefix } from '../helpers/prefixes';
 
@@ -18,7 +18,7 @@ export function generateCollectionsListResponse(query: FastifyRequest['query'], 
 
 	// Filter prefixes
 	const prefixes = filterPrefixesByPrefix(getPrefixes('info'), q, false);
-	const response = Object.create(null) as Record<string, IconifyInfo>;
+	const response = Object.create(null) as APIv2CollectionsResponse;
 
 	for (let i = 0; i < prefixes.length; i++) {
 		const prefix = prefixes[i];

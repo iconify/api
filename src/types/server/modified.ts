@@ -3,6 +3,6 @@
  *
  * Key is prefix, value is last modification time number
  */
-export interface LastModifiedAPIResponse {
+export interface APIv3LastModifiedResponse {
 	lastModified: Record<string, number>;
 }

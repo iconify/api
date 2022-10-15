@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets';
-import type { LastModifiedAPIResponse } from '../../types/server/modified';
+import type { APIv3LastModifiedResponse } from '../../types/server/modified';
 import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
 import { filterPrefixesByPrefix } from '../helpers/prefixes';
 
@@ -21,7 +21,7 @@ export function generateLastModifiedResponse(query: FastifyRequest['query'], res
 
 	// Generate result
 	const lastModified = Object.create(null) as Record<string, number>;
-	const response: LastModifiedAPIResponse = {
+	const response: APIv3LastModifiedResponse = {
 		lastModified,
 	};
 	let found = false;
