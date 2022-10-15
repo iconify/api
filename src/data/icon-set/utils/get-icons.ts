@@ -13,7 +13,7 @@ export function getIconsToRetrieve(
 	copyTo?: IconifyAliases
 ): Set<string> {
 	const icons: Set<string> = new Set();
-	const aliases = iconSetData.aliases || {};
+	const aliases = iconSetData.aliases || (Object.create(null) as IconifyAliases);
 
 	function resolve(name: string) {
 		if (!aliases[name]) {
@@ -102,7 +102,7 @@ export function getStoredIconsData(iconSet: StoredIconSet, names: string[], call
 		// Nothing to retrieve
 		callback({
 			...iconSet.common,
-			icons: {},
+			icons: Object.create(null),
 			aliases,
 			not_found: names,
 		});

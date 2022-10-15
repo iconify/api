@@ -2,6 +2,7 @@ import fastify, { FastifyReply } from 'fastify';
 import { appConfig } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
+import { generateAPIv2CollectionResponse } from './responses/collection-v2';
 import { generateCollectionsListResponse } from './responses/collections';
 import { generateIconsDataResponse } from './responses/icons';
 import { generateLastModifiedResponse } from './responses/modified';
@@ -114,6 +115,13 @@ export async function startHTTPServer() {
 		});
 	});
 
+	// Icons list, API v2
+	server.get('/collection', (req, res) => {
+		runWhenLoaded(() => {
+			generateAPIv2CollectionResponse(req.query, res);
+		});
+	});
+
 	// Update icon sets
 	server.get('/update', (req, res) => {
 		generateUpdateResponse(req.query, res);
@@ -148,6 +156,7 @@ export async function startHTTPServer() {
 	// Error handling
 	server.setDefaultRoute((req, res) => {
 		res.statusCode = 301;
+		console.log('404:', req.url);
 		res.setHeader('Location', appConfig.redirectIndex);
 
 		// Need to set custom headers because hooks don't work here

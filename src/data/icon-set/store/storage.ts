@@ -7,6 +7,9 @@ import type { MemoryStorage, MemoryStorageItem } from '../../../types/storage';
 import { createSplitRecordsTree, splitRecords } from '../../storage/split';
 import { createStorage, createStoredItem } from '../../storage/create';
 import { getIconSetSplitChunksCount, splitIconSetMainData } from './split';
+import { generateIconSetIconsTree } from '../lists/icons';
+import { removeBadAliases } from '../lists/validate';
+import { prepareAPIv2IconsList } from '../lists/icons-v2';
 
 /**
  * Storage
@@ -28,6 +31,15 @@ export function storeLoadedIconSet(
 	storage: MemoryStorage<IconifyIcons> = iconSetsStorage,
 	config: SplitIconSetConfig = splitIconSetConfig
 ) {
+	// Get icons list and remove bad aliases
+	const icons = generateIconSetIconsTree(iconSet);
+	removeBadAliases(iconSet, icons);
+
+	// Fix icons counter
+	if (iconSet.info) {
+		iconSet.info.total = icons.visible.size;
+	}
+
 	// Get common items
 	const common = splitIconSetMainData(iconSet);
 
@@ -66,6 +78,8 @@ export function storeLoadedIconSet(
 				storage,
 				items: storedItems,
 				tree,
+				icons,
+				apiV2IconsCache: prepareAPIv2IconsList(iconSet, icons),
 			};
 			if (iconSet.info) {
 				result.info = iconSet.info;

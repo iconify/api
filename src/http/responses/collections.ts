@@ -6,6 +6,11 @@ import { filterPrefixesByPrefix } from '../helpers/prefixes';
 
 /**
  * Send response
+ *
+ * Request and responses are the same for v2 and v3
+ *
+ * Ignored parameters:
+ * - hidden (always enabled)
  */
 export function generateCollectionsListResponse(query: FastifyRequest['query'], res: FastifyReply) {
 	const q = (query || {}) as Record<string, string>;

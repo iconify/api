@@ -1,3 +1,4 @@
+import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons';
 import { removeBadAliases } from '../../lib/data/icon-set/store/validate';
 
 describe('Validating icon set', () => {
@@ -55,7 +56,7 @@ describe('Validating icon set', () => {
 				},
 			},
 		};
-		removeBadAliases(iconSet);
+		removeBadAliases(iconSet, generateIconSetIconsTree(iconSet));
 
 		// Check aliases
 		expect(Object.keys(iconSet.aliases)).toEqual(['baz', 'baz2', 'baz3', 'baz4', 'baz5', 'baz6', 'bazz5']);
