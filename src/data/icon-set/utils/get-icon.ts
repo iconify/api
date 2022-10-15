@@ -73,7 +73,21 @@ export function getStoredIconData(
 		props = resolved.props;
 		name = resolved.name;
 	} else {
-		props = {} as ExtendedIconifyIcon;
+		props = {} as ExtendedIconifyAlias;
+		const charValue = iconSet.apiV2IconsCache.chars?.[name];
+		if (charValue) {
+			// Character
+			const icons = iconSet.icons;
+			if (!icons.visible.has(name) && !icons.hidden.has(name)) {
+				// Resolve character instead of alias
+				name = charValue;
+				if (common.aliases[name]) {
+					const resolved = prepareAlias(common, name);
+					props = resolved.props;
+					name = resolved.name;
+				}
+			}
+		}
 	}
 
 	// Load icon

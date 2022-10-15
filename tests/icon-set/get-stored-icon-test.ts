@@ -62,6 +62,13 @@ describe('Loading icon data from storage', () => {
 
 		// Missing icons
 		expect(await getIcon('foo')).toBeNull();
+
+		// Characters
+		expect(await getIcon('f16e0')).toEqual({
+			body: iconSet.icons['abacus'].body,
+			width: 24,
+			height: 24,
+		});
 	});
 
 	test('Testing complex aliases', async () => {

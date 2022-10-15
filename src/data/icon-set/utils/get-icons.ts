@@ -7,16 +7,31 @@ import { getStoredItem } from '../../storage/get';
 /**
  * Get list of icons that must be retrieved
  */
-export function getIconsToRetrieve(
-	iconSetData: SplitIconifyJSONMainData,
-	names: string[],
-	copyTo?: IconifyAliases
-): Set<string> {
+export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copyTo?: IconifyAliases): Set<string> {
 	const icons: Set<string> = new Set();
+	const iconSetData = iconSet.common;
 	const aliases = iconSetData.aliases || (Object.create(null) as IconifyAliases);
 
-	function resolve(name: string) {
+	function resolve(name: string, nested: boolean) {
 		if (!aliases[name]) {
+			if (!nested) {
+				// Check for character
+				const charValue = iconSet.apiV2IconsCache.chars?.[name];
+				if (charValue) {
+					// Character
+					const icons = iconSet.icons;
+					if (!icons.visible.has(name) && !icons.hidden.has(name)) {
+						// Resolve character instead of alias
+						copyTo &&
+							(copyTo[name] = {
+								parent: charValue,
+							});
+						resolve(charValue, true);
+						return;
+					}
+				}
+			}
+
 			// Icon
 			icons.add(name);
 			return;
@@ -27,11 +42,11 @@ export function getIconsToRetrieve(
 		copyTo && (copyTo[name] = item);
 
 		// Resolve parent
-		resolve(item.parent);
+		resolve(item.parent, true);
 	}
 
 	for (let i = 0; i < names.length; i++) {
-		resolve(names[i]);
+		resolve(names[i], false);
 	}
 
 	return icons;
@@ -43,7 +58,8 @@ export function getIconsToRetrieve(
 export function getIconsData(
 	iconSetData: SplitIconifyJSONMainData,
 	names: string[],
-	sourceIcons: IconifyIcons[]
+	sourceIcons: IconifyIcons[],
+	chars?: Record<string, string>
 ): IconifyJSON {
 	const sourceAliases = iconSetData.aliases;
 	const icons = Object.create(null) as IconifyJSON['icons'];
@@ -55,7 +71,7 @@ export function getIconsData(
 		aliases,
 	};
 
-	function resolve(name: string): boolean {
+	function resolve(name: string, nested: boolean): boolean {
 		if (!sourceAliases[name]) {
 			// Icon
 			for (let i = 0; i < sourceIcons.length; i++) {
@@ -63,6 +79,17 @@ export function getIconsData(
 				if (name in item) {
 					icons[name] = item[name];
 					return true;
+				}
+			}
+
+			// Check for character
+			if (!nested) {
+				const charValue = chars?.[name];
+				if (charValue) {
+					aliases[name] = {
+						parent: charValue,
+					};
+					return resolve(charValue, true);
 				}
 			}
 		} else if (name in sourceAliases) {
@@ -73,7 +100,7 @@ export function getIconsData(
 			}
 
 			const item = sourceAliases[name];
-			if (resolve(item.parent)) {
+			if (resolve(item.parent, true)) {
 				aliases[name] = item;
 				return true;
 			}
@@ -85,7 +112,7 @@ export function getIconsData(
 	}
 
 	for (let i = 0; i < names.length; i++) {
-		resolve(names[i]);
+		resolve(names[i], false);
 	}
 
 	return result;
@@ -97,7 +124,7 @@ export function getIconsData(
 export function getStoredIconsData(iconSet: StoredIconSet, names: string[], callback: (data: IconifyJSON) => void) {
 	// Get list of icon names
 	const aliases = Object.create(null) as IconifyAliases;
-	const iconNames = Array.from(getIconsToRetrieve(iconSet.common, names, aliases));
+	const iconNames = Array.from(getIconsToRetrieve(iconSet, names, aliases));
 	if (!iconNames.length) {
 		// Nothing to retrieve
 		callback({

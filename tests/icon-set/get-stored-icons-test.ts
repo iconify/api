@@ -110,6 +110,8 @@ describe('Loading icons from storage', () => {
 						'1-2-3',
 						'1up',
 						'accessible',
+						// Chars
+						'f1ba4',
 					],
 					fulfill
 				);
@@ -128,6 +130,7 @@ describe('Loading icons from storage', () => {
 				'abacus': iconSet.icons['abacus'],
 				'abjad-arabic': iconSet.icons['abjad-arabic'],
 				'abjad-hebrew': iconSet.icons['abjad-hebrew'],
+				'account-card': iconSet.icons['account-card'],
 				'floor-1': iconSet.icons['floor-1'],
 				'folder-swap': iconSet.icons['folder-swap'],
 				'folder-swap-outline': iconSet.icons['folder-swap-outline'],
@@ -147,6 +150,9 @@ describe('Loading icons from storage', () => {
 				},
 				'accessible': {
 					parent: 'wheelchair',
+				},
+				'f1ba4': {
+					parent: 'account-card',
 				},
 			},
 			not_found,
