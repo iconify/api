@@ -16,15 +16,22 @@ import { iconSets } from '../../data/icon-sets';
  */
 export function generateSVGResponse(prefix: string, name: string, query: FastifyRequest['query'], res: FastifyReply) {
 	// Get icon set
-	const iconSet = iconSets[prefix];
-	if (!iconSet) {
+	const iconSetItem = iconSets[prefix]?.item;
+	if (!iconSetItem) {
 		// No such icon set
 		res.send(404);
 		return;
 	}
 
+	// Check if icon exists
+	if (!iconSetItem.icons.names.has(name) && !iconSetItem.icons.chars?.[name]) {
+		// No such icon
+		res.send(404);
+		return;
+	}
+
 	// Get icon
-	getStoredIconData(iconSet.item, name, (data) => {
+	getStoredIconData(iconSetItem, name, (data) => {
 		if (!data) {
 			// Invalid icon
 			res.send(404);

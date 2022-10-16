@@ -10,28 +10,29 @@ import { getStoredItem } from '../../storage/get';
 export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copyTo?: IconifyAliases): Set<string> {
 	const icons: Set<string> = new Set();
 	const iconSetData = iconSet.common;
+	const allNames = iconSet.icons.names;
+	const chars = iconSet.icons.chars;
 	const aliases = iconSetData.aliases || (Object.create(null) as IconifyAliases);
 
 	function resolve(name: string, nested: boolean) {
-		if (!aliases[name]) {
-			if (!nested) {
-				// Check for character
-				const charValue = iconSet.apiV2IconsCache.chars?.[name];
-				if (charValue) {
-					// Character
-					const icons = iconSet.icons;
-					if (!icons.visible.has(name) && !icons.hidden.has(name)) {
-						// Resolve character instead of alias
-						copyTo &&
-							(copyTo[name] = {
-								parent: charValue,
-							});
-						resolve(charValue, true);
-						return;
-					}
-				}
+		if (!allNames.has(name)) {
+			// No such icon: check for character
+			const charValue = chars?.[name];
+			if (!charValue) {
+				return;
 			}
 
+			// Resolve character instead of alias
+			copyTo &&
+				(copyTo[name] = {
+					parent: charValue,
+				});
+			resolve(charValue, true);
+			return;
+		}
+
+		// Icon or alias exists
+		if (!aliases[name]) {
 			// Icon
 			icons.add(name);
 			return;
@@ -50,72 +51,6 @@ export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copy
 	}
 
 	return icons;
-}
-
-/**
- * Extract icons from chunks of icon data
- */
-export function getIconsData(
-	iconSetData: SplitIconifyJSONMainData,
-	names: string[],
-	sourceIcons: IconifyIcons[],
-	chars?: Record<string, string>
-): IconifyJSON {
-	const sourceAliases = iconSetData.aliases;
-	const icons = Object.create(null) as IconifyJSON['icons'];
-	const aliases = Object.create(null) as IconifyAliases;
-
-	const result: IconifyJSON = {
-		...iconSetData,
-		icons,
-		aliases,
-	};
-
-	function resolve(name: string, nested: boolean): boolean {
-		if (!sourceAliases[name]) {
-			// Icon
-			for (let i = 0; i < sourceIcons.length; i++) {
-				const item = sourceIcons[i];
-				if (name in item) {
-					icons[name] = item[name];
-					return true;
-				}
-			}
-
-			// Check for character
-			if (!nested) {
-				const charValue = chars?.[name];
-				if (charValue) {
-					aliases[name] = {
-						parent: charValue,
-					};
-					return resolve(charValue, true);
-				}
-			}
-		} else if (name in sourceAliases) {
-			// Alias
-			if (name in aliases) {
-				// Already resolved
-				return true;
-			}
-
-			const item = sourceAliases[name];
-			if (resolve(item.parent, true)) {
-				aliases[name] = item;
-				return true;
-			}
-		}
-
-		// Missing
-		(result.not_found || (result.not_found = [])).push(name);
-		return false;
-	}
-
-	for (let i = 0; i < names.length; i++) {
-		resolve(names[i], false);
-	}
-
-	return result;
 }
 
 /**
@@ -139,22 +74,22 @@ export function getStoredIconsData(iconSet: StoredIconSet, names: string[], call
 	// Get map of chunks to load
 	const chunks = searchSplitRecordsTreeForSet(iconSet.tree, iconNames);
 	let pending = chunks.size;
-	let not_found: string[] | undefined;
+	let missing: Set<string> = new Set();
 	const icons = Object.create(null) as IconifyIcons;
 
 	const storage = iconSet.storage;
-	chunks.forEach((names, storedItem) => {
+	chunks.forEach((chunkNames, storedItem) => {
 		getStoredItem(storage, storedItem, (data) => {
 			// Copy data from chunk
 			if (!data) {
-				not_found = names.concat(not_found || []);
+				missing = new Set([...chunkNames, ...missing]);
 			} else {
-				for (let i = 0; i < names.length; i++) {
-					const name = names[i];
+				for (let i = 0; i < chunkNames.length; i++) {
+					const name = chunkNames[i];
 					if (data[name]) {
 						icons[name] = data[name];
 					} else {
-						(not_found || (not_found = [])).push(name);
+						missing.add(name);
 					}
 				}
 			}
@@ -167,8 +102,17 @@ export function getStoredIconsData(iconSet: StoredIconSet, names: string[], call
 					icons,
 					aliases,
 				};
-				if (not_found) {
-					result.not_found = not_found;
+
+				// Add missing icons
+				for (let i = 0; i < names.length; i++) {
+					const name = names[i];
+					if (!icons[name] && !aliases[name]) {
+						missing.add(name);
+					}
+				}
+
+				if (missing.size) {
+					result.not_found = Array.from(missing);
 				}
 				callback(result);
 			}

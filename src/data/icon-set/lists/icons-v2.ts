@@ -9,24 +9,24 @@ const themeKeys: ThemeKey[] = ['themes', 'prefixes', 'suffixes'];
  */
 export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIconsListIcons): IconSetAPIv2IconsList {
 	// Prepare data
-	const rendered: IconSetAPIv2IconsList['rendered'] = {
+	const result: IconSetAPIv2IconsList = {
 		prefix: iconSet.prefix,
 		total: iconsList.visible.size,
 	};
 
 	const info = iconSet.info;
 	if (info) {
-		rendered.title = info.name;
-		rendered.info = info;
+		result.title = info.name;
+		result.info = info;
 	}
 
 	if (iconsList.uncategorised.length) {
-		rendered.uncategorized = iconsList.uncategorised;
+		result.uncategorized = iconsList.uncategorised;
 	}
 
 	// Convert categories
 	if (iconsList.tags.length) {
-		const categories = (rendered.categories = Object.create(null) as Record<string, string[]>);
+		const categories = (result.categories = Object.create(null) as Record<string, string[]>);
 		for (let i = 0; i < iconsList.tags.length; i++) {
 			const tag = iconsList.tags[i];
 			categories[tag.title] = tag.icons;
@@ -36,7 +36,7 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 	// Hidden icons
 	const hidden = Array.from(iconsList.hidden).concat(Object.keys(iconsList.hiddenAliases));
 	if (hidden.length) {
-		rendered.hidden = hidden;
+		result.hidden = hidden;
 	}
 
 	// Add aliases
@@ -45,7 +45,7 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 		...iconsList.hiddenAliases,
 	};
 	for (const alias in aliases) {
-		rendered.aliases = aliases;
+		result.aliases = aliases;
 		break;
 	}
 
@@ -53,18 +53,8 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 	for (let i = 0; i < themeKeys.length; i++) {
 		const key = themeKeys[i] as ThemeKey;
 		if (iconSet[key]) {
-			rendered[key as 'themes'] = iconSet[key as 'themes'];
+			result[key as 'themes'] = iconSet[key as 'themes'];
 		}
-	}
-
-	// Result
-	const result: IconSetAPIv2IconsList = {
-		rendered,
-	};
-
-	// Add characters
-	if (iconSet.chars) {
-		result.chars = iconSet.chars;
 	}
 
 	return result;

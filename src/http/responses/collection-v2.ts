@@ -34,16 +34,16 @@ export function generateAPIv2CollectionResponse(query: FastifyRequest['query'], 
 
 	// Filter prefixes
 	const response: APIv2CollectionResponse = {
-		...apiV2IconsCache.rendered,
+		...apiV2IconsCache,
 	};
 
 	if (!q.info) {
 		// Delete info
 		delete response.info;
 	}
-	if (q.chars && apiV2IconsCache.chars) {
+	if (q.chars && iconSet.icons.chars) {
 		// Add characters map
-		response.chars = apiV2IconsCache.chars;
+		response.chars = iconSet.icons.chars;
 	}
 
 	sendJSONResponse(response, q, wrap, res);

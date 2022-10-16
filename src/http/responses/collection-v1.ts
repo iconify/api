@@ -33,35 +33,35 @@ export function generateAPIv1IconsListResponse(
 	}
 
 	function parse(prefix: string, iconSet: StoredIconSet): APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse {
+		const icons = iconSet.icons;
 		const v2Cache = iconSet.apiV2IconsCache;
-		const rendered = v2Cache.rendered;
 
 		// Generate common data
 		const base: APIv1ListIconsBaseResponse = {
 			prefix,
-			total: rendered.total,
+			total: v2Cache.total,
 		};
-		if (rendered.title) {
-			base.title = rendered.title;
+		if (v2Cache.title) {
+			base.title = v2Cache.title;
 		}
-		if (q.info && rendered.info) {
-			base.info = rendered.info;
+		if (q.info && v2Cache.info) {
+			base.info = v2Cache.info;
 		}
-		if (q.aliases && rendered.aliases) {
-			base.aliases = rendered.aliases;
+		if (q.aliases && v2Cache.aliases) {
+			base.aliases = v2Cache.aliases;
 		}
-		if (q.chars && v2Cache.chars) {
-			base.chars = v2Cache.chars;
+		if (q.chars && icons.chars) {
+			base.chars = icons.chars;
 		}
 
 		// Add icons
 		if (categorised) {
 			const result = base as APIv1ListIconsCategorisedResponse;
-			if (rendered.categories) {
-				result.categories = rendered.categories;
+			if (v2Cache.categories) {
+				result.categories = v2Cache.categories;
 			}
-			if (rendered.uncategorized) {
-				result.uncategorized = rendered.uncategorized;
+			if (v2Cache.uncategorized) {
+				result.uncategorized = v2Cache.uncategorized;
 			}
 			return result;
 		}

@@ -74,7 +74,7 @@ export function getStoredIconData(
 		name = resolved.name;
 	} else {
 		props = {} as ExtendedIconifyAlias;
-		const charValue = iconSet.apiV2IconsCache.chars?.[name];
+		const charValue = iconSet.icons.chars?.[name];
 		if (charValue) {
 			// Character
 			const icons = iconSet.icons;

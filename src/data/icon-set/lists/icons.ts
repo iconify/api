@@ -145,6 +145,7 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 
 	// Return data
 	return {
+		names: new Set([...visible, ...hidden, ...Object.keys(visibleAliases), ...Object.keys(hiddenAliases)]),
 		visible,
 		hidden,
 		visibleAliases,
@@ -152,5 +153,6 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 		failed,
 		tags: tags.filter((tag) => tag.icons.length > 0),
 		uncategorised,
+		chars: iconSet.chars,
 	};
 }

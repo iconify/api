@@ -8,7 +8,7 @@ import { createSplitRecordsTree, splitRecords } from '../../storage/split';
 import { createStorage, createStoredItem } from '../../storage/create';
 import { getIconSetSplitChunksCount, splitIconSetMainData } from './split';
 import { generateIconSetIconsTree } from '../lists/icons';
-import { removeBadAliases } from '../lists/validate';
+import { removeBadIconSetItems } from '../lists/validate';
 import { prepareAPIv2IconsList } from '../lists/icons-v2';
 
 /**
@@ -33,7 +33,7 @@ export function storeLoadedIconSet(
 ) {
 	// Get icons list and remove bad aliases
 	const icons = generateIconSetIconsTree(iconSet);
-	removeBadAliases(iconSet, icons);
+	removeBadIconSetItems(iconSet, icons);
 
 	// Fix icons counter
 	if (iconSet.info) {

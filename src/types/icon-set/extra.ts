@@ -15,6 +15,9 @@ export interface IconSetIconsListTag {
  * Icons
  */
 export interface IconSetIconsListIcons {
+	// All names: icons + aliases
+	names: Set<string>;
+
 	// Visible icons
 	visible: Set<string>;
 
@@ -31,46 +34,43 @@ export interface IconSetIconsListIcons {
 	// Tags
 	tags: IconSetIconsListTag[];
 	uncategorised: string[];
+
+	// Characters, key = character, value = icon name
+	chars?: Record<string, string>;
 }
 
 /**
  * Prepared icons list for API v2 response
  */
 export interface IconSetAPIv2IconsList {
-	// Prepared data
-	rendered: {
-		// Icon set prefix
-		prefix: string;
+	// Icon set prefix
+	prefix: string;
 
-		// Number of icons (duplicate of info?.total)
-		total: number;
+	// Number of icons (duplicate of info?.total)
+	total: number;
 
-		// Icon set title, if available (duplicate of info?.name)
-		title?: string;
+	// Icon set title, if available (duplicate of info?.name)
+	title?: string;
 
-		// Icon set info
-		info?: IconifyInfo;
+	// Icon set info
+	info?: IconifyInfo;
 
-		// List of icons without categories
-		uncategorized?: string[];
+	// List of icons without categories
+	uncategorized?: string[];
 
-		// List of icons, sorted by category
-		categories?: Record<string, string[]>;
+	// List of icons, sorted by category
+	categories?: Record<string, string[]>;
 
-		// List of hidden icons
-		hidden?: string[];
+	// List of hidden icons
+	hidden?: string[];
 
-		// List of aliases, key = alias, value = parent icon
-		aliases?: Record<string, string>;
+	// List of aliases, key = alias, value = parent icon
+	aliases?: Record<string, string>;
 
-		// Themes
-		themes?: IconifyJSON['themes'];
-		prefixes?: IconifyJSON['prefixes'];
-		suffixes?: IconifyJSON['suffixes'];
-	};
-
-	// Characters, key = character, value = icon name
-	chars?: Record<string, string>;
+	// Themes
+	themes?: IconifyJSON['themes'];
+	prefixes?: IconifyJSON['prefixes'];
+	suffixes?: IconifyJSON['suffixes'];
 }
 
 /**
