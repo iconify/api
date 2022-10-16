@@ -26,9 +26,10 @@ RUN set -ex && \
         bash \
         curl \
         nano \
+		yarn \
         git && \
-    npm install --location=global pnpm && \
     mkdir -p /data/iconify-api && \
+	yarn global add pnpm && \
     deluser --remove-home node && \
     useradd --home-dir /data/iconify-api --uid 1000 --shell /bin/bash iconify-api && \
     chown -R iconify-api:root /data/iconify-api && chmod -R g+rwX /data/iconify-api && \
@@ -44,9 +45,9 @@ WORKDIR /data/iconify-api
 
 #### Stage iconify-api-install #########################################################################################
 FROM base AS iconify-api-install
+ARG SRC_PATH
 
 # Make CERTAIN peer dependencies are installed, otherwise this will very likely fail
-
 COPY ${SRC_PATH} /data/iconify-api/
 COPY init.sh /init.sh
 
