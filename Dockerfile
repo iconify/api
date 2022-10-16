@@ -26,10 +26,9 @@ RUN set -ex && \
         bash \
         curl \
         nano \
-		yarn \
-        git && \
+		git && \
     mkdir -p /data/iconify-api && \
-	yarn global add pnpm && \
+	npm i selfupdate --location=global && \
     deluser --remove-home node && \
     useradd --home-dir /data/iconify-api --uid 1000 --shell /bin/bash iconify-api && \
     chown -R iconify-api:root /data/iconify-api && chmod -R g+rwX /data/iconify-api && \
@@ -52,7 +51,7 @@ COPY ${SRC_PATH} /data/iconify-api/
 COPY init.sh /init.sh
 
 RUN cp -fR /data/iconify-api/src/config /data/config_default && \
-    pnpm install
+    npm install
 
 #### Stage RELEASE #####################################################################################################
 FROM iconify-api-install AS RELEASE

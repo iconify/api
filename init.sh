@@ -10,5 +10,5 @@ echo "Initializing Iconify API.js..."
 cd /data/iconify-api
 # Only copy files which don't exist in target
 cp -rn /data/config_default/. /data/iconify-api/src/config/
-pnpm build
+npm run build
 node lib/index.js
