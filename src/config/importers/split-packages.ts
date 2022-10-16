@@ -34,7 +34,7 @@ export const splitPackagesImporter = createJSONCollectionsListImporter(
 		),
 	{
 		// Filter icon sets. Returns true if icon set should be included, false if not
-		filter: (prefix) => {
+		filter: (prefix, info) => {
 			return true;
 		},
 	}

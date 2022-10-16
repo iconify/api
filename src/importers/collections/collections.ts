@@ -4,13 +4,14 @@ import type { BaseDownloader } from '../../downloaders/base';
 import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections';
 import type { ImportedData } from '../../types/importers/common';
 import { createBaseCollectionsListImporter } from './base';
+import type { IconifyInfo } from '@iconify/types';
 
 interface JSONCollectionsListImporterOptions {
 	// File to load
 	filename?: string;
 
 	// Icon set filter
-	filter?: (prefix: string) => boolean;
+	filter?: (prefix: string, info: IconifyInfo) => boolean;
 }
 
 /**
@@ -26,9 +27,10 @@ export function createJSONCollectionsListImporter<Downloader extends BaseDownloa
 	// Load data
 	obj._loadCollectionsListFromDirectory = async (path: string) => {
 		let prefixes: string[];
+		let data: Record<string, IconifyInfo>;
+		const filename = options?.filename || '/collections.json';
 		try {
-			const filename = options?.filename || '/collections.json';
-			const data = JSON.parse(await readFile(path + filename, 'utf8')) as Record<string, unknown>;
+			data = JSON.parse(await readFile(path + filename, 'utf8')) as Record<string, IconifyInfo>;
 			prefixes = Object.keys(data).filter((prefix) => matchIconName.test(prefix));
 
 			if (!(prefixes instanceof Array)) {
@@ -43,7 +45,7 @@ export function createJSONCollectionsListImporter<Downloader extends BaseDownloa
 		// Filter keys
 		const filter = options?.filter;
 		if (filter) {
-			prefixes = prefixes.filter(filter);
+			prefixes = prefixes.filter((prefix) => filter(prefix, data[prefix]));
 		}
 		return prefixes;
 	};
