@@ -7,3 +7,4 @@ tsconfig.tsbuildinfo
 /node_modules
 /lib
 /cache
+/tmp
