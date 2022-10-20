@@ -74,11 +74,11 @@ export function getStoredIconData(
 		name = resolved.name;
 	} else {
 		props = {} as ExtendedIconifyAlias;
-		const charValue = iconSet.icons.chars?.[name];
+		const charValue = iconSet.icons.chars?.[name]?.[0];
 		if (charValue) {
 			// Character
 			const icons = iconSet.icons;
-			if (!icons.visible.has(name) && !icons.hidden.has(name)) {
+			if (!icons.visible[name] && !icons.hidden[name]) {
 				// Resolve character instead of alias
 				name = charValue;
 				if (common.aliases[name]) {

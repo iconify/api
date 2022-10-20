@@ -1,4 +1,5 @@
 import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons';
+import type { IconSetIconNames, IconSetIconsListTag } from '../../lib/types/icon-set/extra';
 
 describe('Icons tree', () => {
 	test('Simple icon set', () => {
@@ -18,13 +19,17 @@ describe('Icons tree', () => {
 		});
 
 		expect(tree.failed).toEqual(new Set());
-		expect(tree.visible).toEqual(new Set(['bar', 'baz', 'foo']));
-		expect(tree.hidden).toEqual(new Set());
-		expect(tree.visibleAliases).toEqual({});
-		expect(tree.hiddenAliases).toEqual({});
+
+		const expectedVisible: Record<string, IconSetIconNames> = {
+			bar: ['bar'],
+			baz: ['baz'],
+			foo: ['foo'],
+		};
+		expect(tree.visible).toEqual(expectedVisible);
+		expect(tree.hidden).toEqual({});
 
 		expect(tree.tags).toEqual([]);
-		expect(tree.uncategorised).toEqual(['bar', 'baz', 'foo']);
+		expect(tree.uncategorised).toEqual([expectedVisible.bar, expectedVisible.baz, expectedVisible.foo]);
 	});
 
 	test('Few aliases', () => {
@@ -56,18 +61,24 @@ describe('Icons tree', () => {
 		});
 
 		expect(tree.failed).toEqual(new Set(['missing-alias', 'missing-icon']));
-		expect(tree.visible).toEqual(new Set(['bar', 'bar2', 'foo']));
-		expect(tree.hidden).toEqual(new Set());
-		expect(tree.visibleAliases).toEqual({ foo2: 'foo' });
-		expect(tree.hiddenAliases).toEqual({});
 
-		expect(tree.tags).toEqual([
+		const expectedVisible: Record<string, IconSetIconNames> = {
+			bar: ['bar'],
+			bar2: ['bar2'],
+			foo: ['foo', 'foo2'],
+			foo2: ['foo', 'foo2'],
+		};
+		expect(tree.visible).toEqual(expectedVisible);
+		expect(tree.hidden).toEqual({});
+
+		const expectedTags: IconSetIconsListTag[] = [
 			{
 				title: 'Bar',
-				icons: ['bar', 'foo'],
+				icons: [expectedVisible.bar, expectedVisible.foo],
 			},
-		]);
-		expect(tree.uncategorised).toEqual(['bar2']);
+		];
+		expect(tree.tags).toEqual(expectedTags);
+		expect(tree.uncategorised).toEqual([expectedVisible.bar2]);
 	});
 
 	test('Many aliases', () => {
@@ -154,28 +165,33 @@ describe('Icons tree', () => {
 		});
 
 		expect(tree.failed).toEqual(new Set(['alias3', 'icon3', 'loop1', 'loop2', 'loop3']));
-		expect(tree.visible).toEqual(new Set(['icon1', 'alias2z']));
-		expect(tree.hidden).toEqual(new Set(['icon2', 'alias2f', 'alias2a']));
-		expect(tree.visibleAliases).toEqual({
-			alias2z3: 'alias2z',
-			alias2z4: 'alias2z',
-			alias2z5: 'alias2z',
-		});
-		expect(tree.hiddenAliases).toEqual({
-			alias2z6: 'alias2z',
-			alias2z7: 'alias2z',
-		});
 
-		expect(tree.tags).toEqual([
+		const alias2z: IconSetIconNames = ['alias2z', 'alias2z3', 'alias2z4', 'alias2z5'];
+		const expectedVisible: Record<string, IconSetIconNames> = {
+			icon1: ['icon1'],
+			alias2z: alias2z,
+			alias2z3: alias2z,
+			alias2z4: alias2z,
+			alias2z5: alias2z,
+		};
+		expect(tree.visible).toEqual(expectedVisible);
+
+		const expectedHidden: Record<string, IconSetIconNames> = {
+			icon2: ['icon2'],
+			alias2f: ['alias2f'],
+			alias2a: ['alias2a'],
+			alias2z6: ['alias2z6', 'alias2z7'],
+			alias2z7: ['alias2z6', 'alias2z7'],
+		};
+		expect(tree.hidden).toEqual(expectedHidden);
+
+		const expectedTags: IconSetIconsListTag[] = [
 			{
 				title: 'Icon1',
-				icons: ['icon1'],
+				icons: [expectedVisible.icon1],
 			},
-			{
-				title: 'Icon2',
-				icons: ['alias2z'],
-			},
-		]);
-		expect(tree.uncategorised).toEqual([]);
+		];
+		expect(tree.tags).toEqual(expectedTags);
+		expect(tree.uncategorised).toEqual([expectedVisible.alias2z]);
 	});
 });

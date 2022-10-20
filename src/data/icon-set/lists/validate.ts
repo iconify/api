@@ -16,10 +16,11 @@ export function removeBadIconSetItems(data: IconifyJSON, iconsList: IconSetIcons
 	// Remove bad characters
 	const chars = iconsList.chars;
 	if (chars) {
+		const visible = iconsList.visible;
+		const hidden = iconsList.hidden;
 		for (const key in chars) {
-			if (iconsList.names.has(key) || !iconsList.names.has(chars[key])) {
-				// Character matches existing icon or points to missing icon
-				// Also deletes data.chars[key] because it points to same object
+			if (visible[key] || hidden[key]) {
+				// Character matches existing icon
 				delete chars[key];
 			}
 		}

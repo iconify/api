@@ -1,6 +1,6 @@
 import type { IconifyAliases, IconifyJSON, IconifyOptional } from '@iconify/types';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
-import type { IconSetIconsListIcons, IconSetIconsListTag } from '../../../types/icon-set/extra';
+import type { IconSetIconNames, IconSetIconsListIcons, IconSetIconsListTag } from '../../../types/icon-set/extra';
 
 const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptional)[];
 
@@ -12,15 +12,14 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 	const iconSetAliases = iconSet.aliases || (Object.create(null) as IconifyAliases);
 
 	const checked: Set<string> = new Set();
-	const visible: Set<string> = new Set();
-	const hidden: Set<string> = new Set();
+	const visible = Object.create(null) as Record<string, IconSetIconNames>;
+	const hidden = Object.create(null) as Record<string, IconSetIconNames>;
 	const failed: Set<string> = new Set();
-	const visibleAliases = Object.create(null) as Record<string, string>;
-	const hiddenAliases = Object.create(null) as Record<string, string>;
+	let total = 0;
 
 	// Generate list of tags for each icon
 	const tags: IconSetIconsListTag[] = [];
-	const uncategorised: string[] = [];
+	const uncategorised: IconSetIconNames[] = [];
 
 	const resolvedTags = Object.create(null) as Record<string, Set<IconSetIconsListTag>>;
 	const categories = iconSet.categories;
@@ -28,9 +27,10 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 		for (const title in categories) {
 			const items = categories[title];
 			if (items instanceof Array) {
+				const icons: IconSetIconNames[] = [];
 				const tag: IconSetIconsListTag = {
 					title,
-					icons: [],
+					icons,
 				};
 				tags.push(tag);
 				for (let i = 0; i < items.length; i++) {
@@ -44,20 +44,23 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 	// Parse all icons
 	for (const name in iconSetIcons) {
 		const isVisible = !iconSetIcons[name].hidden;
-		(isVisible ? visible : hidden).add(name);
+		const icon: IconSetIconNames = [name];
+		(isVisible ? visible : hidden)[name] = icon;
 		checked.add(name);
 
 		if (isVisible) {
-			// Check tag
+			total++;
+
+			// Check tags
 			const iconTags = resolvedTags[name];
 			if (iconTags) {
 				// Add icon to each tag
 				iconTags.forEach((tag) => {
-					tag.icons.push(name);
+					tag.icons.push(icon);
 				});
 			} else {
 				// No tags: uncategorised
-				uncategorised.push(name);
+				uncategorised.push(icon);
 			}
 		}
 	}
@@ -99,38 +102,54 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 			}
 		}
 
-		// Success
-		const isVisible =
-			item.hidden === false || (!item.hidden && (visible.has(parent) || visibleAliases[parent] !== void 0));
-		failed.delete(name);
-
-		// Add tags
-		let itemTags: Set<IconSetIconsListTag> | undefined = resolvedTags[name];
-		if (!itemTags) {
-			// Use tags from parent icon
-			itemTags = resolvedTags[name] = resolvedTags[parent];
-		}
-
-		if (isVisible && transformed) {
-			// Icon: add to tags
-			if (itemTags) {
-				itemTags.forEach((tag) => {
-					tag.icons.push(name);
-				});
-			} else {
-				uncategorised.push(name);
-			}
+		// Check visibility
+		const parentVisible = !!visible[parent];
+		let isVisible: boolean;
+		if (typeof item.hidden === 'boolean') {
+			isVisible = !item.hidden;
+		} else {
+			// Same visibility as parent icon
+			isVisible = parentVisible;
 		}
 
 		// Add icon
-		if (transformed) {
+		const parentIcon = visible[parent] || hidden[parent];
+		let icon: IconSetIconNames;
+		if (transformed || isVisible !== parentVisible) {
 			// Treat as new icon
-			(isVisible ? visible : hidden).add(name);
+			icon = [name];
+			if (isVisible) {
+				total++;
+
+				// Check for categories
+				const iconTags = resolvedTags[name];
+				if (iconTags) {
+					// Alias has its own categories!
+					iconTags.forEach((tag) => {
+						tag.icons.push(icon);
+					});
+				} else {
+					// Copy from parent
+					const iconTags = resolvedTags[parentIcon[0]];
+					if (iconTags) {
+						resolvedTags[name] = iconTags;
+						iconTags.forEach((tag) => {
+							tag.icons.push(icon);
+						});
+					} else {
+						uncategorised.push(icon);
+					}
+				}
+			}
 		} else {
-			// Treat as alias
-			const parentName = visibleAliases[parent] || hiddenAliases[parent] || parent;
-			(isVisible ? visibleAliases : hiddenAliases)[name] = parentName;
+			// Treat as alias: add to parent icon
+			icon = parentIcon;
+			icon.push(name);
 		}
+		(isVisible ? visible : hidden)[name] = icon;
+
+		// Success
+		failed.delete(name);
 	};
 
 	for (const name in iconSetAliases) {
@@ -139,20 +158,33 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 
 	// Sort icons in tags
 	for (let i = 0; i < tags.length; i++) {
-		tags[i].icons.sort((a, b) => a.localeCompare(b));
+		tags[i].icons.sort((a, b) => a[0].localeCompare(b[0]));
 	}
-	uncategorised.sort((a, b) => a.localeCompare(b));
+	uncategorised.sort((a, b) => a[0].localeCompare(b[0]));
 
-	// Return data
-	return {
-		names: new Set([...visible, ...hidden, ...Object.keys(visibleAliases), ...Object.keys(hiddenAliases)]),
+	// Create data
+	const result: IconSetIconsListIcons = {
+		total,
 		visible,
 		hidden,
-		visibleAliases,
-		hiddenAliases,
 		failed,
 		tags: tags.filter((tag) => tag.icons.length > 0),
 		uncategorised,
-		chars: iconSet.chars,
 	};
+
+	// Add characters
+	if (iconSet.chars) {
+		const sourceChars = iconSet.chars;
+		const chars = Object.create(null) as Record<string, IconSetIconNames>;
+		for (const char in sourceChars) {
+			const name = sourceChars[char];
+			const item = visible[name] || hidden[name];
+			if (item) {
+				chars[char] = item;
+			}
+		}
+		result.chars = chars;
+	}
+
+	return result;
 }

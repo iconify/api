@@ -37,18 +37,19 @@ export function generateAPIv2CollectionResponse(query: FastifyRequest['query'], 
 		return;
 	}
 
-	// Filter prefixes
+	// Generate response
 	const response: APIv2CollectionResponse = {
 		...apiV2IconsCache,
+		...iconSet.themes,
 	};
 
 	if (!q.info) {
 		// Delete info
 		delete response.info;
 	}
-	if (q.chars && iconSet.icons.chars) {
-		// Add characters map
-		response.chars = iconSet.icons.chars;
+	if (!q.chars) {
+		// Remove characters map
+		delete response.chars;
 	}
 
 	sendJSONResponse(response, q, wrap, res);

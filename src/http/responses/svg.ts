@@ -24,7 +24,8 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 	}
 
 	// Check if icon exists
-	if (!iconSetItem.icons.names.has(name) && !iconSetItem.icons.chars?.[name]) {
+	const icons = iconSetItem.icons;
+	if (!(icons.visible[name] || icons.hidden[name]) && !iconSetItem.icons.chars?.[name]) {
 		// No such icon
 		res.send(404);
 		return;

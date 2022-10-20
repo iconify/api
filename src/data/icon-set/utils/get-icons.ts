@@ -1,5 +1,4 @@
 import type { IconifyJSON, IconifyAliases, IconifyIcons } from '@iconify/types';
-import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split';
 import type { StoredIconSet } from '../../../types/icon-set/storage';
 import { searchSplitRecordsTreeForSet } from '../../storage/split';
 import { getStoredItem } from '../../storage/get';
@@ -10,14 +9,14 @@ import { getStoredItem } from '../../storage/get';
 export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copyTo?: IconifyAliases): Set<string> {
 	const icons: Set<string> = new Set();
 	const iconSetData = iconSet.common;
-	const allNames = iconSet.icons.names;
-	const chars = iconSet.icons.chars;
+	const iconsData = iconSet.icons;
+	const chars = iconsData.chars;
 	const aliases = iconSetData.aliases || (Object.create(null) as IconifyAliases);
 
 	function resolve(name: string, nested: boolean) {
-		if (!allNames.has(name)) {
+		if (!iconsData.visible[name] && !iconsData.hidden[name]) {
 			// No such icon: check for character
-			const charValue = chars?.[name];
+			const charValue = chars?.[name]?.[0];
 			if (!charValue) {
 				return;
 			}

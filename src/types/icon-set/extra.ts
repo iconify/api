@@ -1,4 +1,9 @@
-import type { IconifyInfo, IconifyJSON } from '@iconify/types';
+import type { IconifyInfo } from '@iconify/types';
+
+/**
+ * Icon. First entry is main name, other entries are aliases
+ */
+export type IconSetIconNames = [string, ...string[]];
 
 /**
  * Tag
@@ -7,36 +12,32 @@ export interface IconSetIconsListTag {
 	// Title
 	title: string;
 
-	// Names of icons
-	icons: string[];
+	// Icons
+	icons: IconSetIconNames[];
 }
 
 /**
  * Icons
  */
 export interface IconSetIconsListIcons {
-	// All names: icons + aliases
-	names: Set<string>;
+	// Number of visible icons
+	total: number;
 
 	// Visible icons
-	visible: Set<string>;
+	visible: Record<string, IconSetIconNames>;
 
 	// Hidden icons
-	hidden: Set<string>;
-
-	// Aliases, pointing to parent icon in either `visible` or `hidden` set
-	visibleAliases: Record<string, string>;
-	hiddenAliases: Record<string, string>;
+	hidden: Record<string, IconSetIconNames>;
 
 	// Failed aliases
 	failed: Set<string>;
 
 	// Tags
 	tags: IconSetIconsListTag[];
-	uncategorised: string[];
+	uncategorised: IconSetIconNames[];
 
-	// Characters, key = character, value = icon name
-	chars?: Record<string, string>;
+	// Characters, key = character, value = icon
+	chars?: Record<string, IconSetIconNames>;
 }
 
 /**
@@ -67,10 +68,8 @@ export interface IconSetAPIv2IconsList {
 	// List of aliases, key = alias, value = parent icon
 	aliases?: Record<string, string>;
 
-	// Themes
-	themes?: IconifyJSON['themes'];
-	prefixes?: IconifyJSON['prefixes'];
-	suffixes?: IconifyJSON['suffixes'];
+	// Characters, key = character, value = icon name
+	chars?: Record<string, string>;
 }
 
 /**

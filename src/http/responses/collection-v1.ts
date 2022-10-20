@@ -54,8 +54,8 @@ export function generateAPIv1IconsListResponse(
 		if (q.aliases && v2Cache.aliases) {
 			base.aliases = v2Cache.aliases;
 		}
-		if (q.chars && icons.chars) {
-			base.chars = icons.chars;
+		if (q.chars && v2Cache.chars) {
+			base.chars = v2Cache.chars;
 		}
 
 		// Add icons
@@ -71,7 +71,13 @@ export function generateAPIv1IconsListResponse(
 		}
 
 		const result = base as APIv1ListIconsResponse;
-		result.icons = Array.from(iconSet.icons.visible);
+		result.icons = [];
+		const visible = iconSet.icons.visible;
+		for (const name in visible) {
+			if (visible[name][0] === name) {
+				result.icons.push(name);
+			}
+		}
 		return result;
 	}
 

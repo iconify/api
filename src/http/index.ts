@@ -1,4 +1,4 @@
-import fastify, { FastifyReply } from 'fastify';
+import fastify from 'fastify';
 import { appConfig } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';

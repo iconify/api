@@ -1,8 +1,5 @@
 import type { IconifyJSON } from '@iconify/types';
-import type { IconSetAPIv2IconsList, IconSetIconsListIcons } from '../../../types/icon-set/extra';
-
-type ThemeKey = 'themes' | 'prefixes' | 'suffixes';
-const themeKeys: ThemeKey[] = ['themes', 'prefixes', 'suffixes'];
+import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from '../../../types/icon-set/extra';
 
 /**
  * Prepare data for icons list API v2 response
@@ -11,7 +8,7 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 	// Prepare data
 	const result: IconSetAPIv2IconsList = {
 		prefix: iconSet.prefix,
-		total: iconsList.visible.size,
+		total: iconsList.total,
 	};
 
 	const info = iconSet.info;
@@ -20,40 +17,57 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 		result.info = info;
 	}
 
+	// Icons without categories
 	if (iconsList.uncategorised.length) {
-		result.uncategorized = iconsList.uncategorised;
+		result.uncategorized = iconsList.uncategorised.map((item) => item[0]);
 	}
 
-	// Convert categories
+	// Categories
 	if (iconsList.tags.length) {
+		const tags = iconsList.tags;
 		const categories = (result.categories = Object.create(null) as Record<string, string[]>);
-		for (let i = 0; i < iconsList.tags.length; i++) {
-			const tag = iconsList.tags[i];
-			categories[tag.title] = tag.icons;
+		for (let i = 0; i < tags.length; i++) {
+			const tag = tags[i];
+			categories[tag.title] = tag.icons.map((icon) => icon[0]);
+		}
+	}
+
+	// Aliases
+	const aliases = Object.create(null) as Record<string, string>;
+	for (const name in iconsList.visible) {
+		const item = iconsList.visible[name];
+		if (item[0] !== name) {
+			aliases[name] = item[0];
 		}
 	}
 
 	// Hidden icons
-	const hidden = Array.from(iconsList.hidden).concat(Object.keys(iconsList.hiddenAliases));
+	const hidden: string[] = [];
+	for (const name in iconsList.hidden) {
+		const item = iconsList.hidden[name];
+		if (item[0] === name) {
+			hidden.push(name);
+		} else {
+			aliases[name] = item[0];
+		}
+	}
+
 	if (hidden.length) {
 		result.hidden = hidden;
 	}
 
-	// Add aliases
-	const aliases = {
-		...iconsList.visibleAliases,
-		...iconsList.hiddenAliases,
-	};
-	for (const alias in aliases) {
+	// Aliases
+	for (const key in aliases) {
 		result.aliases = aliases;
 		break;
 	}
 
-	// Themes
-	for (let i = 0; i < themeKeys.length; i++) {
-		const key = themeKeys[i] as ThemeKey;
-		if (iconSet[key]) {
-			result[key as 'themes'] = iconSet[key as 'themes'];
+	if (iconsList.chars) {
+		// Add characters map
+		const chars = (result.chars = Object.create(null) as Record<string, string>);
+		const sourceChars = iconsList.chars;
+		for (const key in sourceChars) {
+			chars[key] = sourceChars[key][0];
 		}
 	}
 
