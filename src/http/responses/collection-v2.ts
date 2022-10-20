@@ -31,6 +31,11 @@ export function generateAPIv2CollectionResponse(query: FastifyRequest['query'], 
 
 	const iconSet = iconSets[prefix].item;
 	const apiV2IconsCache = iconSet.apiV2IconsCache;
+	if (!apiV2IconsCache) {
+		// Disabled
+		res.send(404);
+		return;
+	}
 
 	// Filter prefixes
 	const response: APIv2CollectionResponse = {

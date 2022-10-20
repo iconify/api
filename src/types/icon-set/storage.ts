@@ -23,7 +23,7 @@ export interface StoredIconSet {
 
 	// Icons list
 	icons: IconSetIconsListIcons;
-	apiV2IconsCache: IconSetAPIv2IconsList;
+	apiV2IconsCache?: IconSetAPIv2IconsList;
 
 	// TODO: add properties for search data
 }

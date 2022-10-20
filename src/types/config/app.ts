@@ -32,4 +32,13 @@ export interface AppConfig {
 
 	// Update check throttling
 	updateThrottle: number;
+
+	// Enable icon sets and icon lists
+	// Disable this option if you need API to serve only icon data to save memory
+	enableIconLists: boolean;
+
+	// Enable icon search
+	// Requires `enableIconLists` to be enabled
+	// Disable this option if you do not need search functionality
+	enableSearchEngine: boolean;
 }

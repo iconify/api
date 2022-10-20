@@ -1,5 +1,5 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
-import { splitIconSetConfig, storageConfig } from '../../../config/app';
+import { appConfig, splitIconSetConfig, storageConfig } from '../../../config/app';
 import type { SplitIconSetConfig } from '../../../types/config/split';
 import type { StoredIconSet, StoredIconSetDone } from '../../../types/icon-set/storage';
 import type { SplitRecord } from '../../../types/split';
@@ -79,10 +79,12 @@ export function storeLoadedIconSet(
 				items: storedItems,
 				tree,
 				icons,
-				apiV2IconsCache: prepareAPIv2IconsList(iconSet, icons),
 			};
 			if (iconSet.info) {
 				result.info = iconSet.info;
+			}
+			if (appConfig.enableIconLists) {
+				result.apiV2IconsCache = prepareAPIv2IconsList(iconSet, icons);
 			}
 			done(result);
 		}

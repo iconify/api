@@ -109,31 +109,33 @@ export async function startHTTPServer() {
 		});
 	});
 
-	// Icon sets list
-	server.get('/collections', (req, res) => {
-		runWhenLoaded(() => {
-			generateCollectionsListResponse(req.query, res);
+	if (appConfig.enableIconLists) {
+		// Icon sets list
+		server.get('/collections', (req, res) => {
+			runWhenLoaded(() => {
+				generateCollectionsListResponse(req.query, res);
+			});
 		});
-	});
 
-	// Icons list, API v2
-	server.get('/collection', (req, res) => {
-		runWhenLoaded(() => {
-			generateAPIv2CollectionResponse(req.query, res);
+		// Icons list, API v2
+		server.get('/collection', (req, res) => {
+			runWhenLoaded(() => {
+				generateAPIv2CollectionResponse(req.query, res);
+			});
 		});
-	});
 
-	// Icons list, API v1
-	server.get('/list-icons', (req, res) => {
-		runWhenLoaded(() => {
-			generateAPIv1IconsListResponse(req.query, res, false);
+		// Icons list, API v1
+		server.get('/list-icons', (req, res) => {
+			runWhenLoaded(() => {
+				generateAPIv1IconsListResponse(req.query, res, false);
+			});
 		});
-	});
-	server.get('/list-icons-categorized', (req, res) => {
-		runWhenLoaded(() => {
-			generateAPIv1IconsListResponse(req.query, res, true);
+		server.get('/list-icons-categorized', (req, res) => {
+			runWhenLoaded(() => {
+				generateAPIv1IconsListResponse(req.query, res, true);
+			});
 		});
-	});
+	}
 
 	// Update icon sets
 	server.get('/update', (req, res) => {

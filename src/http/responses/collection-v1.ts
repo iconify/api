@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets';
+import type { IconSetAPIv2IconsList } from '../../types/icon-set/extra';
 import type { StoredIconSet } from '../../types/icon-set/storage';
 import type {
 	APIv1ListIconsBaseResponse,
@@ -32,9 +33,12 @@ export function generateAPIv1IconsListResponse(
 		return;
 	}
 
-	function parse(prefix: string, iconSet: StoredIconSet): APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse {
+	function parse(
+		prefix: string,
+		iconSet: StoredIconSet,
+		v2Cache: IconSetAPIv2IconsList
+	): APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse {
 		const icons = iconSet.icons;
-		const v2Cache = iconSet.apiV2IconsCache;
 
 		// Generate common data
 		const base: APIv1ListIconsBaseResponse = {
@@ -74,11 +78,11 @@ export function generateAPIv1IconsListResponse(
 	if (q.prefix) {
 		const prefix = q.prefix;
 		const iconSet = iconSets[prefix]?.item;
-		if (!iconSet) {
+		if (!iconSet || !iconSet.apiV2IconsCache) {
 			res.send(404);
 			return;
 		}
-		sendJSONResponse(parse(prefix, iconSet), q, wrap, res);
+		sendJSONResponse(parse(prefix, iconSet, iconSet.apiV2IconsCache), q, wrap, res);
 		return;
 	}
 
@@ -95,15 +99,17 @@ export function generateAPIv1IconsListResponse(
 		interface Item {
 			prefix: string;
 			iconSet: StoredIconSet;
+			v2Cache: IconSetAPIv2IconsList;
 		}
 		const items: Item[] = [];
 		for (let i = 0; i < prefixes.length; i++) {
 			const prefix = prefixes[i];
 			const iconSet = iconSets[prefix]?.item;
-			if (iconSet) {
+			if (iconSet?.apiV2IconsCache) {
 				items.push({
 					prefix,
 					iconSet,
+					v2Cache: iconSet.apiV2IconsCache,
 				});
 				if (items.length > 10) {
 					break;
@@ -121,7 +127,7 @@ export function generateAPIv1IconsListResponse(
 		const result = Object.create(null) as Record<string, ReturnType<typeof parse>>;
 		for (let i = 0; i < items.length; i++) {
 			const item = items[i];
-			result[item.prefix] = parse(item.prefix, item.iconSet);
+			result[item.prefix] = parse(item.prefix, item.iconSet, item.v2Cache);
 		}
 		sendJSONResponse(result, q, wrap, res);
 		return;

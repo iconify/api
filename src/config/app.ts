@@ -42,6 +42,15 @@ export const appConfig: AppConfig = {
 	// Update check throttling
 	// Delay to wait between successful update request and actual update
 	updateThrottle: 60,
+
+	// Enable icon sets and icon lists
+	// Disable this option if you need API to serve only icon data to save memory
+	enableIconLists: true,
+
+	// Enable icon search
+	// Requires `enableIconLists` to be enabled
+	// Disable this option if you do not need search functionality
+	enableSearchEngine: true,
 };
 
 /**
