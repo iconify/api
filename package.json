@@ -18,7 +18,7 @@
 	"scripts": {
 		"build": "tsc -b",
 		"test": "vitest --config vitest.config.mjs",
-		"start": "node lib/index.js"
+		"start": "node --expose-gc lib/index.js"
 	},
 	"dependencies": {
 		"@iconify/tools": "^2.1.0",
