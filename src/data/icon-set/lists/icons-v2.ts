@@ -5,6 +5,12 @@ import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from '../../../type
  * Prepare data for icons list API v2 response
  */
 export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIconsListIcons): IconSetAPIv2IconsList {
+	const tags = iconsList.tags;
+	const uncategorised = iconsList.uncategorised;
+	if (!tags || !uncategorised) {
+		throw new Error('prepareAPIv2IconsList() was called with missing data');
+	}
+
 	// Prepare data
 	const result: IconSetAPIv2IconsList = {
 		prefix: iconSet.prefix,
@@ -18,13 +24,12 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 	}
 
 	// Icons without categories
-	if (iconsList.uncategorised.length) {
-		result.uncategorized = iconsList.uncategorised.map((item) => item[0]);
+	if (uncategorised.length) {
+		result.uncategorized = uncategorised.map((item) => item[0]);
 	}
 
 	// Categories
-	if (iconsList.tags.length) {
-		const tags = iconsList.tags;
+	if (tags.length) {
 		const categories = (result.categories = Object.create(null) as Record<string, string[]>);
 		for (let i = 0; i < tags.length; i++) {
 			const tag = tags[i];

@@ -32,9 +32,9 @@ export interface IconSetIconsListIcons {
 	// Failed aliases
 	failed: Set<string>;
 
-	// Tags
-	tags: IconSetIconsListTag[];
-	uncategorised: IconSetIconNames[];
+	// Tags, set if icons list is enabled
+	tags?: IconSetIconsListTag[];
+	uncategorised?: IconSetIconNames[];
 
 	// Characters, key = character, value = icon
 	chars?: Record<string, IconSetIconNames>;

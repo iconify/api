@@ -1,5 +1,6 @@
 import type { IconifyAliases, IconifyJSON, IconifyOptional } from '@iconify/types';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
+import { appConfig } from '../../../config/app';
 import type { IconSetIconNames, IconSetIconsListIcons, IconSetIconsListTag } from '../../../types/icon-set/extra';
 
 const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptional)[];
@@ -23,7 +24,7 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 
 	const resolvedTags = Object.create(null) as Record<string, Set<IconSetIconsListTag>>;
 	const categories = iconSet.categories;
-	if (categories) {
+	if (categories && appConfig.enableIconLists) {
 		for (const title in categories) {
 			const items = categories[title];
 			if (items instanceof Array) {
@@ -52,15 +53,17 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 			total++;
 
 			// Check tags
-			const iconTags = resolvedTags[name];
-			if (iconTags) {
-				// Add icon to each tag
-				iconTags.forEach((tag) => {
-					tag.icons.push(icon);
-				});
-			} else {
-				// No tags: uncategorised
-				uncategorised.push(icon);
+			if (appConfig.enableIconLists) {
+				const iconTags = resolvedTags[name];
+				if (iconTags) {
+					// Add icon to each tag
+					iconTags.forEach((tag) => {
+						tag.icons.push(icon);
+					});
+				} else {
+					// No tags: uncategorised
+					uncategorised.push(icon);
+				}
 			}
 		}
 	}
@@ -122,22 +125,24 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 				total++;
 
 				// Check for categories
-				const iconTags = resolvedTags[name];
-				if (iconTags) {
-					// Alias has its own categories!
-					iconTags.forEach((tag) => {
-						tag.icons.push(icon);
-					});
-				} else {
-					// Copy from parent
-					const iconTags = resolvedTags[parentIcon[0]];
+				if (appConfig.enableIconLists) {
+					const iconTags = resolvedTags[name];
 					if (iconTags) {
-						resolvedTags[name] = iconTags;
+						// Alias has its own categories!
 						iconTags.forEach((tag) => {
 							tag.icons.push(icon);
 						});
 					} else {
-						uncategorised.push(icon);
+						// Copy from parent
+						const iconTags = resolvedTags[parentIcon[0]];
+						if (iconTags) {
+							resolvedTags[name] = iconTags;
+							iconTags.forEach((tag) => {
+								tag.icons.push(icon);
+							});
+						} else {
+							uncategorised.push(icon);
+						}
 					}
 				}
 			}
@@ -156,21 +161,22 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 		resolve(name);
 	}
 
-	// Sort icons in tags
-	for (let i = 0; i < tags.length; i++) {
-		tags[i].icons.sort((a, b) => a[0].localeCompare(b[0]));
-	}
-	uncategorised.sort((a, b) => a[0].localeCompare(b[0]));
-
 	// Create data
 	const result: IconSetIconsListIcons = {
 		total,
 		visible,
 		hidden,
 		failed,
-		tags: tags.filter((tag) => tag.icons.length > 0),
-		uncategorised,
 	};
+
+	// Sort icons in tags
+	if (appConfig.enableIconLists) {
+		for (let i = 0; i < tags.length; i++) {
+			tags[i].icons.sort((a, b) => a[0].localeCompare(b[0]));
+		}
+		result.tags = tags.filter((tag) => tag.icons.length > 0);
+		result.uncategorised = uncategorised.sort((a, b) => a[0].localeCompare(b[0]));
+	}
 
 	// Add characters
 	if (iconSet.chars) {
