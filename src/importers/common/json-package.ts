@@ -3,6 +3,7 @@ import { quicklyValidateIconSet } from '@iconify/utils/lib/icon-set/validate-bas
 import { asyncStoreLoadedIconSet } from '../../data/icon-set/store/storage';
 import type { StoredIconSet } from '../../types/icon-set/storage';
 import { prependSlash } from '../../misc/files';
+import { appConfig } from '../../config/app';
 
 export interface IconSetJSONPackageOptions {
 	// Ignore bad prefix?
@@ -33,21 +34,44 @@ export async function importIconSetFromJSONPackage(
 			data.prefix = prefix;
 		}
 
-		const result = await asyncStoreLoadedIconSet(data);
+		// Check for characters map
+		try {
+			const chars = JSON.parse(await readFile(path + '/chars.json', 'utf8'));
+			if (typeof chars === 'object') {
+				for (const key in chars) {
+					data.chars = chars;
+					break;
+				}
+			}
+		} catch {
+			//
+		}
 
-		// Check for info
-		if (!result.info) {
+		// Check for data needed for icons list
+		if (appConfig.enableIconLists) {
+			// Info
 			try {
 				const info = JSON.parse(await readFile(path + '/info.json', 'utf8'));
 				if (info.prefix === prefix) {
-					result.info = info;
+					data.info = info;
+				}
+			} catch {
+				//
+			}
+
+			// Categories, themes
+			try {
+				const metadata = JSON.parse(await readFile(path + '/metadata.json', 'utf8'));
+				if (typeof metadata === 'object') {
+					Object.assign(data, metadata);
 				}
 			} catch {
 				//
 			}
 		}
 
-		// TODO: handle metadata from other .json files
+		const result = await asyncStoreLoadedIconSet(data);
+
 		return result;
 	} catch (err) {
 		console.error(err);
