@@ -11,4 +11,4 @@ cd /data/iconify-api
 # Only copy files which don't exist in target
 cp -rn /data/config_default/. /data/iconify-api/src/config/
 npm run build
-node lib/index.js
+node --expose-gc lib/index.js
