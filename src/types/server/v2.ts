@@ -136,6 +136,6 @@ export interface APIv2SearchResponse {
 	// Info about icon sets
 	collections: Record<string, IconifyInfo>;
 
-	// Copy of request
-	request: APIv2SearchParams;
+	// Copy of request, values are string
+	request: Record<keyof APIv2SearchParams, string>;
 }

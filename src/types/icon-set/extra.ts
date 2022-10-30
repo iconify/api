@@ -38,6 +38,9 @@ export interface IconSetIconsListIcons {
 
 	// Characters, key = character, value = icon
 	chars?: Record<string, IconSetIconNames>;
+
+	// Keywords, set if search engine is enabled
+	keywords?: Record<string, Set<IconSetIconNames>>;
 }
 
 /**

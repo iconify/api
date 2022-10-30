@@ -37,11 +37,6 @@ export function cleanupStoredItem<T>(storage: MemoryStorage<T>, storedItem: Memo
 		stopTimer(storage);
 	}
 
-	// Purge unused memory if garbage collector global is exposed
-	try {
-		global.gc?.();
-	} catch {}
-
 	return true;
 }
 

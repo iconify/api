@@ -120,6 +120,18 @@ export function asyncStoreLoadedIconSet(
 	config: SplitIconSetConfig = splitIconSetConfig
 ): Promise<StoredIconSet> {
 	return new Promise((fulfill) => {
-		storeLoadedIconSet(iconSet, fulfill, storage, config);
+		storeLoadedIconSet(
+			iconSet,
+			(data: StoredIconSet) => {
+				// Purge unused memory if garbage collector global is exposed
+				try {
+					global.gc?.();
+				} catch {}
+
+				fulfill(data);
+			},
+			storage,
+			config
+		);
 	});
 }

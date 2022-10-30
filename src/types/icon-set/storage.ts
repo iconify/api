@@ -36,8 +36,6 @@ export interface StoredIconSet {
 
 	// Themes
 	themes?: StorageIconSetThemes;
-
-	// TODO: add properties for search data
 }
 
 /**

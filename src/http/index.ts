@@ -7,6 +7,7 @@ import { generateAPIv2CollectionResponse } from './responses/collection-v2';
 import { generateCollectionsListResponse } from './responses/collections';
 import { generateIconsDataResponse } from './responses/icons';
 import { generateLastModifiedResponse } from './responses/modified';
+import { generateAPIv2SearchResponse } from './responses/search';
 import { generateSVGResponse } from './responses/svg';
 import { generateUpdateResponse } from './responses/update';
 import { initVersionResponse, versionResponse } from './responses/version';
@@ -135,6 +136,15 @@ export async function startHTTPServer() {
 				generateAPIv1IconsListResponse(req.query, res, true);
 			});
 		});
+
+		if (appConfig.enableSearchEngine) {
+			// Search, currently version 2
+			server.get('/search', (req, res) => {
+				runWhenLoaded(() => {
+					generateAPIv2SearchResponse(req.query, res);
+				});
+			});
+		}
 	}
 
 	// Update icon sets

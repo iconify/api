@@ -192,5 +192,31 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 		result.chars = chars;
 	}
 
+	// Generate keywords for all visible icons if:
+	// - search engine is enabled
+	// - icon set has info (cannot search icon set if cannot show it)
+	// - icon set is not marked as hidden
+	if (appConfig.enableIconLists && appConfig.enableSearchEngine && iconSet.info && !iconSet.info.hidden) {
+		const keywords = (result.keywords = Object.create(null) as Record<string, Set<IconSetIconNames>>);
+		for (const name in visible) {
+			const icon = visible[name];
+			if (icon[0] !== name) {
+				// Alias. Another entry for parent icon should be present in `visible` object
+				continue;
+			}
+
+			const iconKeywords: Set<string> = new Set();
+			for (let i = 0; i < icon.length; i++) {
+				icon[i].split('-').forEach((chunk) => {
+					if (iconKeywords.has(chunk)) {
+						return;
+					}
+					iconKeywords.add(chunk);
+					(keywords[chunk] || (keywords[chunk] = new Set())).add(icon);
+				});
+			}
+		}
+	}
+
 	return result;
 }

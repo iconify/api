@@ -1,5 +1,6 @@
 import type { StoredIconSet } from '../types/icon-set/storage';
 import type { IconSetEntry, Importer } from '../types/importers';
+import { updateSearchIndex } from './search';
 
 /**
  * All importers
@@ -100,6 +101,8 @@ export function updateIconSets(): number {
 	if (loadedIconSets.size) {
 		// Got some icon sets to clean up
 		const cleanup = loadedIconSets;
+
+		// TODO: clean up old icon sets
 	}
 	loadedIconSets = newLoadedIconSets;
 
@@ -107,6 +110,15 @@ export function updateIconSets(): number {
 	allPrefixes = Array.from(newPrefixes);
 	prefixesWithInfo = Array.from(newPrefixesWithInfo);
 	visiblePrefixes = Array.from(newVisiblePrefixes);
+
+	// Update search index
+	updateSearchIndex(allPrefixes, iconSets);
+
+	// Purge unused memory if garbage collector global is exposed
+	try {
+		global.gc?.();
+	} catch {}
+
 	return allPrefixes.length;
 }
 
