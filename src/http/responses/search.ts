@@ -88,28 +88,37 @@ export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res:
 
 	// Run query
 	const searchResults = search(params, searchIndexData, iconSets);
-	if (!searchResults) {
-		res.send(404);
-		return;
-	}
 
-	// Generate result
-	const response: APIv2SearchResponse = {
-		icons: searchResults.names.slice(start),
-		total: searchResults.names.length,
-		limit: params.limit,
-		start,
-		collections: Object.create(null),
-		request: v2Query,
-	};
+	let response: APIv2SearchResponse;
+	if (searchResults) {
+		// Generate result
+		response = {
+			icons: searchResults.names.slice(start),
+			total: searchResults.names.length,
+			limit: params.limit,
+			start,
+			collections: Object.create(null),
+			request: v2Query,
+		};
 
-	// Add icon sets
-	for (let i = 0; i < searchResults.prefixes.length; i++) {
-		const prefix = searchResults.prefixes[i];
-		const info = iconSets[prefix]?.item.info;
-		if (info) {
-			response.collections[prefix] = info;
+		// Add icon sets
+		for (let i = 0; i < searchResults.prefixes.length; i++) {
+			const prefix = searchResults.prefixes[i];
+			const info = iconSets[prefix]?.item.info;
+			if (info) {
+				response.collections[prefix] = info;
+			}
 		}
+	} else {
+		// No matches
+		response = {
+			icons: [],
+			total: 0,
+			limit: params.limit,
+			start,
+			collections: Object.create(null),
+			request: v2Query,
+		};
 	}
 
 	sendJSONResponse(response, q, wrap, res);

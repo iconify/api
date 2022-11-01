@@ -175,11 +175,13 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 				}
 
 				// Add style
-				if (iconsWithFill.has(parentIcon)) {
-					iconsWithFill.add(icon);
-				}
-				if (iconsWithStroke.has(parentIcon)) {
-					iconsWithStroke.add(icon);
+				if (checkIconStyle) {
+					if (iconsWithFill.has(parentIcon)) {
+						iconsWithFill.add(icon);
+					}
+					if (iconsWithStroke.has(parentIcon)) {
+						iconsWithStroke.add(icon);
+					}
 				}
 			}
 		} else {
