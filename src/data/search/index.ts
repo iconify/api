@@ -1,3 +1,4 @@
+import { appConfig } from '../../config/app';
 import type { IconSetIconNames } from '../../types/icon-set/extra';
 import type { IconSetEntry } from '../../types/importers';
 import type { SearchIndexData, SearchKeywordsEntry, SearchParams, SearchResultsData } from '../../types/search';
@@ -18,6 +19,13 @@ export function search(
 	if (!keywords) {
 		return;
 	}
+
+	// Merge params
+	const fullParams = {
+		...params,
+		// Params extracted from query override default params
+		...keywords.params,
+	};
 
 	// Make sure all keywords exist
 	keywords.searches = keywords.searches.filter((search) => {
@@ -54,15 +62,10 @@ export function search(
 	}
 
 	// Get prefixes
-	const basePrefixes = filterSearchPrefixes(data, iconSets, {
-		...params,
-		// Params extracted from query override default params
-		...keywords.params,
-	});
+	const basePrefixes = filterSearchPrefixes(data, iconSets, fullParams);
 
 	// Prepare variables
 	const addedIcons = Object.create(null) as Record<string, Set<IconSetIconNames>>;
-	const foundPrefixes: Set<string> = new Set();
 	const results: string[] = [];
 	const limit = params.limit;
 
@@ -144,6 +147,20 @@ export function search(
 						const item = matches[matchIndex];
 						if (prefixAddedIcons.has(item)) {
 							// Already added
+							continue;
+						}
+
+						// Check style
+						if (
+							// Style is set
+							fullParams.style &&
+							// Enabled in config
+							appConfig.allowFilterIconsByStyle &&
+							// Icon set has mixed style (so it is assigned to icons) -> check icon
+							iconSetIcons.iconStyle === 'mixed' &&
+							item._is !== fullParams.style
+						) {
+							// Different icon style
 							continue;
 						}
 

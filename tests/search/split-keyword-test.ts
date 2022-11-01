@@ -305,6 +305,54 @@ describe('Splitting keywords', () => {
 			},
 		});
 
+		expect(splitKeyword('home style:fill')).toEqual({
+			searches: [
+				{
+					keywords: [],
+				},
+			],
+			partial: 'home',
+			params: {
+				style: 'fill',
+			},
+		});
+
+		expect(splitKeyword('home style=stroke')).toEqual({
+			searches: [
+				{
+					keywords: [],
+				},
+			],
+			partial: 'home',
+			params: {
+				style: 'stroke',
+			},
+		});
+
+		expect(splitKeyword('home fill=true')).toEqual({
+			searches: [
+				{
+					keywords: [],
+				},
+			],
+			partial: 'home',
+			params: {
+				style: 'fill',
+			},
+		});
+
+		expect(splitKeyword('home stroke=true')).toEqual({
+			searches: [
+				{
+					keywords: [],
+				},
+			],
+			partial: 'home',
+			params: {
+				style: 'stroke',
+			},
+		});
+
 		// Too short for partial
 		expect(splitKeyword('ab')).toEqual({
 			searches: [

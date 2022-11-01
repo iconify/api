@@ -1,3 +1,5 @@
+import type { IconStyle } from './icon-set/extra';
+
 /**
  * List of keywords that can be used to autocomplete keyword
  */
@@ -38,6 +40,9 @@ export interface SearchParams {
 
 	// Filter icon sets by palette
 	palette?: boolean;
+
+	// Filter icons by style
+	style?: IconStyle;
 
 	// Keyword
 	keyword: string;

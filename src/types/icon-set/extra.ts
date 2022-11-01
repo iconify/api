@@ -1,9 +1,21 @@
 import type { IconifyInfo } from '@iconify/types';
 
 /**
+ * Icon style
+ */
+export type IconStyle = 'fill' | 'stroke';
+
+/**
+ * Extra props added to icons
+ */
+export interface ExtraIconSetIconNamesProps {
+	_is?: IconStyle;
+}
+
+/**
  * Icon. First entry is main name, other entries are aliases
  */
-export type IconSetIconNames = [string, ...string[]];
+export type IconSetIconNames = [string, ...string[]] & ExtraIconSetIconNamesProps;
 
 /**
  * Tag
@@ -41,6 +53,9 @@ export interface IconSetIconsListIcons {
 
 	// Keywords, set if search engine is enabled
 	keywords?: Record<string, Set<IconSetIconNames>>;
+
+	// Extra info
+	iconStyle?: IconStyle | 'mixed';
 }
 
 /**

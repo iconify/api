@@ -51,6 +51,10 @@ export const appConfig: AppConfig = {
 	// Requires `enableIconLists` to be enabled
 	// Disable this option if you do not need search functionality
 	enableSearchEngine: true,
+
+	// Enables filtering icons by style: 'fill' or 'stroke'
+	// Works only if search engine is enabled
+	allowFilterIconsByStyle: true,
 };
 
 /**

@@ -160,5 +160,19 @@ describe('Creating search index, checking prefixes', () => {
 				palette: true,
 			})
 		).toEqual([]);
+
+		// Style
+		expect(
+			filterSearchPrefixes(searchIndex, iconSets, {
+				...baseParams,
+				style: 'fill',
+			})
+		).toEqual(['mdi-light', 'mdi-test-prefix']);
+		expect(
+			filterSearchPrefixes(searchIndex, iconSets, {
+				...baseParams,
+				style: 'stroke',
+			})
+		).toEqual([]);
 	}, 5000);
 });

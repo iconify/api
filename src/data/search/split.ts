@@ -1,5 +1,6 @@
 import { matchIconName } from '@iconify/utils/lib/icon/name';
 import { paramToBoolean } from '../../misc/bool';
+import type { IconStyle } from '../../types/icon-set/extra';
 import type { SearchKeywords, SearchKeywordsEntry } from '../../types/search';
 import { minPartialKeywordLength } from './partial';
 
@@ -224,6 +225,7 @@ function addPartialPrefix(prefix: string, set: Set<string>): boolean {
 export function splitKeyword(keyword: string, allowPartial = true): SearchKeywords | undefined {
 	const commonPrefixes: Set<string> = new Set();
 	let palette: boolean | undefined;
+	let iconStyle: IconStyle | undefined;
 
 	// Split by space, check for prefixes and reserved keywords
 	const keywordChunks = keyword.toLowerCase().trim().split(/\s+/);
@@ -243,9 +245,32 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 		if (prefixChunks.length === 2) {
 			const keyword = prefixChunks[0];
 			const value = prefixChunks[1];
+			let isKeyword = false;
 			switch (keyword) {
 				case 'palette': {
 					palette = paramToBoolean(value);
+					if (typeof palette === 'boolean') {
+						isKeyword = true;
+					}
+					break;
+				}
+
+				// style:fill, style:stroke
+				case 'style': {
+					if (value === 'fill' || value === 'stroke') {
+						iconStyle = value;
+						isKeyword = true;
+					}
+					break;
+				}
+
+				// fill:true, stroke:true
+				case 'fill':
+				case 'stroke': {
+					if (paramToBoolean(value)) {
+						iconStyle = keyword;
+						isKeyword = true;
+					}
 					break;
 				}
 
@@ -270,38 +295,40 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 						// All prefixes are bad: invalidate search query
 						return;
 					}
+
+					isKeyword = true;
 					break;
 				}
+			}
 
-				default: {
-					// Icon with prefix
-					if (hasPrefixes) {
-						// Already had entry with prefix: invalidate query
-						return;
-					}
+			if (!isKeyword) {
+				// Icon with prefix
+				if (hasPrefixes) {
+					// Already had entry with prefix: invalidate query
+					return;
+				}
 
-					const values = keyword.split(',');
-					let invalid = true;
-					hasPrefixes = true;
-					for (let j = 0; j < values.length; j++) {
-						const prefix = values[j].trim();
-						if (matchIconName.test(prefix)) {
-							commonPrefixes.add(prefix);
-							invalid = false;
-						}
+				const values = keyword.split(',');
+				let invalid = true;
+				hasPrefixes = true;
+				for (let j = 0; j < values.length; j++) {
+					const prefix = values[j].trim();
+					if (matchIconName.test(prefix)) {
+						commonPrefixes.add(prefix);
+						invalid = false;
 					}
+				}
 
-					if (invalid) {
-						// All prefixes are bad: invalidate search query
-						return;
-					}
+				if (invalid) {
+					// All prefixes are bad: invalidate search query
+					return;
+				}
 
-					if (value.length) {
-						// Add icon name, unless it is empty: 'mdi:'
-						// Allow partial if enabled
-						checkPartial = allowPartial;
-						keywords.push(value);
-					}
+				if (value.length) {
+					// Add icon name, unless it is empty: 'mdi:'
+					// Allow partial if enabled
+					checkPartial = allowPartial;
+					keywords.push(value);
 				}
 			}
 			continue;
@@ -316,8 +343,9 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 		}
 
 		if (paramChunks.length === 2) {
+			const keyword = paramChunks[0];
 			const value = paramChunks[1] as string;
-			switch (paramChunks[0]) {
+			switch (keyword) {
 				// 'palette=true', 'palette=false' -> filter icon sets by palette
 				case 'palette':
 					palette = paramToBoolean(value);
@@ -325,6 +353,28 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 						return;
 					}
 					break;
+
+				// style=fill, style=stroke
+				case 'style': {
+					if (value === 'fill' || value === 'stroke') {
+						iconStyle = value;
+					} else {
+						return;
+					}
+					break;
+				}
+
+				// fill=true, stroke=true
+				// accepts only true as value
+				case 'fill':
+				case 'stroke': {
+					if (paramToBoolean(value)) {
+						iconStyle = keyword;
+					} else {
+						return;
+					}
+					break;
+				}
 
 				// 'prefix=material-symbols', 'prefix=material-'
 				// 'prefixes=material-symbols,material-'
@@ -389,6 +439,9 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 	const params: SearchKeywords['params'] = {};
 	if (typeof palette === 'boolean') {
 		params.palette = palette;
+	}
+	if (iconStyle) {
+		params.style = iconStyle;
 	}
 	return {
 		searches,

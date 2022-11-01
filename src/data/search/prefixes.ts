@@ -1,3 +1,4 @@
+import { appConfig } from '../../config/app';
 import type { IconSetEntry } from '../../types/importers';
 import type { SearchIndexData, SearchParams } from '../../types/search';
 
@@ -36,11 +37,6 @@ export function filterSearchPrefixes(
 ): Readonly<string[]> {
 	let prefixes: string[] | undefined;
 
-	// Filter by prefix
-	if (params.prefixes) {
-		prefixes = filterSearchPrefixesList(prefixes || data.sortedPrefixes, params.prefixes);
-	}
-
 	// Filter by palette
 	const palette = params.palette;
 	if (typeof palette === 'boolean') {
@@ -48,6 +44,22 @@ export function filterSearchPrefixes(
 			const info = iconSets[prefix].item.info;
 			return info?.palette === palette;
 		});
+	}
+
+	// Filter by style
+	if (appConfig.allowFilterIconsByStyle) {
+		const style = params.style;
+		if (style) {
+			prefixes = (prefixes || data.sortedPrefixes).filter((prefix) => {
+				const iconSetStyle = iconSets[prefix].item.icons.iconStyle;
+				return iconSetStyle === style || iconSetStyle === 'mixed';
+			});
+		}
+	}
+
+	// Filter by prefix
+	if (params.prefixes) {
+		prefixes = filterSearchPrefixesList(prefixes || data.sortedPrefixes, params.prefixes);
 	}
 
 	// TODO: add more filter options

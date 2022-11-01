@@ -41,4 +41,8 @@ export interface AppConfig {
 	// Requires `enableIconLists` to be enabled
 	// Disable this option if you do not need search functionality
 	enableSearchEngine: boolean;
+
+	// Enables filtering icons by style: 'fill' or 'stroke'
+	// Works only if search engine is enabled
+	allowFilterIconsByStyle: boolean;
 }

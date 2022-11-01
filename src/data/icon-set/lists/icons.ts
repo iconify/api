@@ -1,7 +1,13 @@
 import type { IconifyAliases, IconifyJSON, IconifyOptional } from '@iconify/types';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import { appConfig } from '../../../config/app';
-import type { IconSetIconNames, IconSetIconsListIcons, IconSetIconsListTag } from '../../../types/icon-set/extra';
+import type {
+	IconSetIconNames,
+	IconSetIconsListIcons,
+	IconSetIconsListTag,
+	IconStyle,
+} from '../../../types/icon-set/extra';
+import { getIconStyle } from './style';
 
 const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptional)[];
 
@@ -43,6 +49,12 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 	}
 
 	// Parse all icons
+	let detectedIconStyle: IconStyle | undefined | null;
+	const iconsWithStroke: Set<IconSetIconNames> = new Set();
+	const iconsWithFill: Set<IconSetIconNames> = new Set();
+	const checkIconStyle =
+		appConfig.allowFilterIconsByStyle && appConfig.enableSearchEngine && appConfig.enableIconLists;
+
 	for (const name in iconSetIcons) {
 		const isVisible = !iconSetIcons[name].hidden;
 		const icon: IconSetIconNames = [name];
@@ -63,6 +75,22 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 				} else {
 					// No tags: uncategorised
 					uncategorised.push(icon);
+				}
+			}
+
+			// Check content
+			if (checkIconStyle) {
+				const body = iconSetIcons[name].body;
+				const iconStyle = getIconStyle(body);
+				if (iconStyle) {
+					(iconStyle === 'stroke' ? iconsWithStroke : iconsWithFill).add(icon);
+				}
+				if (detectedIconStyle === void 0) {
+					// First item
+					detectedIconStyle = iconStyle;
+				} else if (detectedIconStyle && detectedIconStyle !== iconStyle) {
+					// Different style
+					detectedIconStyle = null;
 				}
 			}
 		}
@@ -145,6 +173,14 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 						}
 					}
 				}
+
+				// Add style
+				if (iconsWithFill.has(parentIcon)) {
+					iconsWithFill.add(icon);
+				}
+				if (iconsWithStroke.has(parentIcon)) {
+					iconsWithStroke.add(icon);
+				}
 			}
 		} else {
 			// Treat as alias: add to parent icon
@@ -213,6 +249,22 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 					}
 					iconKeywords.add(chunk);
 					(keywords[chunk] || (keywords[chunk] = new Set())).add(icon);
+				});
+			}
+		}
+
+		// Icon style
+		if (checkIconStyle) {
+			if (detectedIconStyle) {
+				result.iconStyle = detectedIconStyle;
+			} else if (iconsWithFill.size || iconsWithStroke.size) {
+				// Mixed styles: assign to icon object
+				result.iconStyle = 'mixed';
+				iconsWithFill.forEach((item) => {
+					item._is = 'fill';
+				});
+				iconsWithStroke.forEach((item) => {
+					item._is = 'stroke';
 				});
 			}
 		}

@@ -97,5 +97,21 @@ describe('Searching icons', () => {
 			],
 			hasMore: false,
 		});
+
+		// Search with style and palette
+		expect(
+			search(
+				{
+					keyword: 'bookmark style:fill palette:true',
+					limit: 999,
+				},
+				searchIndex,
+				iconSets
+			)
+		).toEqual({
+			prefixes: ['emojione-v1'],
+			names: ['emojione-v1:bookmark', 'emojione-v1:bookmark-tabs'],
+			hasMore: false,
+		});
 	}, 5000);
 });
