@@ -1,13 +1,14 @@
 import type { PartialKeywords, SearchIndexData } from '../../types/search';
 import { searchIndex } from '../search';
 
-export const minPartialKeywordLength = 3;
+export const minPartialKeywordLength = 2;
 
 /**
  * Find partial keywords for keyword
  */
 export function getPartialKeywords(
 	keyword: string,
+	suffixes: boolean,
 	data: SearchIndexData | undefined = searchIndex.data
 ): PartialKeywords | undefined {
 	// const data = searchIndex.data;
@@ -16,16 +17,22 @@ export function getPartialKeywords(
 		return;
 	}
 
-	if (data.partial[keyword]) {
-		return data.partial[keyword];
+	// Check cache
+	const storedItem = (suffixes ? data.partial : data.partialPrefixes)?.[keyword];
+	if (storedItem) {
+		return storedItem;
 	}
 
 	// Cache takes a lot of memory, so clean up old cache once every few minutes before generating new item
 	const time = Date.now();
 	if (data.partialCleanup < time - 60000) {
-		data.partial = Object.create(null);
+		delete data.partial;
+		delete data.partialPrefixes;
 		data.partialCleanup = time;
 	}
+	const storageKey = suffixes ? 'partial' : 'partialPrefixes';
+	const storage =
+		data[storageKey] || (data[storageKey] = Object.create(null) as Exclude<SearchIndexData['partial'], undefined>);
 
 	// Generate partial list
 	const prefixMatches: string[] = [];
@@ -37,14 +44,14 @@ export function getPartialKeywords(
 		if (item.length > length) {
 			if (item.slice(0, length) === keyword) {
 				prefixMatches.push(item);
-			} else if (item.slice(0 - length) === keyword) {
+			} else if (suffixes && item.slice(0 - length) === keyword) {
 				suffixMatches.push(item);
 			}
 		}
 	}
 
 	// Sort: shortest matches first
-	return (data.partial[keyword] = prefixMatches
+	return (storage[keyword] = prefixMatches
 		.sort((a, b) => (a.length === b.length ? a.localeCompare(b) : a.length - b.length))
 		.concat(suffixMatches.sort((a, b) => (a.length === b.length ? a.localeCompare(b) : a.length - b.length))));
 }

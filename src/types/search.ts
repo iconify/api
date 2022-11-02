@@ -19,7 +19,8 @@ export interface SearchIndexData {
 	// Partial keywords: ['foo'] = ['foo1', 'foo2', 'foobar', ...]
 	// Can be used for auto-completion for search results
 	// Keywords are generated on demand and sorted by length: shortest first
-	partial: Record<string, PartialKeywords>;
+	partial?: Record<string, PartialKeywords>;
+	partialPrefixes?: Record<string, PartialKeywords>;
 
 	// Last cleanup for old partial lists
 	partialCleanup: number;

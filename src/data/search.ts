@@ -49,7 +49,6 @@ export function updateSearchIndex(
 	return (searchIndex.data = {
 		sortedPrefixes,
 		keywords,
-		partial: Object.create(null),
 		partialCleanup: Date.now(),
 	});
 }

@@ -52,8 +52,11 @@ describe('Creating search index, checking prefixes', () => {
 		expect(searchIndex.keywords['xml']).toEqual(new Set(['mdi-light']));
 
 		// Check for partial keywords
-		expect(getPartialKeywords('acc', searchIndex)).toEqual(['account']);
-		expect(getPartialKeywords('arr', searchIndex)).toEqual(['arrow', 'arrange']);
+		expect(getPartialKeywords('acc', true, searchIndex)).toEqual(['account']);
+		expect(getPartialKeywords('arr', true, searchIndex)).toEqual(['arrow', 'arrange']);
+		expect(getPartialKeywords('row', true, searchIndex)).toEqual(['arrow']);
+		expect(getPartialKeywords('one', true, searchIndex)).toEqual(['none', 'phone', 'microphone']);
+		expect(getPartialKeywords('one', false, searchIndex)).toEqual([]);
 	}, 5000);
 
 	test('Two icon sets', async () => {

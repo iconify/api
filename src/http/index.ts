@@ -6,6 +6,7 @@ import { generateAPIv1IconsListResponse } from './responses/collection-v1';
 import { generateAPIv2CollectionResponse } from './responses/collection-v2';
 import { generateCollectionsListResponse } from './responses/collections';
 import { generateIconsDataResponse } from './responses/icons';
+import { generateKeywordsResponse } from './responses/keywords';
 import { generateLastModifiedResponse } from './responses/modified';
 import { generateAPIv2SearchResponse } from './responses/search';
 import { generateSVGResponse } from './responses/svg';
@@ -142,6 +143,13 @@ export async function startHTTPServer() {
 			server.get('/search', (req, res) => {
 				runWhenLoaded(() => {
 					generateAPIv2SearchResponse(req.query, res);
+				});
+			});
+
+			// Keywords
+			server.get('/keywords', (req, res) => {
+				runWhenLoaded(() => {
+					generateKeywordsResponse(req.query, res);
 				});
 			});
 		}

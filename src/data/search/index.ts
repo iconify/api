@@ -47,7 +47,7 @@ export function search(
 
 	if (partial) {
 		// Get all partial keyword matches
-		const cache = getPartialKeywords(partial, data);
+		const cache = getPartialKeywords(partial, true, data);
 		const exists = data.keywords[partial];
 		if (!cache || !cache.length) {
 			// No partial matches: check if keyword exists
