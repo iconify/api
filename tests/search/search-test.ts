@@ -98,6 +98,41 @@ describe('Searching icons', () => {
 			hasMore: false,
 		});
 
+		// Search with category filter
+		expect(
+			search(
+				{
+					keyword: 'cycle',
+					limit: 999,
+					category: 'General',
+				},
+				searchIndex,
+				iconSets
+			)
+		).toEqual({
+			prefixes: ['mdi-test-prefix'],
+			names: [
+				'mdi-test-prefix:cash-cycle',
+				'mdi-test-prefix:hand-cycle',
+				'mdi-test-prefix:power-cycle',
+				'mdi-test-prefix:bicycle',
+				'mdi-test-prefix:bicycle-basket',
+				'mdi-test-prefix:bicycle-cargo',
+				'mdi-test-prefix:bicycle-electric',
+				'mdi-test-prefix:bicycle-penny-farthing',
+				'mdi-test-prefix:battery-recycle',
+				'mdi-test-prefix:battery-recycle-outline',
+				'mdi-test-prefix:recycle',
+				'mdi-test-prefix:recycle-variant',
+				'mdi-test-prefix:water-recycle',
+				'mdi-test-prefix:unicycle',
+				'mdi-test-prefix:motorcycle',
+				'mdi-test-prefix:motorcycle-electric',
+				'mdi-test-prefix:motorcycle-off',
+			],
+			hasMore: false,
+		});
+
 		// Search with style and palette
 		expect(
 			search(

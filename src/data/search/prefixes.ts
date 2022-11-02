@@ -57,6 +57,23 @@ export function filterSearchPrefixes(
 		}
 	}
 
+	// Filter by category
+	const category = params.category;
+	if (category) {
+		prefixes = (prefixes || data.sortedPrefixes).filter(
+			(prefix) => iconSets[prefix].item.info?.category === category
+		);
+	}
+
+	// Filter by tag
+	const tag = params.tag;
+	if (tag) {
+		prefixes = (prefixes || data.sortedPrefixes).filter((prefix) => {
+			const tags = iconSets[prefix].item.info?.tags;
+			return tags && tags.indexOf(tag) !== -1;
+		});
+	}
+
 	// Filter by prefix
 	if (params.prefixes) {
 		prefixes = filterSearchPrefixesList(prefixes || data.sortedPrefixes, params.prefixes);
