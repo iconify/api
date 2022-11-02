@@ -52,7 +52,7 @@ export function generateKeywordsResponse(query: FastifyRequest['query'], res: Fa
 		invalid = true;
 	} else {
 		// Get only last part of complex keyword
-		// Testing complex keywords is not recommended, first part is not checked
+		// Testing complex keywords is not recommended, mix of parts is not checked
 		const parts = test.split('-');
 		if (parts.length > 1) {
 			test = parts.pop() as string;
