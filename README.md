@@ -60,9 +60,11 @@ Options that can be changed with environment variables and their default values 
 -   `ENABLE_SEARCH_ENGINE=true`: enables `/search` route. Requires `ENABLE_ICON_LISTS` to be enabled.
 -   `ALLOW_FILTER_ICONS_BY_STYLE=true`: allows searching for icons based on fill or stroke, such as adding `style=fill` to search query. This feature uses a bit of memory, so it can be disabled. Requires `ENABLE_SEARCH_ENGINE` to be enabled.
 
-### Update
+### Updating icons
 
-In addition to updating icon sets when server starts, API can update icon sets without restarting server.
+Icons are automatically updated when server starts.
+
+In addition to that, API can update icon sets without restarting server.
 
 To enable automatic update, you must set `APP_UPDATE_SECRET` environment variable. Without it, update will not work.
 
@@ -76,6 +78,17 @@ To trigger icon sets update, open `/update?foo=bar`, where `foo` is value of `UP
 Update will not be triggered immediately, it will be ran after `UPDATE_THROTTLE` seconds. This is done to prevent multiple checks when update is triggered several times in a row by something like GitHub hooks.
 
 If update is triggered while update process is already running (as in, source was checked for update, but download is still in progress), another update check will be ran after currently running update ends.
+
+Response to `/update` route is always the same, regardless of outcome. This is done to make it impossible to try to guess key/value pair or even see if route is enabled. To see actual result, you need to check console. Successful request and update process will be logged.
+
+### HTTP headers
+
+By default, server sends the following HTTP headers:
+
+-   Various CORS headers, allowing access from anywhere.
+-   Cache headers to cache responses for 604800 seconds (7 days).
+
+To change headers, edit `header` property in `src/config/app.ts`, then rebuild script.
 
 ## Node vs PHP
 

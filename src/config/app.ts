@@ -22,7 +22,7 @@ export const appConfig: AppConfig = {
 		'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding',
 		'Access-Control-Max-Age: 86400',
 		'Cross-Origin-Resource-Policy: cross-origin',
-		'Cache-Control: public, max-age=604800, min-refresh=604800',
+		'Cache-Control: public, max-age=604800, min-refresh=604800, immutable',
 	],
 
 	// Host and port for server
