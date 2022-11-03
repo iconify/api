@@ -9,7 +9,7 @@ import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
 
 const minSearchLimit = 32;
 const maxSearchLimit = 999;
-const defaultSearchLimit = maxSearchLimit;
+const defaultSearchLimit = minSearchLimit * 2;
 
 /**
  * Send API v2 response

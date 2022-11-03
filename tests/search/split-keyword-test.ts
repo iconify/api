@@ -354,10 +354,10 @@ describe('Splitting keywords', () => {
 		});
 
 		// Too short for partial
-		expect(splitKeyword('ab')).toEqual({
+		expect(splitKeyword('a')).toEqual({
 			searches: [
 				{
-					keywords: ['ab'],
+					keywords: ['a'],
 				},
 			],
 			params: {},
