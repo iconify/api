@@ -1,15 +1,15 @@
 {
 	"name": "@iconify/api",
-	"description": "Node.js version of api.iconify.design",
+	"description": "Iconify API",
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
 	"private": true,
-	"version": "3.0.0-dev",
-	"bugs": "https://github.com/iconify/api.js/issues",
-	"homepage": "https://github.com/iconify/api.js",
+	"version": "3.0.0-beta.1",
+	"bugs": "https://github.com/iconify/api/issues",
+	"homepage": "https://github.com/iconify/api",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/iconify/api.js.git"
+		"url": "https://github.com/iconify/api.git"
 	},
 	"packageManager": "npm@8.19.2",
 	"engines": {
