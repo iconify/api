@@ -33,12 +33,6 @@ export function loadEnvConfig(env = process.env) {
 					case 'string':
 						cfg[key] = value;
 						break;
-
-					case 'object':
-						if (defaultValue instanceof Array) {
-							// Append one entry to array
-							defaultValue.push(value);
-						}
 				}
 			}
 		}

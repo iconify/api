@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import { appConfig } from '../config/app';
+import { appConfig, httpHeaders } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
 import { generateAPIv1IconsListResponse } from './responses/collection-v1';
@@ -28,7 +28,7 @@ export async function startHTTPServer() {
 		value: string;
 	}
 	const headers: Header[] = [];
-	appConfig.headers.forEach((item) => {
+	httpHeaders.forEach((item) => {
 		const parts = item.split(':');
 		if (parts.length > 1) {
 			headers.push({

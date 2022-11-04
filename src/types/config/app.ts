@@ -12,9 +12,6 @@ export interface AppConfig {
 	// Without trailing '/'
 	cacheRootDir: string;
 
-	// HTTP headers to send
-	headers: string[];
-
 	// Host
 	host: string;
 

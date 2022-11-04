@@ -88,7 +88,7 @@ By default, server sends the following HTTP headers:
 -   Various CORS headers, allowing access from anywhere.
 -   Cache headers to cache responses for 604800 seconds (7 days).
 
-To change headers, edit `headers` property in `src/config/app.ts`, then rebuild script.
+To change headers, edit `httpHeaders` variable in `src/config/app.ts`, then rebuild script.
 
 ## Node vs PHP
 
