@@ -1,24 +1,40 @@
-import { appConfig } from '../config/app';
+import { appConfig, splitIconSetConfig, storageConfig } from '../config/app';
+import { paramToBoolean } from './bool';
+
+interface ConfigurableItem {
+	config: unknown;
+	prefix: string;
+}
+
+const config: ConfigurableItem[] = [
+	{
+		config: appConfig,
+		prefix: '',
+	},
+	{
+		config: splitIconSetConfig,
+		prefix: 'SPLIT_',
+	},
+	{
+		config: storageConfig,
+		prefix: 'STORAGE_',
+	},
+];
 
 /**
  * Load config from environment
  */
 export function loadEnvConfig(env = process.env) {
-	[appConfig].forEach((config) => {
-		const cfg = config as unknown as Record<string, unknown>;
+	config.forEach(({ config, prefix }) => {
+		const cfg = config as Record<string, unknown>;
 		for (const key in cfg) {
-			const envKey = key.replace(/[A-Z]/g, (letter) => '_' + letter.toLowerCase()).toUpperCase();
+			const envKey = prefix + key.replace(/[A-Z]/g, (letter) => '_' + letter.toLowerCase()).toUpperCase();
 			const value = env[envKey];
 			if (value !== void 0) {
 				const defaultValue = cfg[key];
 				switch (typeof defaultValue) {
 					case 'boolean': {
-						const valuelc = value.toLowerCase();
-						if (valuelc === 'true' || valuelc === '1') {
-							cfg[key] = true;
-						} else if (valuelc === 'false' || valuelc === '0') {
-							cfg[key] = false;
-						}
+						cfg[key] = paramToBoolean(value.toLowerCase(), cfg[key] as boolean);
 						break;
 					}
 
