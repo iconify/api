@@ -17,11 +17,13 @@ export const appConfig: AppConfig = {
 
 	// HTTP headers to send
 	headers: [
+		// CORS
 		'Access-Control-Allow-Origin: *',
 		'Access-Control-Allow-Methods: GET, OPTIONS',
 		'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding',
 		'Access-Control-Max-Age: 86400',
 		'Cross-Origin-Resource-Policy: cross-origin',
+		// Cache
 		'Cache-Control: public, max-age=604800, min-refresh=604800, immutable',
 	],
 
