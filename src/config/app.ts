@@ -87,7 +87,7 @@ export const storageConfig: MemoryStorageConfig = {
 	// Should be set to at least 10 seconds (10000) to avoid repeated read operations
 	minExpiration: 20000,
 
-	// Timeout in milliseconds to check expired items, > 0 (if disabled, cleanupAfterSec is not ran)
+	// Timeout in milliseconds to check expired items, > 0 (if disabled, cleanupAfter is not ran)
 	timer: 60000,
 
 	// Number of milliseconds to keep item in storage after last use, > minExpiration

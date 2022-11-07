@@ -59,6 +59,9 @@ describe('Advanced storage tests', () => {
 
 											// Fake expiration for last item and run cleanup process
 											lastItem.lastUsed -= 100000;
+											if (storage.minLastUsed) {
+												storage.minLastUsed -= 100000;
+											}
 											cleanupStorage(storage);
 
 											// Only `lastItem` should have been removed

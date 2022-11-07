@@ -55,18 +55,26 @@ export function cleanupStorage<T>(storage: MemoryStorage<T>) {
 	const cleanupAfter = config.cleanupAfter;
 	if (cleanupAfter) {
 		const minTimer = Math.min(Date.now() - cleanupAfter, lastUsedLimit);
-		watched.forEach((item) => {
-			if (item.lastUsed < minTimer) {
-				cleanupStoredItem(storage, item);
-			}
-		});
+		if (!storage.minLastUsed || storage.minLastUsed < minTimer) {
+			watched.forEach((item) => {
+				if (item.lastUsed < minTimer) {
+					cleanupStoredItem(storage, item);
+				}
+			});
+		}
 	}
 
 	// Check items limit
 	const maxCount = config.maxCount;
 	if (maxCount && watched.size > maxCount) {
+		if (storage.minLastUsed && storage.minLastUsed > lastUsedLimit) {
+			// Cannot cleanup: minLastUsed set from last check is too high
+			return;
+		}
+
 		// Sort items
 		const sortedList = Array.from(watched).sort((item1, item2) => item1.lastUsed - item2.lastUsed);
+		delete storage.minLastUsed;
 
 		// Delete items, sorted by `lastUsed`
 		for (let i = 0; i < sortedList.length && watched.size > maxCount; i++) {
@@ -74,6 +82,10 @@ export function cleanupStorage<T>(storage: MemoryStorage<T>) {
 			const item = sortedList[i];
 			if (item.lastUsed < lastUsedLimit) {
 				cleanupStoredItem(storage, item);
+			} else {
+				// Ran out of items to delete
+				storage.minLastUsed = item.lastUsed;
+				return;
 			}
 		}
 	}

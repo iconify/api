@@ -46,7 +46,7 @@ export interface MemoryStorageConfig {
 	// Should be set to at least 10 seconds (10000) to avoid repeated read operations
 	minExpiration?: number;
 
-	// Timeout in milliseconds to check expired items, > 0 (if disabled, cleanupAfterSec is not ran)
+	// Timeout in milliseconds to check expired items, > 0 (if disabled, cleanupAfter is not ran)
 	timer?: number;
 
 	// Number of milliseconds to keep item in storage after last use, > minExpiration
@@ -72,4 +72,7 @@ export interface MemoryStorage<T> {
 
 	// Watched items
 	watched: Set<MemoryStorageItem<T>>;
+
+	// Minimum `lastUsed` value from last sort. Used to avoid re-sorting too often
+	minLastUsed?: number;
 }
