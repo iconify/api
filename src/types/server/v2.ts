@@ -90,7 +90,7 @@ export interface APIv2CollectionResponse {
 	chars?: Record<string, string>;
 
 	// Themes
-	themes?: IconifyJSON['themes'];
+	themes?: IconifyJSON['themes']; // Deprecated, so it can be ignored
 	prefixes?: IconifyJSON['prefixes'];
 	suffixes?: IconifyJSON['suffixes'];
 }
@@ -127,7 +127,7 @@ export interface APIv2SearchResponse {
 	// Number of results. If same as `limit`, more results are available
 	total: number;
 
-	// Number of results shown
+	// Maximum number of items allowed by query
 	limit: number;
 
 	// Index of first result

@@ -24,7 +24,6 @@ export function generateLastModifiedResponse(query: FastifyRequest['query'], res
 	const response: APIv3LastModifiedResponse = {
 		lastModified,
 	};
-	let found = false;
 
 	for (let i = 0; i < prefixes.length; i++) {
 		const prefix = prefixes[i];
@@ -32,16 +31,10 @@ export function generateLastModifiedResponse(query: FastifyRequest['query'], res
 		if (item) {
 			const value = item.item.common.lastModified;
 			if (value) {
-				found = true;
 				lastModified[prefix] = value;
 			}
 		}
 	}
 
-	if (!found) {
-		// No matches
-		res.send(404);
-		return;
-	}
 	sendJSONResponse(response, q, wrap, res);
 }
