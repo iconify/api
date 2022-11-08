@@ -203,7 +203,7 @@ export function search(
 	// Generate results
 	if (results.length) {
 		return {
-			prefixes: Object.keys(addedIcons),
+			prefixes: Object.keys(addedIcons).filter((prefix) => !!addedIcons[prefix]?.size),
 			names: results,
 			hasMore: results.length >= limit,
 		};
