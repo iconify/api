@@ -21,6 +21,7 @@
 		"start": "node --expose-gc lib/index.js"
 	},
 	"dependencies": {
+		"@fastify/formbody": "^7.3.0",
 		"@iconify/tools": "^2.1.0",
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.0.0",

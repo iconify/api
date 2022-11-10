@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import fastifyFormBody from '@fastify/formbody';
 import { appConfig, httpHeaders } from '../config/app';
 import { runWhenLoaded } from '../data/loading';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
@@ -21,6 +22,9 @@ export async function startHTTPServer() {
 	const server = fastify({
 		caseSensitive: true,
 	});
+
+	// Support `application/x-www-form-urlencoded`
+	server.register(fastifyFormBody);
 
 	// Generate headers to send
 	interface Header {
