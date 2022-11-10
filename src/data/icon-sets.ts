@@ -1,8 +1,6 @@
 import type { StoredIconSet } from '../types/icon-set/storage';
 import type { IconSetEntry, Importer } from '../types/importers';
-import { iconSetsStorage } from './icon-set/store/storage';
 import { updateSearchIndex } from './search';
-import { cleanupStorageCache } from './storage/startup';
 
 /**
  * All importers
@@ -135,7 +133,6 @@ export function triggerIconSetsUpdate() {
 
 	(async () => {
 		// Clear as much memory as possible by running storage cleanup immediately
-		await cleanupStorageCache(iconSetsStorage);
 		try {
 			global.gc?.();
 		} catch {}

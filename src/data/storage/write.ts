@@ -3,6 +3,8 @@ import { dirname } from 'node:path';
 import type { MemoryStorage, MemoryStorageItem } from '../../types/storage';
 import { addStorageToCleanup } from './cleanup';
 
+const createdDirs: Set<string> = new Set();
+
 /**
  * Write storage to file
  */
@@ -24,32 +26,42 @@ export function writeStoredItem<T>(
 	const dataStr = JSON.stringify(data);
 	pendingWrites.add(storedItem);
 
-	// Create directory
+	// Create directory if needed, write file
 	const filename = config.filename;
 	const dir = dirname(filename);
-	mkdir(
-		dir,
-		{
-			recursive: true,
-		},
-		() => {
-			// Write file
-			writeFile(filename, dataStr, 'utf8', (err) => {
-				pendingWrites.delete(storedItem);
 
-				if (err) {
-					// Error
-					console.error(err);
-				} else {
-					// Success
-					config.exists = true;
+	const write = () => {
+		// Write file
+		writeFile(filename, dataStr, 'utf8', (err) => {
+			pendingWrites.delete(storedItem);
 
-					// Data is written, storage can be cleaned up when needed
-					addStorageToCleanup(storage, storedItem);
-				}
+			if (err) {
+				// Error
+				console.error(err);
+			} else {
+				// Success
+				config.exists = true;
 
-				done?.(err || void 0);
-			});
-		}
-	);
+				// Data is written, storage can be cleaned up when needed
+				addStorageToCleanup(storage, storedItem);
+			}
+
+			done?.(err || void 0);
+		});
+	};
+
+	if (createdDirs.has(dir)) {
+		write();
+	} else {
+		mkdir(
+			dir,
+			{
+				recursive: true,
+			},
+			() => {
+				createdDirs.add(dir);
+				write();
+			}
+		);
+	}
 }
