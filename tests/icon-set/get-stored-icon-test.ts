@@ -173,7 +173,53 @@ describe('Loading icon data from storage', () => {
 				const name = 'star';
 				let isSync1 = true;
 
-				// First run should be async
+				// First run should be async if loader uses async read, synchronous if loaded uses sync read
+				getStoredIconData(storedIconSet, name, () => {
+					let isSync2 = true;
+
+					// Second run should be synchronous
+					getStoredIconData(storedIconSet, name, () => {
+						fulfill(isSync2 === true && isSync1 === true);
+					});
+					isSync2 = false;
+				});
+				isSync1 = false;
+			});
+		}
+
+		// Load icon
+		expect(await syncTest()).toBeTruthy();
+	});
+
+	test('Asynchronous loading', async () => {
+		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+
+		function store(): Promise<StoredIconSet> {
+			return new Promise((fulfill, reject) => {
+				// Create storage
+				const dir = uniqueCacheDir();
+				const cacheDir = '{cache}/' + dir;
+				const storage = createStorage<IconifyIcons>({
+					cacheDir,
+					maxCount: 2,
+					asyncRead: true,
+				});
+
+				// Split icon set
+				storeLoadedIconSet(iconSet, fulfill, storage, {
+					chunkSize: 5000,
+					minIconsPerChunk: 10,
+				});
+			});
+		}
+		const storedIconSet = await store();
+
+		function syncTest(): Promise<boolean> {
+			return new Promise((fulfill, reject) => {
+				const name = 'star';
+				let isSync1 = true;
+
+				// First run should be async if loader uses async read, synchronous if loaded uses sync read
 				getStoredIconData(storedIconSet, name, () => {
 					let isSync2 = true;
 

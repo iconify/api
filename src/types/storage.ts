@@ -52,6 +52,9 @@ export interface MemoryStorageConfig {
 	// Number of milliseconds to keep item in storage after last use, > minExpiration
 	cleanupAfter?: number;
 
+	// Asynchronous reading
+	asyncRead?: boolean;
+
 	// Timer callback, used for debugging and testing. Called before cleanup when its triggered by timer
 	timerCallback?: () => void;
 }

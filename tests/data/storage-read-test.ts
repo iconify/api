@@ -13,12 +13,14 @@ describe('Reading stored data', () => {
 				const storage = createStorage({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Config
 				expect(storage.config).toEqual({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Timer should not exist
@@ -70,12 +72,14 @@ describe('Reading stored data', () => {
 				const storage = createStorage({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Config
 				expect(storage.config).toEqual({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Timer should not exist
@@ -127,12 +131,14 @@ describe('Reading stored data', () => {
 				const storage = createStorage({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Config
 				expect(storage.config).toEqual({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Timer should not exist
@@ -206,7 +212,7 @@ describe('Reading stored data', () => {
 		});
 	});
 
-	test('Error reading cache', () => {
+	test('Error reading cache asynchronously', () => {
 		return new Promise((fulfill, reject) => {
 			try {
 				const dir = uniqueCacheDir();
@@ -216,6 +222,53 @@ describe('Reading stored data', () => {
 				const storage = createStorage({
 					cacheDir,
 					maxCount: 1,
+					asyncRead: true,
+				});
+
+				// Add one item
+				const content = {
+					test: true,
+				};
+				createStoredItem(storage, content, 'foo.json', true, (item, err) => {
+					try {
+						// Data should be written to cache
+						expect(item.data).toBeUndefined();
+
+						// Remove cache file
+						unlinkSync(actualCacheDir + '/foo.json');
+
+						// Attempt to read data
+						getStoredItem(storage, item, (data) => {
+							try {
+								expect(data).toBeFalsy();
+								fulfill(true);
+							} catch (err) {
+								reject(err);
+							}
+						});
+					} catch (err) {
+						reject(err);
+					}
+				});
+
+				// Test continues in callback in createStoredItem()...
+			} catch (err) {
+				reject(err);
+			}
+		});
+	});
+
+	test('Error reading cache synchronously', () => {
+		return new Promise((fulfill, reject) => {
+			try {
+				const dir = uniqueCacheDir();
+				const cacheDir = '{cache}/' + dir;
+				const actualCacheDir = cacheDir.replace('{cache}', appConfig.cacheRootDir);
+
+				const storage = createStorage({
+					cacheDir,
+					maxCount: 1,
+					asyncRead: false,
 				});
 
 				// Add one item

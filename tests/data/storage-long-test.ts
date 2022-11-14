@@ -18,6 +18,7 @@ describe('Advanced storage tests', () => {
 				const storage = createStorage<Item>({
 					cacheDir,
 					maxCount: 2,
+					asyncRead: true,
 				});
 
 				// Create items

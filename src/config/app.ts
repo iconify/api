@@ -92,4 +92,7 @@ export const storageConfig: MemoryStorageConfig = {
 
 	// Number of milliseconds to keep item in storage after last use, > minExpiration
 	cleanupAfter: 0,
+
+	// Asynchronous reading of cache from file system
+	asyncRead: true,
 };
