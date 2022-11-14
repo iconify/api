@@ -160,4 +160,49 @@ describe('Loading icons from storage', () => {
 			height: 24,
 		});
 	});
+
+	test('Synchronous loading', async () => {
+		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+
+		function store(): Promise<StoredIconSet> {
+			return new Promise((fulfill, reject) => {
+				// Create storage
+				const dir = uniqueCacheDir();
+				const cacheDir = '{cache}/' + dir;
+				const storage = createStorage<IconifyIcons>({
+					cacheDir,
+					maxCount: 5,
+				});
+
+				// Split icon set
+				storeLoadedIconSet(iconSet, fulfill, storage, {
+					chunkSize: 5000,
+					minIconsPerChunk: 10,
+				});
+			});
+		}
+		const storedIconSet = await store();
+
+		function syncTest(): Promise<boolean> {
+			return new Promise((fulfill, reject) => {
+				const names: string[] = ['abacus', 'floor-1', 'star', 'wifi'];
+				let isSync1 = true;
+
+				// First run should be async
+				getStoredIconsData(storedIconSet, names, () => {
+					let isSync2 = true;
+
+					// Second run should be synchronous
+					getStoredIconsData(storedIconSet, names, () => {
+						fulfill(isSync2 === true && isSync1 === false);
+					});
+					isSync2 = false;
+				});
+				isSync1 = false;
+			});
+		}
+
+		// Load icons
+		expect(await syncTest()).toBeTruthy();
+	});
 });
