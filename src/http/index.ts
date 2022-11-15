@@ -192,9 +192,8 @@ export async function startHTTPServer() {
 
 	// Error handling
 	server.setDefaultRoute((req, res) => {
-		res.statusCode = 301;
+		res.statusCode = 404;
 		console.log('404:', req.url);
-		// res.setHeader('Location', appConfig.redirectIndex);
 
 		// Need to set custom headers because hooks don't work here
 		for (let i = 0; i < headers.length; i++) {
