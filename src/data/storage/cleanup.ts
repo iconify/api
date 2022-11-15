@@ -1,6 +1,5 @@
 import type { MemoryStorage, MemoryStorageItem } from '../../types/storage';
 import { runStorageCallbacks } from './callbacks';
-import { writeStoredItem } from './write';
 
 /**
  * Stop timer

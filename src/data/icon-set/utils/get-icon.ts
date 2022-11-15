@@ -1,4 +1,4 @@
-import type { ExtendedIconifyAlias, ExtendedIconifyIcon, IconifyIcons, IconifyJSON } from '@iconify/types';
+import type { ExtendedIconifyAlias, ExtendedIconifyIcon, IconifyIcons } from '@iconify/types';
 import { mergeIconData } from '@iconify/utils/lib/icon/merge';
 import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split';
 import type { StoredIconSet } from '../../../types/icon-set/storage';

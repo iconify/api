@@ -1,11 +1,4 @@
-import {
-	defaultIconDimensions,
-	flipFromString,
-	iconToHTML,
-	iconToSVG,
-	rotateFromString,
-	stringToColor,
-} from '@iconify/utils';
+import { defaultIconDimensions, flipFromString, iconToHTML, iconToSVG, rotateFromString } from '@iconify/utils';
 import { defaultIconCustomisations, IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getStoredIconData } from '../../data/icon-set/utils/get-icon';

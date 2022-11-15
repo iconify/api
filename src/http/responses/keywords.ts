@@ -1,12 +1,9 @@
 import { matchIconName } from '@iconify/utils';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { getPrefixes, iconSets } from '../../data/icon-sets';
 import { searchIndex } from '../../data/search';
 import { getPartialKeywords } from '../../data/search/partial';
 import type { APIv3KeywordsQuery, APIv3KeywordsResponse } from '../../types/server/keywords';
-import type { APIv3LastModifiedResponse } from '../../types/server/modified';
 import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
-import { filterPrefixesByPrefix } from '../helpers/prefixes';
 
 /**
  * Generate icons data
