@@ -179,10 +179,10 @@ export async function startHTTPServer() {
 
 	// Version
 	server.get('/version', (req, res) => {
-		res.send(versionResponse(req.query));
+		versionResponse(req.query, res);
 	});
 	server.post('/version', (req, res) => {
-		res.send(versionResponse(req.query));
+		versionResponse(req.query, res);
 	});
 
 	// Redirect
