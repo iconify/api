@@ -178,12 +178,14 @@ export async function startHTTPServer() {
 	});
 
 	// Version
-	server.get('/version', (req, res) => {
-		versionResponse(req.query, res);
-	});
-	server.post('/version', (req, res) => {
-		versionResponse(req.query, res);
-	});
+	if (appConfig.enableVersion) {
+		server.get('/version', (req, res) => {
+			versionResponse(req.query, res);
+		});
+		server.post('/version', (req, res) => {
+			versionResponse(req.query, res);
+		});
+	}
 
 	// Redirect
 	server.get('/', (req, res) => {

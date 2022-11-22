@@ -5,7 +5,9 @@ export interface AppConfig {
 	// Index page
 	redirectIndex: string;
 
-	// Region to add to `/version` response. Used to tell which server is responding when running multiple servers
+	// Region to add to `/version` response
+	// Used to tell which server is responding when running multiple servers
+	// Requires `enableVersion` to be enabled
 	statusRegion: string;
 
 	// Cache root directory
@@ -29,6 +31,9 @@ export interface AppConfig {
 
 	// Update check throttling
 	updateThrottle: number;
+
+	// Enables `/version` query
+	enableVersion: boolean;
 
 	// Enable icon sets and icon lists
 	// Disable this option if you need API to serve only icon data to save memory

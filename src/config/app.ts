@@ -9,7 +9,9 @@ export const appConfig: AppConfig = {
 	// Index page
 	redirectIndex: 'https://iconify.design/',
 
-	// Region to add to `/version` response. Used to tell which server is responding when running multiple servers
+	// Region to add to `/version` response
+	// Used to tell which server is responding when running multiple servers
+	// Requires `enableVersion` to be enabled
 	statusRegion: '',
 
 	// Cache root directory
@@ -32,6 +34,9 @@ export const appConfig: AppConfig = {
 	// Update check throttling
 	// Delay to wait between successful update request and actual update
 	updateThrottle: 60,
+
+	// Enables `/version` query
+	enableVersion: false,
 
 	// Enable icon sets and icon lists
 	// Disable this option if you need API to serve only icon data to save memory
