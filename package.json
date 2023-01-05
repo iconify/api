@@ -21,17 +21,17 @@
 		"start": "node --expose-gc lib/index.js"
 	},
 	"dependencies": {
-		"@fastify/formbody": "^7.3.0",
-		"@iconify/tools": "^2.1.2",
+		"@fastify/formbody": "^7.4.0",
+		"@iconify/tools": "^2.2.0",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.0.2",
+		"@iconify/utils": "^2.0.9",
 		"dotenv": "^16.0.3",
-		"fastify": "^4.10.2"
+		"fastify": "^4.11.0"
 	},
 	"devDependencies": {
-		"@types/jest": "^29.2.3",
-		"@types/node": "^18.11.9",
-		"typescript": "^4.9.3",
-		"vitest": "^0.25.2"
+		"@types/jest": "^29.2.5",
+		"@types/node": "^18.11.18",
+		"typescript": "^4.9.4",
+		"vitest": "^0.26.3"
 	}
 }
