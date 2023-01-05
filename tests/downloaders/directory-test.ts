@@ -99,6 +99,8 @@ describe('Directory downloader', () => {
 
 		// Add new file
 		await writeFile(dir + '/mdi-light.json', await readFile('tests/fixtures/json/mdi-light.json'));
+
+		// Check for update
 		expect(await test.checkForUpdate()).toBe(true);
 		expect(test.contentLoaded).toBe(4);
 
