@@ -13,6 +13,7 @@ import { generateAPIv2SearchResponse } from './responses/search';
 import { generateSVGResponse } from './responses/svg';
 import { generateUpdateResponse } from './responses/update';
 import { initVersionResponse, versionResponse } from './responses/version';
+import { generateIconsStyleResponse } from './responses/css';
 
 /**
  * Start HTTP server
@@ -93,6 +94,18 @@ export async function startHTTPServer() {
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').json', (req, res) => {
 		runWhenLoaded(() => {
 			generateIconsDataResponse((req.params as PrefixParams).prefix, false, req.query, res);
+		});
+	});
+
+	// Stylesheet: /prefix/style.css, /prefix.css
+	server.get('/:prefix(' + iconNameRoutePartialRegEx + ')/style.css', (req, res) => {
+		runWhenLoaded(() => {
+			generateIconsStyleResponse((req.params as PrefixParams).prefix, req.query, res);
+		});
+	});
+	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').css', (req, res) => {
+		runWhenLoaded(() => {
+			generateIconsStyleResponse((req.params as PrefixParams).prefix, req.query, res);
 		});
 	});
 
