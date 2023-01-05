@@ -13,6 +13,12 @@ describe('Directory downloader', () => {
 		}
 	}
 
+	function delay() {
+		return new Promise((fulfill) => {
+			setTimeout(fulfill, 100);
+		});
+	}
+
 	test('Existing files', async () => {
 		// Create new instance
 		const test = new TestDownloader('tests/fixtures');
@@ -88,16 +94,19 @@ describe('Directory downloader', () => {
 		expect(test.contentLoaded).toBe(1);
 
 		// Replace file
+		await delay();
 		await writeFile(dir + '/mdi.json', await readFile('tests/fixtures/json/mdi-light.json'));
 		expect(await test.checkForUpdate()).toBe(true);
 		expect(test.contentLoaded).toBe(2);
 
 		// Touch file: should trigger update because file modification time changes
+		await delay();
 		await writeFile(dir + '/mdi.json', await readFile('tests/fixtures/json/mdi-light.json'));
 		expect(await test.checkForUpdate()).toBe(true);
 		expect(test.contentLoaded).toBe(3);
 
 		// Add new file
+		await delay();
 		await writeFile(dir + '/mdi-light.json', await readFile('tests/fixtures/json/mdi-light.json'));
 
 		// Check for update
