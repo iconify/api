@@ -97,12 +97,7 @@ export async function startHTTPServer() {
 		});
 	});
 
-	// Stylesheet: /prefix/style.css, /prefix.css
-	server.get('/:prefix(' + iconNameRoutePartialRegEx + ')/style.css', (req, res) => {
-		runWhenLoaded(() => {
-			generateIconsStyleResponse((req.params as PrefixParams).prefix, req.query, res);
-		});
-	});
+	// Stylesheet: /prefix.css
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').css', (req, res) => {
 		runWhenLoaded(() => {
 			generateIconsStyleResponse((req.params as PrefixParams).prefix, req.query, res);

@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { stringToColor } from '@iconify/utils/lib/colors';
 import { getIconsCSS } from '@iconify/utils/lib/css/icons';
 import { getStoredIconsData } from '../../data/icon-set/utils/get-icons';
 import { iconSets } from '../../data/icon-sets';
@@ -51,6 +52,13 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 				case 'expanded':
 					options.format = format;
 			}
+		}
+
+		// 'color': string
+		// Sets color for monotone images
+		const color = qOptions.color;
+		if (typeof color === 'string' && stringToColor(color)) {
+			options.color = color;
 		}
 
 		// 'mode': string

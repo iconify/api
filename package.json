@@ -4,7 +4,7 @@
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
 	"private": true,
-	"version": "3.0.0-beta.2",
+	"version": "3.0.0-beta.3",
 	"bugs": "https://github.com/iconify/api/issues",
 	"homepage": "https://github.com/iconify/api",
 	"repository": {
@@ -24,7 +24,7 @@
 		"@fastify/formbody": "^7.4.0",
 		"@iconify/tools": "^2.2.0",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.0.9",
+		"@iconify/utils": "^2.0.11",
 		"dotenv": "^16.0.3",
 		"fastify": "^4.11.0"
 	},
