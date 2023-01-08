@@ -1,5 +1,5 @@
 ARG ARCH=amd64
-ARG NODE_VERSION=16
+ARG NODE_VERSION=18
 ARG OS=bullseye-slim
 ARG ICONIFY_API_VERSION=3.0.0
 ARG SRC_PATH=./
@@ -66,13 +66,13 @@ ARG TAG_SUFFIX=default
 LABEL org.label-schema.build-date=${BUILD_DATE} \
     org.label-schema.docker.dockerfile="Dockerfile" \
     org.label-schema.license="MIT" \
-    org.label-schema.name="Iconify API.js" \
+    org.label-schema.name="Iconify API" \
     org.label-schema.version=${BUILD_VERSION} \
     org.label-schema.description="Node.js version of api.iconify.design" \
-    org.label-schema.url="https://github.com/iconify/api.js" \
+    org.label-schema.url="https://github.com/iconify/api" \
     org.label-schema.vcs-ref=${BUILD_REF} \
     org.label-schema.vcs-type="Git" \
-    org.label-schema.vcs-url="https://github.com/iconify/api.js" \
+    org.label-schema.vcs-url="https://github.com/iconify/api" \
     org.label-schema.arch=${ARCH} \
     authors="Vjacheslav Trushkin"
 

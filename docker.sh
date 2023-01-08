@@ -5,8 +5,8 @@
 #./docker.sh arm64v8
 
 # To test the docker image a command like this can be used:
-#docker run --rm -p 3123:3000 --name iconify-api -v $(realpath "../iconify-cache"):/data/iconify-api/cache -v $(realpath "../iconify-config"):/data/iconify-api/src/config iconify/iconify-api:latest
-#docker run --rm -p 3123:3000 --name iconify-api -v /absolute/path/iconify-cache:/data/iconify-api/cache -v /absolute/path/iconify-config:/data/iconify-api/src/config iconify/iconify-api:latest
+#docker run --rm -p 3123:3000 --name iconify-api -v $(realpath "../iconify-cache"):/data/iconify-api/cache -v $(realpath "../iconify-config"):/data/iconify-api/src/config iconify/api:latest
+#docker run --rm -p 3123:3000 --name iconify-api -v /absolute/path/iconify-cache:/data/iconify-api/cache -v /absolute/path/iconify-config:/data/iconify-api/src/config iconify/api:latest
 ICONIFY_API_REPO=$(realpath "./")
 BUILD_SOURCE=$(realpath "./")
 SHARED_DIR=$BUILD_SOURCE/../shared
@@ -24,7 +24,7 @@ echo "Build BASE dir: $BUILD_SOURCE"
 
 export ICONIFY_API_VERSION=$(grep -oE "\"version\": \"([0-9]+.[0-9]+.[a-z0-9.-]+)" $ICONIFY_API_REPO/package.json | cut -d\" -f4)
 
-echo "iconify-api.js version: ${ICONIFY_API_VERSION}"
+echo "Iconify API version: ${ICONIFY_API_VERSION}"
 
 mkdir -p $BUILD_SOURCE/tmp
 
@@ -53,6 +53,6 @@ time docker build --rm=false \
     --build-arg TAG_SUFFIX=default \
 	--build-arg SRC_PATH="$SRC_PATH" \
     --file $DOCKERFILE \
-    --tag iconify/iconify-api:latest --tag iconify/iconify-api:${ICONIFY_API_VERSION} $BUILD_SOURCE
+    --tag iconify/api:latest --tag iconify/api:${ICONIFY_API_VERSION} $BUILD_SOURCE
 
 rm -fR $BUILD_SOURCE/tmp

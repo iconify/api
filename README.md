@@ -12,6 +12,8 @@ To build a Docker image, run `./docker.sh`.
 
 If you want to customise config, fork this repo, customise source code, then build Docker image and deploy API.
 
+To run a Docker image, run `docker run -d -p 3000:3000 iconify/api` (change first 3000 to port you want to run API on).
+
 ## How to use it
 
 First, you need to install NPM dependencies and run build script:
@@ -71,7 +73,7 @@ Options that can be changed with environment variables and their default values 
 ### Memory management
 
 By default, API will use memory management functions. It stores only recently used icons in memory, reducing memory usage.
-
+000
 If your API gets a lot of traffic (above 1k requests per minute), it is better to not use memory management. With such high number of queries, disc read/write operations might cause degraded performance. API can easily handle 10 times more traffic on a basic VPS if everything is in memory and can be accessed instantly.
 
 See [memory management in full API docs](https://docs.iconify.design/api/hosting-js/config.html).
