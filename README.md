@@ -6,6 +6,12 @@ This repository contains Iconify API script. It is a HTTP server, written in Nod
 -   Generates SVG, which you can link to in HTML or stylesheet.
 -   Provides search engine for hosted icons, which can be used by icon pickers.
 
+## Docker
+
+To build a Docker image, run `./docker.sh`.
+
+If you want to customise config, fork this repo, customise source code, then build Docker image and deploy API.
+
 ## How to use it
 
 First, you need to install NPM dependencies and run build script:
@@ -24,6 +30,7 @@ npm run start
 By default, server will:
 
 -   Automatically load latest icons from [`@iconify/json`](https://github.com/iconify/icon-sets).
+-   Load custom icon sets from `icons` directory.
 -   Serve data on port 3000.
 
 You can customise API to:
@@ -54,11 +61,20 @@ Options that can be changed with environment variables and their default values 
 
 -   `HOST=0.0.0.0`: IP address or hostname HTTP server listens on.
 -   `PORT=3000`: port HTTP server listens on.
+-   `ICONIFY_SOURCE=full`: source for Iconify icon sets. Set to `full` to use `@iconify/json` package, `split` to use `@iconify-json/*` packages, `none` to use only custom icon sets.
 -   `REDIRECT_INDEX=https://iconify.design/`: redirect for `/` route. API does not serve any pages, so index page redirects to main website.
 -   `STATUS_REGION=`: custom text to add to `/version` route response. Iconify API is ran on network of servers, visitor is routed to closest server. It is used to tell which server user is connected to.
 -   `ENABLE_ICON_LISTS=true`: enables `/collections` route that lists icon sets and `/collection?prefix=whatever` route to get list of icons. Used by icon pickers. Disable it if you are using API only to serve icon data.
 -   `ENABLE_SEARCH_ENGINE=true`: enables `/search` route. Requires `ENABLE_ICON_LISTS` to be enabled.
 -   `ALLOW_FILTER_ICONS_BY_STYLE=true`: allows searching for icons based on fill or stroke, such as adding `style=fill` to search query. This feature uses a bit of memory, so it can be disabled. Requires `ENABLE_SEARCH_ENGINE` to be enabled.
+
+### Memory management
+
+By default, API will use memory management functions. It stores only recently used icons in memory, reducing memory usage.
+
+If your API gets a lot of traffic (above 1k requests per minute), it is better to not use memory management. With such high number of queries, disc read/write operations might cause degraded performance. API can easily handle 10 times more traffic on a basic VPS if everything is in memory and can be accessed instantly.
+
+See [memory management in full API docs](https://docs.iconify.design/api/hosting-js/config.html).
 
 ### Updating icons
 
