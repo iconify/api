@@ -11,7 +11,7 @@ ICONIFY_API_REPO=$(realpath "./")
 BUILD_SOURCE=$(realpath "./")
 SHARED_DIR=$BUILD_SOURCE/../shared
 DOCKERFILE=$(realpath "./Dockerfile")
-REPO_BRANCH="dev3"
+REPO_BRANCH="main"
 SRC_PATH="./"
 if [ -z "$1" ]; then
     ARCH=amd64
@@ -21,17 +21,8 @@ else
 fi
 echo "Starting to build for arch: $ARCH"
 echo "Build BASE dir: $BUILD_SOURCE"
-if [ ! -s "./package.json" ] && [ -s "./iconify-api.js/package.json" ]; then
-    # If the repo is not the same as where the Docker file is located,
-    # this will fix all paths
-    ICONIFY_API_REPO=$(realpath "./iconify-api.js/")
-	SRC_PATH="iconify-api.js/"
-    cd $ICONIFY_API_REPO
-    git checkout $REPO_BRANCH
-    cd $BUILD_SOURCE
-fi
 
-export ICONIFY_API_VERSION=$(grep -oE "\"version\": \"(\w*.\w*.\w*(-\w*)?)" $ICONIFY_API_REPO/package.json | cut -d\" -f4)
+export ICONIFY_API_VERSION=$(grep -oE "\"version\": \"([0-9]+.[0-9]+.[a-z0-9.-]+)" $ICONIFY_API_REPO/package.json | cut -d\" -f4)
 
 echo "iconify-api.js version: ${ICONIFY_API_VERSION}"
 

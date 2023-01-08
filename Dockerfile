@@ -28,10 +28,6 @@ RUN set -ex && \
         nano \
 		git && \
     mkdir -p /data/iconify-api && \
-	npm i selfupdate --location=global && \
-    deluser --remove-home node && \
-    useradd --home-dir /data/iconify-api --uid 1000 --shell /bin/bash iconify-api && \
-    chown -R iconify-api:root /data/iconify-api && chmod -R g+rwX /data/iconify-api && \
     apt-get clean && \
     rm -rf /tmp/* && \
     # Restore the original sources.list
@@ -46,12 +42,17 @@ WORKDIR /data/iconify-api
 FROM base AS iconify-api-install
 ARG SRC_PATH
 
-# Make CERTAIN peer dependencies are installed, otherwise this will very likely fail
-COPY ${SRC_PATH} /data/iconify-api/
-COPY init.sh /init.sh
+# Copy package files, install dependencies
+COPY ${SRC_PATH}*.json ./
+RUN npm ci
 
-RUN cp -fR /data/iconify-api/src/config /data/config_default && \
-    npm install
+# Copy src, .env and icons
+COPY ${SRC_PATH}.env* /data/iconify-api/
+COPY ${SRC_PATH}src/ /data/iconify-api/src/
+COPY ${SRC_PATH}icons/ /data/iconify-api/icons/
+
+# Build API
+RUN npm run build
 
 #### Stage RELEASE #####################################################################################################
 FROM iconify-api-install AS RELEASE
@@ -86,4 +87,4 @@ EXPOSE 3000
 # Add a healthcheck (default every 30 secs)
 HEALTHCHECK CMD curl http://localhost:3000/ || exit 1
 
-ENTRYPOINT ["/init.sh"]
+CMD ["npm", "run", "start"]
