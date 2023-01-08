@@ -14,6 +14,15 @@ If you want to customise config, fork this repo, customise source code, then bui
 
 To run a Docker image, run `docker run -d -p 3000:3000 iconify/api` (change first 3000 to port you want to run API on).
 
+NPM commands for working with Docker images:
+
+-   `npm run docker:build` - builds Docker image.
+-   `npm run docker:start` - starts Docker container on port 3000.
+-   `npm run docker:stop` - stops all Iconify API Docker containers.
+-   `npm run docker:cleanup` - removes all unused Iconify API Docker containers.
+
+There is no command to remove unused images because of Docker limitations. You need to do it manually from Docker Desktop or command line.
+
 ## How to use it
 
 First, you need to install NPM dependencies and run build script:
