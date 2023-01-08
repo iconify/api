@@ -46,8 +46,7 @@ ARG SRC_PATH
 COPY ${SRC_PATH}*.json ./
 RUN npm ci
 
-# Copy src, .env and icons
-COPY ${SRC_PATH}.env* /data/iconify-api/
+# Copy src and icons
 COPY ${SRC_PATH}src/ /data/iconify-api/src/
 COPY ${SRC_PATH}icons/ /data/iconify-api/icons/
 
