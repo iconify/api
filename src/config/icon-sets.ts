@@ -20,8 +20,8 @@ export async function getImporters(): Promise<Importer[]> {
 	 *
 	 * Uses pre-configured importers. See `importers` sub-directory
 	 */
-	type IconifyIconSetsOptions = 'full' | 'split' | false;
-	const iconifyIconSets = 'full' as IconifyIconSetsOptions;
+	type IconifyIconSetsOptions = 'full' | 'split' | 'none';
+	const iconifyIconSets = (process.env['ICONIFY_SOURCE'] || 'full') as IconifyIconSetsOptions;
 
 	switch (iconifyIconSets) {
 		case 'full':
@@ -34,11 +34,14 @@ export async function getImporters(): Promise<Importer[]> {
 	}
 
 	/**
-	 * Add custom icons from `json` directory
+	 * Add custom icons from `icons` directory
 	 */
-	if (await directoryExists('json')) {
+	if (await directoryExists('icons')) {
 		importers.push(
-			createJSONDirectoryImporter(new DirectoryDownloader<ImportedData>('json'), {
+			createJSONDirectoryImporter(new DirectoryDownloader<ImportedData>('icons'), {
+				// Skip icon sets with mismatched prefix
+				ignoreInvalidPrefix: false,
+
 				// Filter icon sets. Returns true if icon set should be included, false if not.
 				filter: (prefix) => {
 					return true;

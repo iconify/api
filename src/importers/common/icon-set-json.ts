@@ -6,6 +6,8 @@ import { prependSlash } from '../../misc/files';
 
 export interface IconSetJSONOptions {
 	// Ignore bad prefix?
+	// false -> skip icon sets with mismatched prefix
+	// true -> import icon set with mismatched prefix
 	ignoreInvalidPrefix?: boolean;
 }
 
@@ -26,9 +28,12 @@ export async function importIconSetFromJSON(
 		}
 		if (data.prefix !== prefix) {
 			if (!options.ignoreInvalidPrefix) {
-				console.error(
-					`Error loading "${prefix}" icon set: bad prefix (enable ignoreInvalidPrefix option in importer to skip this check)`
-				);
+				if (options.ignoreInvalidPrefix === void 0) {
+					// Show warning if option is not set
+					console.error(
+						`Error loading "${prefix}" icon set: bad prefix (enable ignoreInvalidPrefix option in importer to import icon set)`
+					);
+				}
 				return;
 			}
 			data.prefix = prefix;
