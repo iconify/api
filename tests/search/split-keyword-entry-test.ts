@@ -84,6 +84,31 @@ describe('Splitting keywords', () => {
 				{
 					keywords: ['mdi', 'home'],
 				},
+				{
+					keywords: ['mdihome'],
+				},
+			],
+		});
+
+		expect(
+			splitKeywordEntries(['mdi', 'home', 'outline'], {
+				prefix: false,
+				partial: false,
+			})
+		).toEqual({
+			searches: [
+				{
+					keywords: ['mdi', 'home', 'outline'],
+				},
+				{
+					keywords: ['mdihome', 'outline'],
+				},
+				{
+					keywords: ['mdihomeoutline'],
+				},
+				{
+					keywords: ['mdi', 'homeoutline'],
+				},
 			],
 		});
 
@@ -101,6 +126,9 @@ describe('Splitting keywords', () => {
 				{
 					keywords: ['mdi', 'home'],
 				},
+				{
+					keywords: ['mdihome'],
+				},
 			],
 		});
 
@@ -117,6 +145,9 @@ describe('Splitting keywords', () => {
 				},
 				{
 					keywords: ['mdi'],
+				},
+				{
+					keywords: ['mdihome'],
 				},
 			],
 			partial: 'home',

@@ -37,7 +37,7 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 	};
 	let invalid = false;
 
-	// Split each entry
+	// Split each entry into arrays
 	interface Entry {
 		value: string;
 		empty: boolean;
@@ -184,8 +184,8 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 	for (let i = 0; i <= lastIndex; i++) {
 		add(splitValues[i], keywords, test, options.partial && i === lastIndex);
 	}
-
 	if (keywords.size || results.partial) {
+		// Add item
 		const item: SplitResultItem = {
 			keywords: Array.from(keywords),
 		};
@@ -193,6 +193,65 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 			item.test = Array.from(test);
 		}
 		results.searches.push(item);
+	}
+
+	// Merge values
+	if (splitValues.length > 1) {
+		// Check which items can be used for merge
+		// Merge only simple keywords
+		const validIndexes: Set<number> = new Set();
+		for (let i = 0; i <= lastIndex; i++) {
+			const item = splitValues[i];
+			if (item.length === 1 && !item[0].empty) {
+				validIndexes.add(i);
+			}
+		}
+
+		if (validIndexes.size > 1) {
+			for (let startIndex = 0; startIndex < lastIndex; startIndex++) {
+				if (!validIndexes.has(startIndex)) {
+					continue;
+				}
+				for (let endIndex = startIndex + 1; endIndex <= lastIndex; endIndex++) {
+					if (!validIndexes.has(endIndex)) {
+						// Break loop
+						break;
+					}
+
+					// Generate new values list
+					const newSplitValues: Entry[][] = [
+						...splitValues.slice(0, startIndex),
+						[
+							{
+								value: splitValues
+									.slice(startIndex, endIndex + 1)
+									.map((item) => item[0].value)
+									.join(''),
+								empty: false,
+							},
+						],
+						...splitValues.slice(endIndex + 1),
+					];
+					const newLastIndex = newSplitValues.length - 1;
+					const keywords: Set<string> = new Set();
+					const test: Set<string> = new Set();
+					for (let i = 0; i <= newLastIndex; i++) {
+						add(newSplitValues[i], keywords, test, false);
+					}
+
+					if (keywords.size || results.partial) {
+						// Add item
+						const item: SplitResultItem = {
+							keywords: Array.from(keywords),
+						};
+						if (test.size) {
+							item.test = Array.from(test);
+						}
+						results.searches.push(item);
+					}
+				}
+			}
+		}
 	}
 
 	return results;
