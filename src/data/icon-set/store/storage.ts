@@ -34,7 +34,7 @@ export function storeLoadedIconSet(
 	config: SplitIconSetConfig = splitIconSetConfig
 ) {
 	let themes: StorageIconSetThemes | undefined;
-	let themeChunks: string[] | undefined;
+	let themeParts: string[] | undefined;
 
 	if (appConfig.enableIconLists) {
 		// Get themes
@@ -52,14 +52,14 @@ export function storeLoadedIconSet(
 			if (appConfig.enableSearchEngine) {
 				const data = findIconSetThemes(iconSet);
 				if (data.length) {
-					themeChunks = data;
+					themeParts = data;
 				}
 			}
 		}
 	}
 
 	// Get icons
-	const icons = generateIconSetIconsTree(iconSet, themeChunks);
+	const icons = generateIconSetIconsTree(iconSet, themeParts);
 	removeBadIconSetItems(iconSet, icons);
 
 	// Fix icons counter
@@ -113,6 +113,9 @@ export function storeLoadedIconSet(
 			}
 			if (appConfig.enableIconLists) {
 				result.apiV2IconsCache = prepareAPIv2IconsList(iconSet, icons);
+				if (appConfig.enableSearchEngine && themeParts?.length) {
+					result.themeParts = themeParts;
+				}
 			}
 			done(result);
 		}

@@ -188,10 +188,27 @@ export function search(
 						}
 
 						// Find icon name that matches all keywords
-						const name = item.find((name) => {
+						let length: number | undefined;
+						const name = item.find((name, index) => {
 							for (let i = 0; i < testMatches.length; i++) {
 								if (name.indexOf(testMatches[i]) === -1) {
 									return false;
+								}
+
+								// Get length
+								if (!index) {
+									// First item sets `_l`, unless it didn't match any prefixes/suffixes
+									length = item._l || name.length;
+								} else if (iconSet.themeParts) {
+									// Alias: calculate length
+									const themeParts = iconSet.themeParts;
+									for (let partIndex = 0; partIndex < themeParts.length; partIndex++) {
+										const part = themeParts[partIndex];
+										if (name.startsWith(part + '-') || name.endsWith('-' + part)) {
+											length = name.length - part.length - 1;
+											break;
+										}
+									}
 								}
 							}
 							return true;
@@ -200,8 +217,7 @@ export function search(
 							// Add icon
 							prefixAddedIcons.add(item);
 
-							const length = item._l ?? name.length;
-							const list = getMatchResult(length, !isExact);
+							const list = getMatchResult(length || name.length, !isExact);
 							list.names.push(prefix + ':' + name);
 							allMatchesLength++;
 

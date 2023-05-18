@@ -255,20 +255,16 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: st
 					iconKeywords.add(chunk);
 					(keywords[chunk] || (keywords[chunk] = new Set())).add(icon);
 				});
+			}
 
-				// Check for length
-				let maxLength = name.length;
-				if (commonChunks) {
-					for (let j = 0; j < commonChunks.length; j++) {
-						const chunk = commonChunks[j];
-						if (name.startsWith(chunk + '-') || name.endsWith('-' + chunk)) {
-							maxLength = name.length - chunk.length - 1;
-							break;
-						}
+			// Check for length based on first name
+			if (commonChunks) {
+				for (let j = 0; j < commonChunks.length; j++) {
+					const chunk = commonChunks[j];
+					if (name.startsWith(chunk + '-') || name.endsWith('-' + chunk)) {
+						icon._l = name.length - chunk.length - 1;
+						break;
 					}
-				}
-				if (!icon._l || icon._l > maxLength) {
-					icon._l = maxLength;
 				}
 			}
 		}

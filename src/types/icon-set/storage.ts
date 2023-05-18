@@ -32,6 +32,7 @@ export interface StoredIconSet {
 
 	// Themes
 	themes?: StorageIconSetThemes;
+	themeParts?: string[];
 }
 
 /**
