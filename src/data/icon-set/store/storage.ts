@@ -10,16 +10,13 @@ import { getIconSetSplitChunksCount, splitIconSetMainData } from './split';
 import { removeBadIconSetItems } from '../lists/validate';
 import { prepareAPIv2IconsList } from '../lists/icons-v2';
 import { generateIconSetIconsTree } from '../lists/icons';
+import { themeKeys } from './themes';
+import { findIconSetThemes } from './themes';
 
 /**
  * Storage
  */
 export const iconSetsStorage = createStorage<IconifyIcons>(storageConfig);
-
-/**
- * Themes to copy
- */
-const themeKeys: (keyof StorageIconSetThemes)[] = ['themes', 'prefixes', 'suffixes'];
 
 /**
  * Counter for prefixes
@@ -36,7 +33,33 @@ export function storeLoadedIconSet(
 	storage: MemoryStorage<IconifyIcons> = iconSetsStorage,
 	config: SplitIconSetConfig = splitIconSetConfig
 ) {
-	const icons = generateIconSetIconsTree(iconSet);
+	let themes: StorageIconSetThemes | undefined;
+	let themeChunks: string[] | undefined;
+
+	if (appConfig.enableIconLists) {
+		// Get themes
+		if (appConfig.enableIconLists) {
+			const themesList: StorageIconSetThemes = {};
+			for (let i = 0; i < themeKeys.length; i++) {
+				const key = themeKeys[i];
+				if (iconSet[key]) {
+					themesList[key as 'prefixes'] = iconSet[key as 'prefixes'];
+					themes = themesList;
+				}
+			}
+
+			// Get common parts of icon names for optimised search
+			if (appConfig.enableSearchEngine) {
+				const data = findIconSetThemes(iconSet);
+				if (data.length) {
+					themeChunks = data;
+				}
+			}
+		}
+	}
+
+	// Get icons
+	const icons = generateIconSetIconsTree(iconSet, themeChunks);
 	removeBadIconSetItems(iconSet, icons);
 
 	// Fix icons counter
@@ -46,17 +69,6 @@ export function storeLoadedIconSet(
 
 	// Get common items
 	const common = splitIconSetMainData(iconSet);
-
-	// Get themes
-	const themes: StorageIconSetThemes = {};
-	if (appConfig.enableIconLists) {
-		for (let i = 0; i < themeKeys.length; i++) {
-			const key = themeKeys[i];
-			if (iconSet[key]) {
-				themes[key as 'prefixes'] = iconSet[key as 'prefixes'];
-			}
-		}
-	}
 
 	// Get number of chunks
 	const chunksCount = getIconSetSplitChunksCount(iconSet.icons, config);
@@ -94,15 +106,12 @@ export function storeLoadedIconSet(
 				items: storedItems,
 				tree,
 				icons,
+				themes,
 			};
 			if (iconSet.info) {
 				result.info = iconSet.info;
 			}
 			if (appConfig.enableIconLists) {
-				for (const key in themes) {
-					result.themes = themes;
-					break;
-				}
 				result.apiV2IconsCache = prepareAPIv2IconsList(iconSet, icons);
 			}
 			done(result);

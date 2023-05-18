@@ -44,6 +44,7 @@ export function search(
 	// Check for partial
 	const partial = keywords.partial;
 	let partialKeywords: string[] | undefined;
+	let isFirstKeywordExact = true;
 
 	if (partial) {
 		// Get all partial keyword matches
@@ -57,6 +58,7 @@ export function search(
 			partialKeywords = [partial];
 		} else {
 			// Partial keywords exist
+			isFirstKeywordExact = !!exists;
 			partialKeywords = exists ? [partial].concat(cache) : cache.slice(0);
 		}
 	}
@@ -66,11 +68,32 @@ export function search(
 
 	// Prepare variables
 	const addedIcons = Object.create(null) as Record<string, Set<IconSetIconNames>>;
-	const results: string[] = [];
+
+	// Results, sorted
+	interface TemporaryResultItem {
+		length: number;
+		partial: boolean;
+		names: string[];
+	}
+	const allMatches: TemporaryResultItem[] = [];
+	let allMatchesLength = 0;
+	const getMatchResult = (length: number, partial: boolean): TemporaryResultItem => {
+		const result = allMatches.find((item) => item.length === length && item.partial === partial);
+		if (result) {
+			return result;
+		}
+		const newItem: TemporaryResultItem = {
+			length,
+			partial,
+			names: [],
+		};
+		allMatches.push(newItem);
+		return newItem;
+	};
 	const limit = params.limit;
 
 	// Run all searches
-	const check = (partial?: string) => {
+	const check = (isExact: boolean, partial?: string) => {
 		for (let searchIndex = 0; searchIndex < keywords.searches.length; searchIndex++) {
 			// Add prefixes cache to avoid re-calculating it for every partial keyword
 			interface ExtendedSearchKeywordsEntry extends SearchKeywordsEntry {
@@ -176,8 +199,14 @@ export function search(
 						if (name) {
 							// Add icon
 							prefixAddedIcons.add(item);
-							results.push(prefix + ':' + name);
-							if (results.length >= limit) {
+
+							const length = item._l ?? name.length;
+							const list = getMatchResult(length, !isExact);
+							list.names.push(prefix + ':' + name);
+							allMatchesLength++;
+
+							if (!isExact && allMatchesLength >= limit) {
+								// Return only if checking for partials and limit reached
 								return;
 							}
 						}
@@ -189,21 +218,39 @@ export function search(
 
 	// Check all keywords
 	if (!partialKeywords) {
-		check();
+		check(true);
 	} else {
 		let partial: string | undefined;
 		while ((partial = partialKeywords.shift())) {
-			check(partial);
-			if (results.length >= limit) {
+			check(isFirstKeywordExact, partial);
+			if (allMatchesLength >= limit) {
 				break;
 			}
+
+			// Next check will be for partial keyword
+			isFirstKeywordExact = false;
 		}
 	}
 
 	// Generate results
-	if (results.length) {
+	if (allMatchesLength) {
+		// Sort matches
+		allMatches.sort((a, b) => (a.partial !== b.partial ? (a.partial ? 1 : -1) : a.length - b.length));
+
+		// Extract results
+		const results: string[] = [];
+		const prefixes: Set<string> = new Set();
+		for (let i = 0; i < allMatches.length && results.length < limit; i++) {
+			const { names } = allMatches[i];
+			for (let j = 0; j < names.length && results.length < limit; j++) {
+				const name = names[j];
+				results.push(name);
+				prefixes.add(name.split(':').shift() as string);
+			}
+		}
+
 		return {
-			prefixes: Object.keys(addedIcons).filter((prefix) => !!addedIcons[prefix]?.size),
+			prefixes: Array.from(prefixes),
 			names: results,
 			hasMore: results.length >= limit,
 		};

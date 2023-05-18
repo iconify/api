@@ -1,4 +1,4 @@
-import type { IconifyIcons, IconifyInfo, IconifyJSON } from '@iconify/types';
+import type { IconifyIcons, IconifyInfo, IconifyJSON, IconifyMetaData } from '@iconify/types';
 import type { SplitDataTree } from '../split';
 import type { MemoryStorage, MemoryStorageItem } from '../storage';
 import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from './extra';
@@ -7,11 +7,7 @@ import type { SplitIconifyJSONMainData } from './split';
 /**
  * Themes
  */
-export interface StorageIconSetThemes {
-	themes?: IconifyJSON['themes'];
-	prefixes?: IconifyJSON['prefixes'];
-	suffixes?: IconifyJSON['suffixes'];
-}
+export type StorageIconSetThemes = Pick<IconifyMetaData, 'prefixes' | 'suffixes'>;
 
 /**
  * Generated data

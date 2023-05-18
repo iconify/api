@@ -9,7 +9,11 @@ export type IconStyle = 'fill' | 'stroke';
  * Extra props added to icons
  */
 export interface ExtraIconSetIconNamesProps {
+	// Icon style
 	_is?: IconStyle;
+
+	// Name length without prefix
+	_l?: number;
 }
 
 /**

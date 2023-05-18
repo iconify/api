@@ -14,7 +14,7 @@ const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptiona
 /**
  * Generate icons tree
  */
-export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsListIcons {
+export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: string[]): IconSetIconsListIcons {
 	const iconSetIcons = iconSet.icons;
 	const iconSetAliases = iconSet.aliases || (Object.create(null) as IconifyAliases);
 
@@ -245,13 +245,31 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON): IconSetIconsList
 
 			const iconKeywords: Set<string> = new Set();
 			for (let i = 0; i < icon.length; i++) {
-				icon[i].split('-').forEach((chunk) => {
+				const name = icon[i];
+
+				// Add keywords
+				name.split('-').forEach((chunk) => {
 					if (iconKeywords.has(chunk)) {
 						return;
 					}
 					iconKeywords.add(chunk);
 					(keywords[chunk] || (keywords[chunk] = new Set())).add(icon);
 				});
+
+				// Check for length
+				let maxLength = name.length;
+				if (commonChunks) {
+					for (let j = 0; j < commonChunks.length; j++) {
+						const chunk = commonChunks[j];
+						if (name.startsWith(chunk + '-') || name.endsWith('-' + chunk)) {
+							maxLength = name.length - chunk.length - 1;
+							break;
+						}
+					}
+				}
+				if (!icon._l || icon._l > maxLength) {
+					icon._l = maxLength;
+				}
 			}
 		}
 
