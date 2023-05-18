@@ -20,13 +20,14 @@ describe('Splitting keywords', () => {
 					prefixes: ['mdi'],
 					prefix: 'mdi', // leftover from internal function
 					keywords: [],
+					partial: 'home',
 				},
 				{
 					keywords: ['mdi'],
+					partial: 'home',
 					test: ['mdi-home'],
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('mdi-home', false)).toEqual({
@@ -50,9 +51,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('mdi:home', false)).toEqual({
@@ -71,9 +72,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('prefix:mdi home', false)).toEqual({
@@ -92,9 +93,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('prefix=mdi home', false)).toEqual({
@@ -113,9 +114,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('prefixes:mdi home', false)).toEqual({
@@ -134,9 +135,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['fa6-', 'mdi-'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('prefixes:fa6-,mdi- home', false)).toEqual({
@@ -155,9 +156,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi', 'mdi-'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('prefixes=mdi* home', false)).toEqual({
@@ -177,18 +178,20 @@ describe('Splitting keywords', () => {
 					prefixes: ['mdi-light'],
 					prefix: 'mdi-light',
 					keywords: [],
+					partial: 'home',
 				},
 				{
 					prefixes: ['mdi'],
 					prefix: 'mdi',
 					keywords: ['light'],
+					partial: 'home',
 				},
 				{
 					keywords: ['mdi', 'light'],
 					test: ['mdi-light'],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 		expect(splitKeyword('mdi-light home', false)).toEqual({
@@ -218,20 +221,22 @@ describe('Splitting keywords', () => {
 					prefixes: ['mdi-light'],
 					prefix: 'mdi-light',
 					keywords: ['home'],
+					partial: 'outline',
 					test: ['home-outline'],
 				},
 				{
 					prefixes: ['mdi'],
 					prefix: 'mdi',
 					keywords: ['light', 'home'],
+					partial: 'outline',
 					test: ['home-outline'],
 				},
 				{
 					keywords: ['mdi', 'light', 'home'],
+					partial: 'outline',
 					test: ['mdi-light', 'home-outline'],
 				},
 			],
-			partial: 'outline',
 			params: {},
 		});
 		expect(splitKeyword('mdi-light home-outline', false)).toEqual({
@@ -262,9 +267,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				palette: true,
 			},
@@ -274,9 +279,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				palette: false,
 			},
@@ -287,9 +292,9 @@ describe('Splitting keywords', () => {
 				{
 					prefixes: ['mdi', 'mdi-', 'fa6-'],
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {},
 		});
 
@@ -309,9 +314,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				style: 'fill',
 			},
@@ -321,9 +326,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				style: 'stroke',
 			},
@@ -333,9 +338,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				style: 'fill',
 			},
@@ -345,9 +350,9 @@ describe('Splitting keywords', () => {
 			searches: [
 				{
 					keywords: [],
+					partial: 'home',
 				},
 			],
-			partial: 'home',
 			params: {
 				style: 'stroke',
 			},

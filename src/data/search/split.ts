@@ -21,20 +21,15 @@ interface SplitResultItem {
 
 	// Strings to test icon name
 	test?: string[];
-}
 
-interface SplitResult {
-	searches: SplitResultItem[];
-
-	// Partial keyword. It is last chunk of last keyword, which cannot be treated
-	// as prefix, so it is identical to all searches
+	// Partial keyword. It is last chunk of last keyword, which cannot be treated as prefix
 	partial?: string;
 }
 
+type SplitResult = SplitResultItem[];
+
 export function splitKeywordEntries(values: string[], options: SplitOptions): SplitResult | undefined {
-	const results: SplitResult = {
-		searches: [],
-	};
+	const results: SplitResult = [];
 	let invalid = false;
 
 	// Split each entry into arrays
@@ -83,8 +78,14 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		return (items[0].empty ? '-' : '') + items.map((item) => item.value).join('-');
 	}
 
+	interface ResultsSet {
+		keywords: Set<string>;
+		test: Set<string>;
+		partial?: string;
+	}
+
 	// Function to add item
-	function add(items: Entry[], keywords: Set<string>, test: Set<string>, checkPartial: boolean) {
+	function addToSet(items: Entry[], set: ResultsSet, allowPartial: boolean) {
 		let partial: string | undefined;
 
 		// Add keywords
@@ -92,10 +93,10 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		for (let i = 0; i <= max; i++) {
 			const value = items[i];
 			if (!value.empty) {
-				if (i === max && checkPartial && value.value.length >= minPartialKeywordLength) {
+				if (i === max && allowPartial && value.value.length >= minPartialKeywordLength) {
 					partial = value.value;
 				} else {
-					keywords.add(value.value);
+					set.keywords.add(value.value);
 				}
 			}
 		}
@@ -103,20 +104,30 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		// Get test value
 		const testValue = valuesToString(items);
 		if (testValue) {
-			test.add(testValue);
+			set.test.add(testValue);
 		}
 
-		// Validate partial
-		if (checkPartial) {
-			if (results.searches.length) {
-				if (results.partial !== partial) {
-					// Partial should be identical for all searches. Something went wrong !!!
-					console.error('Mismatches partials when splitting keywords:', values);
-					delete results.partial;
-				}
-			} else {
-				results.partial = partial;
+		// Add partial
+		if (allowPartial && partial) {
+			if (set.partial && set.partial !== partial) {
+				console.error('Different partial keywords. This should not be happening!');
 			}
+			set.partial = partial;
+		}
+	}
+
+	// Add results set to result
+	function addToResult(set: ResultsSet, prefix?: string) {
+		if (set.keywords.size || set.partial) {
+			const item: SplitResultItem = {
+				keywords: Array.from(set.keywords),
+				prefix,
+				partial: set.partial,
+			};
+			if (set.test.size) {
+				item.test = Array.from(set.test);
+			}
+			results.push(item);
 		}
 	}
 
@@ -134,22 +145,14 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 				const prefix = firstItem.length > 1 ? valuesToString(firstItem) : firstItem[0].value;
 				if (prefix) {
 					// Valid prefix
-					const keywords: Set<string> = new Set();
-					const test: Set<string> = new Set();
+					const set: ResultsSet = {
+						keywords: new Set(),
+						test: new Set(),
+					};
 					for (let i = 1; i <= lastIndex; i++) {
-						add(splitValues[i], keywords, test, options.partial && i === lastIndex);
+						addToSet(splitValues[i], set, options.partial && i === lastIndex);
 					}
-
-					if (keywords.size || results.partial) {
-						const item: SplitResultItem = {
-							keywords: Array.from(keywords),
-							prefix,
-						};
-						if (test.size) {
-							item.test = Array.from(test);
-						}
-						results.searches.push(item);
-					}
+					addToResult(set, prefix);
 				}
 			}
 		}
@@ -159,41 +162,26 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		if (maxFirstItemIndex && !firstItem[0].empty && !firstItem[1].empty) {
 			const modifiedFirstItem = firstItem.slice(0);
 			const prefix = modifiedFirstItem.shift()!.value;
-			const keywords: Set<string> = new Set();
-			const test: Set<string> = new Set();
+			const set: ResultsSet = {
+				keywords: new Set(),
+				test: new Set(),
+			};
 			for (let i = 0; i <= lastIndex; i++) {
-				add(i ? splitValues[i] : modifiedFirstItem, keywords, test, options.partial && i === lastIndex);
+				addToSet(i ? splitValues[i] : modifiedFirstItem, set, options.partial && i === lastIndex);
 			}
-
-			if (keywords.size || results.partial) {
-				const item: SplitResultItem = {
-					keywords: Array.from(keywords),
-					prefix,
-				};
-				if (test.size) {
-					item.test = Array.from(test);
-				}
-				results.searches.push(item);
-			}
+			addToResult(set, prefix);
 		}
 	}
 
 	// Add as is
-	const keywords: Set<string> = new Set();
-	const test: Set<string> = new Set();
+	const set: ResultsSet = {
+		keywords: new Set(),
+		test: new Set(),
+	};
 	for (let i = 0; i <= lastIndex; i++) {
-		add(splitValues[i], keywords, test, options.partial && i === lastIndex);
+		addToSet(splitValues[i], set, options.partial && i === lastIndex);
 	}
-	if (keywords.size || results.partial) {
-		// Add item
-		const item: SplitResultItem = {
-			keywords: Array.from(keywords),
-		};
-		if (test.size) {
-			item.test = Array.from(test);
-		}
-		results.searches.push(item);
-	}
+	addToResult(set);
 
 	// Merge values
 	if (splitValues.length > 1) {
@@ -233,22 +221,14 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 						...splitValues.slice(endIndex + 1),
 					];
 					const newLastIndex = newSplitValues.length - 1;
-					const keywords: Set<string> = new Set();
-					const test: Set<string> = new Set();
+					const set: ResultsSet = {
+						keywords: new Set(),
+						test: new Set(),
+					};
 					for (let i = 0; i <= newLastIndex; i++) {
-						add(newSplitValues[i], keywords, test, false);
+						addToSet(newSplitValues[i], set, options.partial && i === newLastIndex);
 					}
-
-					if (keywords.size || results.partial) {
-						// Add item
-						const item: SplitResultItem = {
-							keywords: Array.from(keywords),
-						};
-						if (test.size) {
-							item.test = Array.from(test);
-						}
-						results.searches.push(item);
-					}
+					addToResult(set);
 				}
 			}
 		}
@@ -484,7 +464,7 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 		return;
 	}
 
-	const searches: SearchKeywordsEntry[] = entries.searches.map((item) => {
+	const searches: SearchKeywordsEntry[] = entries.map((item) => {
 		return {
 			...item,
 			prefixes: item.prefix
@@ -505,6 +485,5 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 	return {
 		searches,
 		params,
-		partial: entries.partial,
 	};
 }

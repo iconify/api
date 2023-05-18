@@ -67,6 +67,9 @@ export interface SearchKeywordsEntry {
 
 	// Strings to test icon value
 	test?: string[];
+
+	// Partial keyword
+	partial?: string;
 }
 
 /**
@@ -75,9 +78,6 @@ export interface SearchKeywordsEntry {
 export interface SearchKeywords {
 	// List of searches
 	searches: SearchKeywordsEntry[];
-
-	// Partial keyword, used in all matches
-	partial?: string;
 
 	// Params extracted from keywords
 	params: Partial<SearchParams>;
