@@ -50,6 +50,7 @@ export interface SearchParams {
 
 	// Search results limit
 	limit: number;
+	softLimit?: boolean; // True if limit can be exceeded
 
 	// Toggle partial matches
 	partial?: boolean;

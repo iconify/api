@@ -54,6 +54,15 @@ export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res:
 		}
 		params.limit = Math.max(minSearchLimit, Math.min(limit, maxSearchLimit));
 	}
+	if (v2Query.min) {
+		const limit = parseInt(v2Query.min);
+		if (!limit) {
+			res.send(400);
+			return;
+		}
+		params.limit = Math.max(minSearchLimit, Math.min(limit, maxSearchLimit));
+		params.softLimit = true;
+	}
 
 	let start = 0;
 	if (v2Query.start) {

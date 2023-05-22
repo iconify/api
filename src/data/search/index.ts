@@ -69,6 +69,7 @@ export function search(
 		return newItem;
 	};
 	const limit = params.limit;
+	const softLimit = params.softLimit;
 
 	interface ExtendedSearchKeywordsEntry extends SearchKeywordsEntry {
 		// Add prefixes cache to avoid re-calculating it for every partial keyword
@@ -256,9 +257,9 @@ export function search(
 		// Extract results
 		const results: string[] = [];
 		const prefixes: Set<string> = new Set();
-		for (let i = 0; i < allMatches.length && results.length < limit; i++) {
+		for (let i = 0; i < allMatches.length && (softLimit || results.length < limit); i++) {
 			const { names } = allMatches[i];
-			for (let j = 0; j < names.length && results.length < limit; j++) {
+			for (let j = 0; j < names.length && (softLimit || results.length < limit); j++) {
 				const name = names[j];
 				results.push(name);
 				prefixes.add(name.split(':').shift() as string);

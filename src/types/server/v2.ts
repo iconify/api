@@ -103,7 +103,9 @@ export interface APIv2SearchParams extends APIv2CommonParams {
 	query: SearchQuery;
 
 	// Maximum number of items in response
-	limit?: number;
+	// If `min` is set, `limit` is ignored
+	limit?: number; // Hard limit. Number of results will not exceed `limit`.
+	min?: number; // Soft limit. Number of results can exceed `limit` if function already retrieved more icons.
 
 	// Start index for results
 	start?: number;
