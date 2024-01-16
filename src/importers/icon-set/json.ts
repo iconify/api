@@ -1,7 +1,7 @@
-import type { BaseDownloader } from '../../downloaders/base';
-import type { BaseIconSetImporter } from '../../types/importers/icon-set';
-import type { IconSetImportedData } from '../../types/importers/common';
-import { IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import type { BaseIconSetImporter } from '../../types/importers/icon-set.js';
+import type { IconSetImportedData } from '../../types/importers/common.js';
+import { IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json.js';
 
 interface JSONIconSetImporterOptions extends IconSetJSONOptions {
 	// Icon set prefix

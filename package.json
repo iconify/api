@@ -5,6 +5,7 @@
 	"license": "MIT",
 	"private": true,
 	"version": "3.0.2",
+	"type": "module",
 	"bugs": "https://github.com/iconify/api/issues",
 	"homepage": "https://github.com/iconify/api",
 	"repository": {

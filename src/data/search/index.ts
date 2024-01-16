@@ -1,10 +1,10 @@
-import { appConfig } from '../../config/app';
-import type { IconSetIconNames } from '../../types/icon-set/extra';
-import type { IconSetEntry } from '../../types/importers';
-import type { SearchIndexData, SearchKeywordsEntry, SearchParams, SearchResultsData } from '../../types/search';
-import { getPartialKeywords } from './partial';
-import { filterSearchPrefixes, filterSearchPrefixesList } from './prefixes';
-import { splitKeyword } from './split';
+import { appConfig } from '../../config/app.js';
+import type { IconSetIconNames } from '../../types/icon-set/extra.js';
+import type { IconSetEntry } from '../../types/importers.js';
+import type { SearchIndexData, SearchKeywordsEntry, SearchParams, SearchResultsData } from '../../types/search.js';
+import { getPartialKeywords } from './partial.js';
+import { filterSearchPrefixes, filterSearchPrefixesList } from './prefixes.js';
+import { splitKeyword } from './split.js';
 
 /**
  * Run search

@@ -1,10 +1,10 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { stringToColor } from '@iconify/utils/lib/colors';
 import { getIconsCSS } from '@iconify/utils/lib/css/icons';
-import { getStoredIconsData } from '../../data/icon-set/utils/get-icons';
-import { iconSets } from '../../data/icon-sets';
 import type { IconCSSIconSetOptions } from '@iconify/utils/lib/css/types';
-import { paramToBoolean } from '../../misc/bool';
+import { getStoredIconsData } from '../../data/icon-set/utils/get-icons.js';
+import { iconSets } from '../../data/icon-sets.js';
+import { paramToBoolean } from '../../misc/bool.js';
 
 /**
  * Check selector for weird stuff

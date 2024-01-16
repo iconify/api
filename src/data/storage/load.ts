@@ -1,7 +1,7 @@
 import { readFile, readFileSync } from 'node:fs';
-import type { MemoryStorage, MemoryStorageItem } from '../../types/storage';
-import { runStorageCallbacks } from './callbacks';
-import { addStorageToCleanup } from './cleanup';
+import type { MemoryStorage, MemoryStorageItem } from '../../types/storage.js';
+import { runStorageCallbacks } from './callbacks.js';
+import { addStorageToCleanup } from './cleanup.js';
 
 /**
  * Load data

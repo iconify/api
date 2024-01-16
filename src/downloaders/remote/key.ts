@@ -1,5 +1,5 @@
-import { hashString } from '../../misc/hash';
-import type { RemoteDownloaderOptions } from '../../types/downloaders/remote';
+import { hashString } from '../../misc/hash.js';
+import type { RemoteDownloaderOptions } from '../../types/downloaders/remote.js';
 
 /**
  * Get cache key

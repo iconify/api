@@ -1,5 +1,5 @@
 import { IconifyJSON } from '@iconify/types';
-import { StorageIconSetThemes } from '../../../types/icon-set/storage';
+import { StorageIconSetThemes } from '../../../types/icon-set/storage.js';
 
 /**
  * Themes to copy

@@ -1,6 +1,6 @@
 import { rm } from 'node:fs/promises';
-import { appConfig } from '../../config/app';
-import type { MemoryStorage } from '../../types/storage';
+import { appConfig } from '../../config/app.js';
+import type { MemoryStorage } from '../../types/storage.js';
 
 /**
  * Remove old cache

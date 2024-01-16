@@ -1,9 +1,9 @@
-import { directoryExists } from '../misc/files';
-import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../types/downloaders/remote';
-import { BaseDownloader } from './base';
-import { downloadRemoteArchive } from './remote/download';
-import { getRemoteDownloaderCacheKey } from './remote/key';
-import { getDownloaderVersion, saveDownloaderVersion } from './remote/versions';
+import { directoryExists } from '../misc/files.js';
+import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../types/downloaders/remote.js';
+import { BaseDownloader } from './base.js';
+import { downloadRemoteArchive } from './remote/download.js';
+import { getRemoteDownloaderCacheKey } from './remote/key.js';
+import { getDownloaderVersion, saveDownloaderVersion } from './remote/versions.js';
 
 /**
  * Remote downloader

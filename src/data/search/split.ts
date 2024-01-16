@@ -1,8 +1,8 @@
 import { matchIconName } from '@iconify/utils/lib/icon/name';
-import { paramToBoolean } from '../../misc/bool';
-import type { IconStyle } from '../../types/icon-set/extra';
-import type { SearchKeywords, SearchKeywordsEntry } from '../../types/search';
-import { minPartialKeywordLength } from './partial';
+import { paramToBoolean } from '../../misc/bool.js';
+import type { IconStyle } from '../../types/icon-set/extra.js';
+import type { SearchKeywords, SearchKeywordsEntry } from '../../types/search.js';
+import { minPartialKeywordLength } from './partial.js';
 
 interface SplitOptions {
 	// Can include prefix

@@ -1,5 +1,5 @@
-import { appConfig, splitIconSetConfig, storageConfig } from '../config/app';
-import { paramToBoolean } from './bool';
+import { appConfig, splitIconSetConfig, storageConfig } from '../config/app.js';
+import { paramToBoolean } from './bool.js';
 
 interface ConfigurableItem {
 	config: unknown;

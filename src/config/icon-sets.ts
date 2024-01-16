@@ -1,10 +1,10 @@
-import { DirectoryDownloader } from '../downloaders/directory';
-import { createJSONDirectoryImporter } from '../importers/full/directory-json';
-import { directoryExists } from '../misc/files';
-import type { Importer } from '../types/importers';
-import type { ImportedData } from '../types/importers/common';
-import { fullPackageImporter } from './importers/full-package';
-import { splitPackagesImporter } from './importers/split-packages';
+import { DirectoryDownloader } from '../downloaders/directory.js';
+import { createJSONDirectoryImporter } from '../importers/full/directory-json.js';
+import { directoryExists } from '../misc/files.js';
+import type { Importer } from '../types/importers.js';
+import type { ImportedData } from '../types/importers/common.js';
+import { fullPackageImporter } from './importers/full-package.js';
+import { splitPackagesImporter } from './importers/split-packages.js';
 
 /**
  * Sources

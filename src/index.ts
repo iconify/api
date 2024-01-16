@@ -1,11 +1,11 @@
 import { config } from 'dotenv';
-import { getImporters } from './config/icon-sets';
-import { iconSetsStorage } from './data/icon-set/store/storage';
-import { setImporters, updateIconSets } from './data/icon-sets';
-import { loaded } from './data/loading';
-import { cleanupStorageCache } from './data/storage/startup';
-import { startHTTPServer } from './http';
-import { loadEnvConfig } from './misc/load-config';
+import { getImporters } from './config/icon-sets.js';
+import { iconSetsStorage } from './data/icon-set/store/storage.js';
+import { setImporters, updateIconSets } from './data/icon-sets.js';
+import { loaded } from './data/loading.js';
+import { cleanupStorageCache } from './data/storage/startup.js';
+import { startHTTPServer } from './http/index.js';
+import { loadEnvConfig } from './misc/load-config.js';
 
 (async () => {
 	// Configure environment

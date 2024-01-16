@@ -1,6 +1,6 @@
-import { appConfig } from '../config/app';
-import type { IconSetEntry } from '../types/importers';
-import type { SearchIndexData } from '../types/search';
+import { appConfig } from '../config/app.js';
+import type { IconSetEntry } from '../types/importers.js';
+import type { SearchIndexData } from '../types/search.js';
 
 interface SearchIndex {
 	data?: SearchIndexData;

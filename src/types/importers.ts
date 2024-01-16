@@ -1,6 +1,6 @@
-import type { BaseDownloader } from '../downloaders/base';
-import type { StoredIconSet } from './icon-set/storage';
-import type { ImportedData } from './importers/common';
+import type { BaseDownloader } from '../downloaders/base.js';
+import type { StoredIconSet } from './icon-set/storage.js';
+import type { ImportedData } from './importers/common.js';
 
 /**
  * Importer

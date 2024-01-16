@@ -1,4 +1,4 @@
-import type { IconStyle } from '../../../types/icon-set/extra';
+import type { IconStyle } from '../../../types/icon-set/extra.js';
 
 function getValues(body: string, prop: string): string[] {
 	const chunks = body.split(prop + '="');

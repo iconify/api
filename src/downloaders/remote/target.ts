@@ -1,6 +1,6 @@
-import { appConfig } from '../../config/app';
-import type { RemoteDownloaderOptions } from '../../types/downloaders/remote';
-import { getRemoteDownloaderCacheKey } from './key';
+import { appConfig } from '../../config/app.js';
+import type { RemoteDownloaderOptions } from '../../types/downloaders/remote.js';
+import { getRemoteDownloaderCacheKey } from './key.js';
 
 /**
  * Get directory

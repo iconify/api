@@ -1,4 +1,4 @@
-import type { IconStyle } from './icon-set/extra';
+import type { IconStyle } from './icon-set/extra.js';
 
 /**
  * List of keywords that can be used to autocomplete keyword

@@ -1,9 +1,9 @@
-import { matchIconName } from '@iconify/utils';
+import { matchIconName } from '@iconify/utils/lib/icon/name';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { searchIndex } from '../../data/search';
-import { getPartialKeywords } from '../../data/search/partial';
-import type { APIv3KeywordsQuery, APIv3KeywordsResponse } from '../../types/server/keywords';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
+import { searchIndex } from '../../data/search.js';
+import { getPartialKeywords } from '../../data/search/partial.js';
+import type { APIv3KeywordsQuery, APIv3KeywordsResponse } from '../../types/server/keywords.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 
 /**
  * Generate icons data

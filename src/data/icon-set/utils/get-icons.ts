@@ -1,7 +1,7 @@
 import type { IconifyJSON, IconifyAliases, IconifyIcons } from '@iconify/types';
-import type { StoredIconSet } from '../../../types/icon-set/storage';
-import { searchSplitRecordsTreeForSet } from '../../storage/split';
-import { getStoredItem } from '../../storage/get';
+import type { StoredIconSet } from '../../../types/icon-set/storage.js';
+import { searchSplitRecordsTreeForSet } from '../../storage/split.js';
+import { getStoredItem } from '../../storage/get.js';
 
 /**
  * Get list of icons that must be retrieved

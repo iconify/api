@@ -1,17 +1,16 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
-import { appConfig, splitIconSetConfig, storageConfig } from '../../../config/app';
-import type { SplitIconSetConfig } from '../../../types/config/split';
-import type { StorageIconSetThemes, StoredIconSet, StoredIconSetDone } from '../../../types/icon-set/storage';
-import type { SplitRecord } from '../../../types/split';
-import type { MemoryStorage, MemoryStorageItem } from '../../../types/storage';
-import { createSplitRecordsTree, splitRecords } from '../../storage/split';
-import { createStorage, createStoredItem } from '../../storage/create';
-import { getIconSetSplitChunksCount, splitIconSetMainData } from './split';
-import { removeBadIconSetItems } from '../lists/validate';
-import { prepareAPIv2IconsList } from '../lists/icons-v2';
-import { generateIconSetIconsTree } from '../lists/icons';
-import { themeKeys } from './themes';
-import { findIconSetThemes } from './themes';
+import { appConfig, splitIconSetConfig, storageConfig } from '../../../config/app.js';
+import type { SplitIconSetConfig } from '../../../types/config/split.js';
+import type { StorageIconSetThemes, StoredIconSet, StoredIconSetDone } from '../../../types/icon-set/storage.js';
+import type { SplitRecord } from '../../../types/split.js';
+import type { MemoryStorage, MemoryStorageItem } from '../../../types/storage.js';
+import { createSplitRecordsTree, splitRecords } from '../../storage/split.js';
+import { createStorage, createStoredItem } from '../../storage/create.js';
+import { getIconSetSplitChunksCount, splitIconSetMainData } from './split.js';
+import { removeBadIconSetItems } from '../lists/validate.js';
+import { prepareAPIv2IconsList } from '../lists/icons-v2.js';
+import { generateIconSetIconsTree } from '../lists/icons.js';
+import { themeKeys, findIconSetThemes } from './themes.js';
 
 /**
  * Storage

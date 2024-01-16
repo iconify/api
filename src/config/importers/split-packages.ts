@@ -1,7 +1,7 @@
-import { RemoteDownloader } from '../../downloaders/remote';
-import { createJSONCollectionsListImporter } from '../../importers/collections/collections';
-import { createJSONPackageIconSetImporter } from '../../importers/icon-set/json-package';
-import type { IconSetImportedData, ImportedData } from '../../types/importers/common';
+import { RemoteDownloader } from '../../downloaders/remote.js';
+import { createJSONCollectionsListImporter } from '../../importers/collections/collections.js';
+import { createJSONPackageIconSetImporter } from '../../importers/icon-set/json-package.js';
+import type { IconSetImportedData, ImportedData } from '../../types/importers/common.js';
 
 // Automatically update on startup: boolean
 const autoUpdate = true;

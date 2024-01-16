@@ -1,6 +1,6 @@
-import type { StoredIconSet } from '../types/icon-set/storage';
-import type { IconSetEntry, Importer } from '../types/importers';
-import { updateSearchIndex } from './search';
+import type { StoredIconSet } from '../types/icon-set/storage.js';
+import type { IconSetEntry, Importer } from '../types/importers.js';
+import { updateSearchIndex } from './search.js';
 
 /**
  * All importers

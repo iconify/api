@@ -2,7 +2,7 @@ import { execAsync } from '@iconify/tools/lib/misc/exec';
 import { getGitHubRepoHash } from '@iconify/tools/lib/download/github/hash';
 import { getGitLabRepoHash } from '@iconify/tools/lib/download/gitlab/hash';
 import { getNPMVersion, getPackageVersion } from '@iconify/tools/lib/download/npm/version';
-import { directoryExists } from '../../misc/files';
+import { directoryExists } from '../../misc/files.js';
 import type {
 	GitDownloaderOptions,
 	GitDownloaderVersion,
@@ -12,7 +12,7 @@ import type {
 	GitLabDownloaderVersion,
 	NPMDownloaderOptions,
 	NPMDownloaderVersion,
-} from '../../types/downloaders/remote';
+} from '../../types/downloaders/remote.js';
 
 /**
  * Check git repo for update

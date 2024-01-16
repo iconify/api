@@ -2,15 +2,15 @@ import { downloadGitRepo } from '@iconify/tools/lib/download/git';
 import { downloadGitHubRepo } from '@iconify/tools/lib/download/github';
 import { downloadGitLabRepo } from '@iconify/tools/lib/download/gitlab';
 import { downloadNPMPackage } from '@iconify/tools/lib/download/npm';
-import { appConfig } from '../../config/app';
-import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../../types/downloaders/remote';
+import { appConfig } from '../../config/app.js';
+import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../../types/downloaders/remote.js';
 import {
 	isGitHubUpdateAvailable,
 	isGitLabUpdateAvailable,
 	isGitUpdateAvailable,
 	isNPMUpdateAvailable,
-} from './check-update';
-import { getDownloadDirectory } from './target';
+} from './check-update.js';
+import { getDownloadDirectory } from './target.js';
 
 /**
  * Download files from remote archive

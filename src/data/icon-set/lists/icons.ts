@@ -1,13 +1,13 @@
 import type { IconifyAliases, IconifyJSON, IconifyOptional } from '@iconify/types';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
-import { appConfig } from '../../../config/app';
+import { appConfig } from '../../../config/app.js';
 import type {
 	IconSetIconNames,
 	IconSetIconsListIcons,
 	IconSetIconsListTag,
 	IconStyle,
-} from '../../../types/icon-set/extra';
-import { getIconStyle } from './style';
+} from '../../../types/icon-set/extra.js';
+import { getIconStyle } from './style.js';
 
 const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptional)[];
 

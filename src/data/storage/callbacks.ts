@@ -1,4 +1,4 @@
-import type { MemoryStorageItem, MemoryStorageCallback } from '../../types/storage';
+import type { MemoryStorageItem, MemoryStorageCallback } from '../../types/storage.js';
 
 /**
  * Run all callbacks from storage

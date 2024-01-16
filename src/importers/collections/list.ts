@@ -1,7 +1,7 @@
-import { CustomDownloader } from '../../downloaders/custom';
-import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections';
-import type { ImportedData } from '../../types/importers/common';
-import { createBaseCollectionsListImporter } from './base';
+import { CustomDownloader } from '../../downloaders/custom.js';
+import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections.js';
+import type { ImportedData } from '../../types/importers/common.js';
+import { createBaseCollectionsListImporter } from './base.js';
 
 /**
  * Create importer for hardcoded list of icon sets

@@ -1,4 +1,4 @@
-import type { DownloaderStatus, DownloaderType } from '../types/downloaders/base';
+import type { DownloaderStatus, DownloaderType } from '../types/downloaders/base.js';
 
 /**
  * loadDataFromDirectory()

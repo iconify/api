@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { quicklyValidateIconSet } from '@iconify/utils/lib/icon-set/validate-basic';
-import { asyncStoreLoadedIconSet } from '../../data/icon-set/store/storage';
-import type { StoredIconSet } from '../../types/icon-set/storage';
-import { prependSlash } from '../../misc/files';
+import { asyncStoreLoadedIconSet } from '../../data/icon-set/store/storage.js';
+import type { StoredIconSet } from '../../types/icon-set/storage.js';
+import { prependSlash } from '../../misc/files.js';
 
 export interface IconSetJSONOptions {
 	// Ignore bad prefix?

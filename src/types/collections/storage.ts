@@ -1,4 +1,4 @@
-import type { StoredIconSet } from '../icon-set/storage';
+import type { StoredIconSet } from '../icon-set/storage.js';
 
 /**
  * Generated data

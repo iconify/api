@@ -1,8 +1,12 @@
-import { defaultIconDimensions, flipFromString, iconToHTML, iconToSVG, rotateFromString } from '@iconify/utils';
+import { iconToHTML } from '@iconify/utils/lib/svg/html';
+import { iconToSVG } from '@iconify/utils/lib/svg/build';
+import { flipFromString } from '@iconify/utils/lib/customisations/flip';
+import { rotateFromString } from '@iconify/utils/lib/customisations/rotate';
+import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
 import { defaultIconCustomisations, IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { getStoredIconData } from '../../data/icon-set/utils/get-icon';
-import { iconSets } from '../../data/icon-sets';
+import { getStoredIconData } from '../../data/icon-set/utils/get-icon.js';
+import { iconSets } from '../../data/icon-sets.js';
 
 /**
  * Generate SVG

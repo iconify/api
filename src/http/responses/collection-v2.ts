@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { iconSets } from '../../data/icon-sets';
-import type { APIv2CollectionResponse } from '../../types/server/v2';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
+import { iconSets } from '../../data/icon-sets.js';
+import type { APIv2CollectionResponse } from '../../types/server/v2.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 
 /**
  * Send API v2 response

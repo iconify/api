@@ -1,6 +1,6 @@
-import type { AppConfig } from '../types/config/app';
-import type { SplitIconSetConfig } from '../types/config/split';
-import type { MemoryStorageConfig } from '../types/storage';
+import type { AppConfig } from '../types/config/app.js';
+import type { SplitIconSetConfig } from '../types/config/split.js';
+import type { MemoryStorageConfig } from '../types/storage.js';
 
 /**
  * Main configuration

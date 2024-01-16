@@ -1,7 +1,7 @@
 import { writeFile, mkdir } from 'node:fs';
 import { dirname } from 'node:path';
-import type { MemoryStorage, MemoryStorageItem } from '../../types/storage';
-import { addStorageToCleanup } from './cleanup';
+import type { MemoryStorage, MemoryStorageItem } from '../../types/storage.js';
+import { addStorageToCleanup } from './cleanup.js';
 
 const createdDirs: Set<string> = new Set();
 

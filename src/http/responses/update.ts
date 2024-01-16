@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { appConfig } from '../../config/app';
-import { triggerIconSetsUpdate } from '../../data/icon-sets';
-import { runWhenLoaded } from '../../data/loading';
+import { appConfig } from '../../config/app.js';
+import { triggerIconSetsUpdate } from '../../data/icon-sets.js';
+import { runWhenLoaded } from '../../data/loading.js';
 
 let pendingUpdate = false;
 let lastError = 0;

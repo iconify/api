@@ -1,5 +1,5 @@
 import type { IconifyJSON } from '@iconify/types';
-import type { IconSetIconsListIcons } from '../../../types/icon-set/extra';
+import type { IconSetIconsListIcons } from '../../../types/icon-set/extra.js';
 
 /**
  * Removes bad items

@@ -1,7 +1,7 @@
-import { RemoteDownloader } from '../../downloaders/remote';
-import { createIconSetsPackageImporter } from '../../importers/full/json';
-import type { RemoteDownloaderOptions } from '../../types/downloaders/remote';
-import type { ImportedData } from '../../types/importers/common';
+import { RemoteDownloader } from '../../downloaders/remote.js';
+import { createIconSetsPackageImporter } from '../../importers/full/json.js';
+import type { RemoteDownloaderOptions } from '../../types/downloaders/remote.js';
+import type { ImportedData } from '../../types/importers/common.js';
 
 /**
  * Importer for all icon sets from `@iconify/json` package

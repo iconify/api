@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises';
-import { matchIconName } from '@iconify/utils/lib/icon/name';
-import type { BaseDownloader } from '../../downloaders/base';
-import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections';
-import type { ImportedData } from '../../types/importers/common';
-import { createBaseCollectionsListImporter } from './base';
 import type { IconifyInfo } from '@iconify/types';
+import { matchIconName } from '@iconify/utils/lib/icon/name';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections.js';
+import type { ImportedData } from '../../types/importers/common.js';
+import { createBaseCollectionsListImporter } from './base.js';
 
 interface JSONCollectionsListImporterOptions {
 	// File to load

@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { appConfig } from '../../config/app';
+import { appConfig } from '../../config/app.js';
 
 let version: string | undefined;
 

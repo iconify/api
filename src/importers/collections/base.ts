@@ -1,11 +1,11 @@
-import type { BaseDownloader } from '../../downloaders/base';
-import { maybeAwait } from '../../misc/async';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import { maybeAwait } from '../../misc/async.js';
 import type {
 	BaseCollectionsImporter,
 	CreateIconSetImporter,
 	CreateIconSetImporterResult,
-} from '../../types/importers/collections';
-import type { ImportedData } from '../../types/importers/common';
+} from '../../types/importers/collections.js';
+import type { ImportedData } from '../../types/importers/common.js';
 
 /**
  * Base collections list importer

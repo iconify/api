@@ -1,7 +1,7 @@
 import { stat } from 'node:fs/promises';
 import { scanDirectory } from '@iconify/tools/lib/misc/scan';
-import type { FileEntry } from '../types/files';
-import { hashString } from './hash';
+import type { FileEntry } from '../types/files.js';
+import { hashString } from './hash.js';
 
 /**
  * List all files in directory

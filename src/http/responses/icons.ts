@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { getStoredIconsData } from '../../data/icon-set/utils/get-icons';
-import { iconSets } from '../../data/icon-sets';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
+import { getStoredIconsData } from '../../data/icon-set/utils/get-icons.js';
+import { iconSets } from '../../data/icon-sets.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 
 /**
  * Generate icons data

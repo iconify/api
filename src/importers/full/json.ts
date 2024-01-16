@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
-import { matchIconName } from '@iconify/utils/lib/icon/name';
-import type { BaseDownloader } from '../../downloaders/base';
-import type { ImportedData } from '../../types/importers/common';
-import type { BaseFullImporter } from '../../types/importers/full';
-import { createBaseImporter } from './base';
-import { IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json';
 import type { IconifyInfo } from '@iconify/types';
+import { matchIconName } from '@iconify/utils/lib/icon/name';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import type { ImportedData } from '../../types/importers/common.js';
+import type { BaseFullImporter } from '../../types/importers/full.js';
+import { createBaseImporter } from './base.js';
+import { IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json.js';
 
 interface IconSetsPackageImporterOptions extends IconSetJSONOptions {
 	// Icon set filter

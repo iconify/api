@@ -1,19 +1,19 @@
 import fastify from 'fastify';
 import fastifyFormBody from '@fastify/formbody';
-import { appConfig, httpHeaders } from '../config/app';
-import { runWhenLoaded } from '../data/loading';
-import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name';
-import { generateAPIv1IconsListResponse } from './responses/collection-v1';
-import { generateAPIv2CollectionResponse } from './responses/collection-v2';
-import { generateCollectionsListResponse } from './responses/collections';
-import { generateIconsDataResponse } from './responses/icons';
-import { generateKeywordsResponse } from './responses/keywords';
-import { generateLastModifiedResponse } from './responses/modified';
-import { generateAPIv2SearchResponse } from './responses/search';
-import { generateSVGResponse } from './responses/svg';
-import { generateUpdateResponse } from './responses/update';
-import { initVersionResponse, versionResponse } from './responses/version';
-import { generateIconsStyleResponse } from './responses/css';
+import { appConfig, httpHeaders } from '../config/app.js';
+import { runWhenLoaded } from '../data/loading.js';
+import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name.js';
+import { generateAPIv1IconsListResponse } from './responses/collection-v1.js';
+import { generateAPIv2CollectionResponse } from './responses/collection-v2.js';
+import { generateCollectionsListResponse } from './responses/collections.js';
+import { generateIconsDataResponse } from './responses/icons.js';
+import { generateKeywordsResponse } from './responses/keywords.js';
+import { generateLastModifiedResponse } from './responses/modified.js';
+import { generateAPIv2SearchResponse } from './responses/search.js';
+import { generateSVGResponse } from './responses/svg.js';
+import { generateUpdateResponse } from './responses/update.js';
+import { initVersionResponse, versionResponse } from './responses/version.js';
+import { generateIconsStyleResponse } from './responses/css.js';
 
 /**
  * Start HTTP server

@@ -1,5 +1,5 @@
-import { directoryExists, hashFiles, listFilesInDirectory } from '../misc/files';
-import { BaseDownloader } from './base';
+import { directoryExists, hashFiles, listFilesInDirectory } from '../misc/files.js';
+import { BaseDownloader } from './base.js';
 
 /**
  * Directory downloader

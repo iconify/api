@@ -1,11 +1,11 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { appConfig } from '../../config/app';
+import { appConfig } from '../../config/app.js';
 import type {
 	RemoteDownloaderType,
 	RemoteDownloaderVersion,
 	RemoteDownloaderVersionMixin,
-} from '../../types/downloaders/remote';
+} from '../../types/downloaders/remote.js';
 
 // Storage
 type StoredVersions = Record<string, RemoteDownloaderVersion>;

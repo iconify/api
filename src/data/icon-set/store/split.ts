@@ -1,7 +1,7 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
 import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
-import type { SplitIconSetConfig } from '../../../types/config/split';
-import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split';
+import type { SplitIconSetConfig } from '../../../types/config/split.js';
+import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split.js';
 
 const iconDimensionProps = Object.keys(defaultIconDimensions) as (keyof typeof defaultIconDimensions)[];
 

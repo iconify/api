@@ -1,4 +1,4 @@
-import { BaseDownloader } from './base';
+import { BaseDownloader } from './base.js';
 
 /**
  * Custom downloader

@@ -1,7 +1,7 @@
-import { appConfig } from '../../config/app';
-import type { MemoryStorage, MemoryStorageConfig, MemoryStorageItem } from '../../types/storage';
-import { cleanupStoredItem } from './cleanup';
-import { writeStoredItem } from './write';
+import { appConfig } from '../../config/app.js';
+import type { MemoryStorage, MemoryStorageConfig, MemoryStorageItem } from '../../types/storage.js';
+import { cleanupStoredItem } from './cleanup.js';
+import { writeStoredItem } from './write.js';
 
 /**
  * Create storage

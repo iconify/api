@@ -1,11 +1,11 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { iconSets } from '../../data/icon-sets';
-import { searchIndex } from '../../data/search';
-import { search } from '../../data/search/index';
-import { paramToBoolean } from '../../misc/bool';
-import type { SearchParams } from '../../types/search';
-import type { APIv2SearchParams, APIv2SearchResponse } from '../../types/server/v2';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
+import { iconSets } from '../../data/icon-sets.js';
+import { searchIndex } from '../../data/search.js';
+import { search } from '../../data/search/index.js';
+import { paramToBoolean } from '../../misc/bool.js';
+import type { SearchParams } from '../../types/search.js';
+import type { APIv2SearchParams, APIv2SearchResponse } from '../../types/server/v2.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 
 const minSearchLimit = 32;
 const maxSearchLimit = 999;

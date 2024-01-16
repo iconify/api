@@ -1,4 +1,4 @@
-import type { SplitDataTree, SplitRecord, SplitRecordCallback } from '../../types/split';
+import type { SplitDataTree, SplitRecord, SplitRecordCallback } from '../../types/split.js';
 
 /**
  * Split records into `count` chunks

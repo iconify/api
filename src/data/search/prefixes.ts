@@ -1,6 +1,6 @@
-import { appConfig } from '../../config/app';
-import type { IconSetEntry } from '../../types/importers';
-import type { SearchIndexData, SearchParams } from '../../types/search';
+import { appConfig } from '../../config/app.js';
+import type { IconSetEntry } from '../../types/importers.js';
+import type { SearchIndexData, SearchParams } from '../../types/search.js';
 
 /**
  * Filter prefixes by keyword

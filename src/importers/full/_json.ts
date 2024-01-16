@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { matchIconName } from '@iconify/utils/lib/icon/name';
-import type { BaseDownloader } from '../../downloaders/base';
-import { DirectoryDownloader } from '../../downloaders/directory';
-import type { StoredIconSet } from '../../types/icon-set/storage';
-import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections';
-import type { ImportedData } from '../../types/importers/common';
-import { createJSONIconSetImporter } from '../icon-set/json';
-import { createBaseCollectionsListImporter } from '../collections/base';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import { DirectoryDownloader } from '../../downloaders/directory.js';
+import type { StoredIconSet } from '../../types/icon-set/storage.js';
+import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections.js';
+import type { ImportedData } from '../../types/importers/common.js';
+import { createJSONIconSetImporter } from '../icon-set/json.js';
+import { createBaseCollectionsListImporter } from '../collections/base.js';
 
 interface IconSetsPackageImporterOptions {
 	// Icon set filter

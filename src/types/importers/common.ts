@@ -1,5 +1,5 @@
-import type { DownloaderType } from '../downloaders/base';
-import type { StoredIconSet } from '../icon-set/storage';
+import type { DownloaderType } from '../downloaders/base.js';
+import type { StoredIconSet } from '../icon-set/storage.js';
 
 /**
  * Base icon set importer interface

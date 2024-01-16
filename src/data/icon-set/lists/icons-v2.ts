@@ -1,5 +1,5 @@
 import type { IconifyJSON } from '@iconify/types';
-import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from '../../../types/icon-set/extra';
+import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from '../../../types/icon-set/extra.js';
 
 /**
  * Prepare data for icons list API v2 response

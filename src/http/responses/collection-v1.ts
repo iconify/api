@@ -1,14 +1,14 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { getPrefixes, iconSets } from '../../data/icon-sets';
-import type { IconSetAPIv2IconsList } from '../../types/icon-set/extra';
-import type { StoredIconSet } from '../../types/icon-set/storage';
+import { getPrefixes, iconSets } from '../../data/icon-sets.js';
+import type { IconSetAPIv2IconsList } from '../../types/icon-set/extra.js';
+import type { StoredIconSet } from '../../types/icon-set/storage.js';
 import type {
 	APIv1ListIconsBaseResponse,
 	APIv1ListIconsCategorisedResponse,
 	APIv1ListIconsResponse,
-} from '../../types/server/v1';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
-import { filterPrefixesByPrefix } from '../helpers/prefixes';
+} from '../../types/server/v1.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
+import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
 /**
  * Send API v2 response

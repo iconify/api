@@ -1,5 +1,5 @@
-import type { PartialKeywords, SearchIndexData } from '../../types/search';
-import { searchIndex } from '../search';
+import type { PartialKeywords, SearchIndexData } from '../../types/search.js';
+import { searchIndex } from '../search.js';
 
 export const minPartialKeywordLength = 2;
 

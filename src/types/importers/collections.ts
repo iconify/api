@@ -1,7 +1,7 @@
-import type { BaseDownloader } from '../../downloaders/base';
-import type { MaybeAsync } from '../async';
-import type { BaseMainImporter, IconSetImportedData } from './common';
-import type { BaseIconSetImporter } from './icon-set';
+import type { BaseDownloader } from '../../downloaders/base.js';
+import type { MaybeAsync } from '../async.js';
+import type { BaseMainImporter, IconSetImportedData } from './common.js';
+import type { BaseIconSetImporter } from './icon-set.js';
 
 /**
  * Loader for child element

@@ -1,9 +1,9 @@
 import type { ExtendedIconifyAlias, ExtendedIconifyIcon, IconifyIcons } from '@iconify/types';
 import { mergeIconData } from '@iconify/utils/lib/icon/merge';
-import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split';
-import type { StoredIconSet } from '../../../types/icon-set/storage';
-import { searchSplitRecordsTree } from '../../storage/split';
-import { getStoredItem } from '../../storage/get';
+import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split.js';
+import type { StoredIconSet } from '../../../types/icon-set/storage.js';
+import { searchSplitRecordsTree } from '../../storage/split.js';
+import { getStoredItem } from '../../storage/get.js';
 
 interface PrepareResult {
 	// Merged properties

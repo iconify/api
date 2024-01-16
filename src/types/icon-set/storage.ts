@@ -1,8 +1,8 @@
-import type { IconifyIcons, IconifyInfo, IconifyJSON, IconifyMetaData } from '@iconify/types';
-import type { SplitDataTree } from '../split';
-import type { MemoryStorage, MemoryStorageItem } from '../storage';
-import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from './extra';
-import type { SplitIconifyJSONMainData } from './split';
+import type { IconifyIcons, IconifyInfo, IconifyMetaData } from '@iconify/types';
+import type { SplitDataTree } from '../split.js';
+import type { MemoryStorage, MemoryStorageItem } from '../storage.js';
+import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from './extra.js';
+import type { SplitIconifyJSONMainData } from './split.js';
 
 /**
  * Themes

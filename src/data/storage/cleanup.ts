@@ -1,5 +1,5 @@
-import type { MemoryStorage, MemoryStorageItem } from '../../types/storage';
-import { runStorageCallbacks } from './callbacks';
+import type { MemoryStorage, MemoryStorageItem } from '../../types/storage.js';
+import { runStorageCallbacks } from './callbacks.js';
 
 /**
  * Stop timer

@@ -1,4 +1,4 @@
-import type { BaseImporter, IconSetImportedData } from './common';
+import type { BaseImporter, IconSetImportedData } from './common.js';
 
 /**
  * Base icon set importer interface

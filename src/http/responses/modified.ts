@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { getPrefixes, iconSets } from '../../data/icon-sets';
-import type { APIv3LastModifiedResponse } from '../../types/server/modified';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json';
-import { filterPrefixesByPrefix } from '../helpers/prefixes';
+import { getPrefixes, iconSets } from '../../data/icon-sets.js';
+import type { APIv3LastModifiedResponse } from '../../types/server/modified.js';
+import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
+import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
 /**
  * Generate icons data
