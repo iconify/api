@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets.js';
 import type { IconSetAPIv2IconsList } from '../../types/icon-set/extra.js';
 import type { StoredIconSet } from '../../types/icon-set/storage.js';
@@ -7,11 +6,13 @@ import type {
 	APIv1ListIconsCategorisedResponse,
 	APIv1ListIconsResponse,
 } from '../../types/server/v1.js';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
+// Response results, depends on `categorised` option
+type PossibleResults = APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse;
+
 /**
- * Send API v2 response
+ * Create API v1 response
  *
  * This response ignores the following parameters:
  * - `aliases` -> always enabled
@@ -19,27 +20,15 @@ import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
  *
  * Those parameters are always requested anyway, so does not make sense to re-create data in case they are disabled
  */
-export function generateAPIv1IconsListResponse(
-	query: FastifyRequest['query'],
-	res: FastifyReply,
+export function createAPIv1IconsListResponse(
+	query: Record<string, string>,
 	categorised: boolean
-) {
-	const q = (query || {}) as Record<string, string>;
-
-	const wrap = checkJSONPQuery(q);
-	if (!wrap) {
-		// Invalid JSONP callback
-		res.send(400);
-		return;
-	}
-
+): PossibleResults | Record<string, PossibleResults> | number {
 	function parse(
 		prefix: string,
 		iconSet: StoredIconSet,
 		v2Cache: IconSetAPIv2IconsList
 	): APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse {
-		const icons = iconSet.icons;
-
 		// Generate common data
 		const base: APIv1ListIconsBaseResponse = {
 			prefix,
@@ -48,13 +37,13 @@ export function generateAPIv1IconsListResponse(
 		if (v2Cache.title) {
 			base.title = v2Cache.title;
 		}
-		if (q.info && v2Cache.info) {
+		if (query.info && v2Cache.info) {
 			base.info = v2Cache.info;
 		}
-		if (q.aliases && v2Cache.aliases) {
+		if (query.aliases && v2Cache.aliases) {
 			base.aliases = v2Cache.aliases;
 		}
-		if (q.chars && v2Cache.chars) {
+		if (query.chars && v2Cache.chars) {
 			base.chars = v2Cache.chars;
 		}
 
@@ -81,22 +70,20 @@ export function generateAPIv1IconsListResponse(
 		return result;
 	}
 
-	if (q.prefix) {
-		const prefix = q.prefix;
+	if (query.prefix) {
+		const prefix = query.prefix;
 		const iconSet = iconSets[prefix]?.item;
 		if (!iconSet || !iconSet.apiV2IconsCache) {
-			res.send(404);
-			return;
+			return 404;
 		}
-		sendJSONResponse(parse(prefix, iconSet, iconSet.apiV2IconsCache), q, wrap, res);
-		return;
+		return parse(prefix, iconSet, iconSet.apiV2IconsCache);
 	}
 
-	if (q.prefixes) {
+	if (query.prefixes) {
 		const prefixes = filterPrefixesByPrefix(
 			getPrefixes(),
 			{
-				prefixes: q.prefixes,
+				prefixes: query.prefixes,
 			},
 			false
 		);
@@ -125,20 +112,18 @@ export function generateAPIv1IconsListResponse(
 
 		if (!items.length) {
 			// Empty list
-			res.send(404);
-			return;
+			return 404;
 		}
 
 		// Get all items
-		const result = Object.create(null) as Record<string, ReturnType<typeof parse>>;
+		const result = Object.create(null) as Record<string, PossibleResults>;
 		for (let i = 0; i < items.length; i++) {
 			const item = items[i];
 			result[item.prefix] = parse(item.prefix, item.iconSet, item.v2Cache);
 		}
-		sendJSONResponse(result, q, wrap, res);
-		return;
+		return result;
 	}
 
 	// Invalid
-	res.send(400);
+	return 400;
 }

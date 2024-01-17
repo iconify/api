@@ -14,28 +14,17 @@ const defaultSearchLimit = minSearchLimit * 2;
 /**
  * Send API v2 response
  */
-export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res: FastifyReply) {
-	const q = (query || {}) as Record<string, string>;
-
-	const wrap = checkJSONPQuery(q);
-	if (!wrap) {
-		// Invalid JSONP callback
-		res.send(400);
-		return;
-	}
-
+export function createAPIv2SearchResponse(q: Record<string, string>): number | APIv2SearchResponse {
 	// Check if search data is available
 	const searchIndexData = searchIndex.data;
 	if (!searchIndexData) {
-		res.send(404);
-		return;
+		return 404;
 	}
 
 	// Get query
 	const keyword = q.query;
 	if (!keyword) {
-		res.send(400);
-		return;
+		return 400;
 	}
 
 	// Convert to params
@@ -49,16 +38,14 @@ export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res:
 	if (v2Query.limit) {
 		const limit = parseInt(v2Query.limit);
 		if (!limit) {
-			res.send(400);
-			return;
+			return 400;
 		}
 		params.limit = Math.max(minSearchLimit, Math.min(limit, maxSearchLimit));
 	}
 	if (v2Query.min) {
 		const limit = parseInt(v2Query.min);
 		if (!limit) {
-			res.send(400);
-			return;
+			return 400;
 		}
 		params.limit = Math.max(minSearchLimit, Math.min(limit, maxSearchLimit));
 		params.softLimit = true;
@@ -68,8 +55,7 @@ export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res:
 	if (v2Query.start) {
 		start = parseInt(v2Query.start);
 		if (isNaN(start) || start < 0 || start >= params.limit) {
-			res.send(400);
-			return;
+			return 400;
 		}
 	}
 
@@ -130,5 +116,5 @@ export function generateAPIv2SearchResponse(query: FastifyRequest['query'], res:
 		};
 	}
 
-	sendJSONResponse(response, q, wrap, res);
+	return response;
 }

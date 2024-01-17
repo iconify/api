@@ -125,8 +125,9 @@ export function updateIconSets(): number {
 /**
  * Trigger update
  */
-export function triggerIconSetsUpdate() {
+export function triggerIconSetsUpdate(done?: (success?: boolean) => void) {
 	if (!importers) {
+		done?.();
 		return;
 	}
 	console.log('Checking for updates...');
@@ -147,6 +148,10 @@ export function triggerIconSetsUpdate() {
 		.then((updated) => {
 			console.log(updated ? 'Update complete' : 'Nothing to update');
 			updateIconSets();
+			done?.(true);
 		})
-		.catch(console.error);
+		.catch((err) => {
+			console.error(err);
+			done?.(false);
+		});
 }

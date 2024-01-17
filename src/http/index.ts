@@ -3,17 +3,18 @@ import fastifyFormBody from '@fastify/formbody';
 import { appConfig, httpHeaders } from '../config/app.js';
 import { runWhenLoaded } from '../data/loading.js';
 import { iconNameRoutePartialRegEx, iconNameRouteRegEx, splitIconName } from '../misc/name.js';
-import { generateAPIv1IconsListResponse } from './responses/collection-v1.js';
-import { generateAPIv2CollectionResponse } from './responses/collection-v2.js';
-import { generateCollectionsListResponse } from './responses/collections.js';
-import { generateIconsDataResponse } from './responses/icons.js';
-import { generateKeywordsResponse } from './responses/keywords.js';
-import { generateLastModifiedResponse } from './responses/modified.js';
-import { generateAPIv2SearchResponse } from './responses/search.js';
+import { createAPIv1IconsListResponse } from './responses/collection-v1.js';
+import { createAPIv2CollectionResponse } from './responses/collection-v2.js';
+import { createCollectionsListResponse } from './responses/collections.js';
+import { handleIconsDataResponse } from './helpers/send-icons.js';
+import { createKeywordsResponse } from './responses/keywords.js';
+import { createLastModifiedResponse } from './responses/modified.js';
+import { createAPIv2SearchResponse } from './responses/search.js';
 import { generateSVGResponse } from './responses/svg.js';
 import { generateUpdateResponse } from './responses/update.js';
 import { initVersionResponse, versionResponse } from './responses/version.js';
 import { generateIconsStyleResponse } from './responses/css.js';
+import { handleJSONResponse } from './helpers/send.js';
 
 /**
  * Start HTTP server
@@ -88,12 +89,12 @@ export async function startHTTPServer() {
 	// Icons data: /prefix/icons.json, /prefix.json
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ')/icons.json', (req, res) => {
 		runWhenLoaded(() => {
-			generateIconsDataResponse((req.params as PrefixParams).prefix, false, req.query, res);
+			handleIconsDataResponse((req.params as PrefixParams).prefix, false, req.query, res);
 		});
 	});
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').json', (req, res) => {
 		runWhenLoaded(() => {
-			generateIconsDataResponse((req.params as PrefixParams).prefix, false, req.query, res);
+			handleIconsDataResponse((req.params as PrefixParams).prefix, false, req.query, res);
 		});
 	});
 
@@ -107,19 +108,19 @@ export async function startHTTPServer() {
 	// Icons data: /prefix/icons.js, /prefix.js
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ')/icons.js', (req, res) => {
 		runWhenLoaded(() => {
-			generateIconsDataResponse((req.params as PrefixParams).prefix, true, req.query, res);
+			handleIconsDataResponse((req.params as PrefixParams).prefix, true, req.query, res);
 		});
 	});
 	server.get('/:prefix(' + iconNameRoutePartialRegEx + ').js', (req, res) => {
 		runWhenLoaded(() => {
-			generateIconsDataResponse((req.params as PrefixParams).prefix, true, req.query, res);
+			handleIconsDataResponse((req.params as PrefixParams).prefix, true, req.query, res);
 		});
 	});
 
 	// Last modification time
 	server.get('/last-modified', (req, res) => {
 		runWhenLoaded(() => {
-			generateLastModifiedResponse(req.query, res);
+			handleJSONResponse(req, res, createLastModifiedResponse);
 		});
 	});
 
@@ -127,26 +128,26 @@ export async function startHTTPServer() {
 		// Icon sets list
 		server.get('/collections', (req, res) => {
 			runWhenLoaded(() => {
-				generateCollectionsListResponse(req.query, res);
+				handleJSONResponse(req, res, createCollectionsListResponse);
 			});
 		});
 
 		// Icons list, API v2
 		server.get('/collection', (req, res) => {
 			runWhenLoaded(() => {
-				generateAPIv2CollectionResponse(req.query, res);
+				handleJSONResponse(req, res, createAPIv2CollectionResponse);
 			});
 		});
 
 		// Icons list, API v1
 		server.get('/list-icons', (req, res) => {
 			runWhenLoaded(() => {
-				generateAPIv1IconsListResponse(req.query, res, false);
+				handleJSONResponse(req, res, (q) => createAPIv1IconsListResponse(q, false));
 			});
 		});
 		server.get('/list-icons-categorized', (req, res) => {
 			runWhenLoaded(() => {
-				generateAPIv1IconsListResponse(req.query, res, true);
+				handleJSONResponse(req, res, (q) => createAPIv1IconsListResponse(q, true));
 			});
 		});
 
@@ -154,14 +155,14 @@ export async function startHTTPServer() {
 			// Search, currently version 2
 			server.get('/search', (req, res) => {
 				runWhenLoaded(() => {
-					generateAPIv2SearchResponse(req.query, res);
+					handleJSONResponse(req, res, createAPIv2SearchResponse);
 				});
 			});
 
 			// Keywords
 			server.get('/keywords', (req, res) => {
 				runWhenLoaded(() => {
-					generateKeywordsResponse(req.query, res);
+					handleJSONResponse(req, res, createKeywordsResponse);
 				});
 			});
 		}

@@ -1,7 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets.js';
 import type { APIv2CollectionsResponse } from '../../types/server/v2.js';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
 /**
@@ -12,15 +10,7 @@ import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
  * Ignored parameters:
  * - hidden (always enabled)
  */
-export function generateCollectionsListResponse(query: FastifyRequest['query'], res: FastifyReply) {
-	const q = (query || {}) as Record<string, string>;
-	const wrap = checkJSONPQuery(q);
-	if (!wrap) {
-		// Invalid JSONP callback
-		res.send(400);
-		return;
-	}
-
+export function createCollectionsListResponse(q: Record<string, string>): APIv2CollectionsResponse {
 	// Filter prefixes
 	const prefixes = filterPrefixesByPrefix(getPrefixes('info'), q, false);
 	const response = Object.create(null) as APIv2CollectionsResponse;
@@ -33,5 +23,5 @@ export function generateCollectionsListResponse(query: FastifyRequest['query'], 
 		}
 	}
 
-	sendJSONResponse(response, q, wrap, res);
+	return response;
 }

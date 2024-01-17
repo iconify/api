@@ -1,27 +1,16 @@
 import { matchIconName } from '@iconify/utils/lib/icon/name';
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { searchIndex } from '../../data/search.js';
 import { getPartialKeywords } from '../../data/search/partial.js';
 import type { APIv3KeywordsQuery, APIv3KeywordsResponse } from '../../types/server/keywords.js';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 
 /**
- * Generate icons data
+ * Find full keywords for partial keyword
  */
-export function generateKeywordsResponse(query: FastifyRequest['query'], res: FastifyReply) {
-	const q = (query || {}) as Record<string, string>;
-	const wrap = checkJSONPQuery(q);
-	if (!wrap) {
-		// Invalid JSONP callback
-		res.send(400);
-		return;
-	}
-
+export function createKeywordsResponse(q: Record<string, string>): number | APIv3KeywordsResponse {
 	// Check if search data is available
 	const searchIndexData = searchIndex.data;
 	if (!searchIndexData) {
-		res.send(404);
-		return;
+		return 404;
 	}
 	const keywords = searchIndexData.keywords;
 
@@ -32,15 +21,16 @@ export function generateKeywordsResponse(query: FastifyRequest['query'], res: Fa
 	let failed = false;
 
 	if (typeof q.prefix === 'string') {
+		// Keywords should start with prefix
 		test = q.prefix;
 		suffixes = false;
 	} else if (typeof q.keyword === 'string') {
+		// All keywords that contain keyword
 		test = q.keyword;
 		suffixes = true;
 	} else {
 		// Invalid query
-		res.send(400);
-		return;
+		return 400;
 	}
 	test = test.toLowerCase().trim();
 
@@ -71,5 +61,5 @@ export function generateKeywordsResponse(query: FastifyRequest['query'], res: Fa
 		matches: failed || invalid ? [] : getPartialKeywords(test, suffixes, searchIndexData)?.slice(0) || [],
 	};
 
-	sendJSONResponse(response, q, wrap, res);
+	return response;
 }

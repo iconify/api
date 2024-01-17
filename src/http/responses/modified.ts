@@ -1,21 +1,11 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getPrefixes, iconSets } from '../../data/icon-sets.js';
 import type { APIv3LastModifiedResponse } from '../../types/server/modified.js';
-import { checkJSONPQuery, sendJSONResponse } from '../helpers/json.js';
 import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
 /**
- * Generate icons data
+ * Get last modified time for all icon sets
  */
-export function generateLastModifiedResponse(query: FastifyRequest['query'], res: FastifyReply) {
-	const q = (query || {}) as Record<string, string>;
-	const wrap = checkJSONPQuery(q);
-	if (!wrap) {
-		// Invalid JSONP callback
-		res.send(400);
-		return;
-	}
-
+export function createLastModifiedResponse(q: Record<string, string>): number | APIv3LastModifiedResponse {
 	// Filter prefixes
 	const prefixes = filterPrefixesByPrefix(getPrefixes(), q, false);
 
@@ -36,5 +26,5 @@ export function generateLastModifiedResponse(query: FastifyRequest['query'], res
 		}
 	}
 
-	sendJSONResponse(response, q, wrap, res);
+	return response;
 }

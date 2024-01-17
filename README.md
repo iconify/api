@@ -6,6 +6,12 @@ This repository contains Iconify API script. It is a HTTP server, written in Nod
 -   Generates SVG, which you can link to in HTML or stylesheet.
 -   Provides search engine for hosted icons, which can be used by icon pickers.
 
+## NPM Package
+
+This package is also available at NPM, allowing using API code in custom wrappers.
+
+NPM package contains only compiled files, to build custom Docker image you need to use source files from Git repository, not NPM package.
+
 ## Docker
 
 To build a Docker image, run `./docker.sh`.
