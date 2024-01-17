@@ -7,9 +7,10 @@ import { iconSets } from '../../data/icon-sets.js';
  */
 export function createIconsDataResponse(
 	prefix: string,
-	q: Record<string, string>
+	q: Record<string, string | string[]>
 ): number | IconifyJSON | Promise<IconifyJSON | number> {
-	const names = q.icons?.split(',');
+	const iconNames = q.icons;
+	const names = typeof iconNames === 'string' ? iconNames.split(',') : iconNames;
 
 	if (!names || !names.length) {
 		// Missing or invalid icons parameter
@@ -47,7 +48,10 @@ export function createIconsDataResponse(
 /**
  * Awaitable version of createIconsDataResponse()
  */
-export function createIconsDataResponseAsync(prefix: string, q: Record<string, string>): Promise<IconifyJSON | number> {
+export function createIconsDataResponseAsync(
+	prefix: string,
+	q: Record<string, string | string[]>
+): Promise<IconifyJSON | number> {
 	return new Promise((resolve, reject) => {
 		const result = createIconsDataResponse(prefix, q);
 		if (result instanceof Promise) {
