@@ -23,6 +23,13 @@ export function loaded() {
 }
 
 /**
+ * Get state
+ */
+export function isLoading() {
+	return loading;
+}
+
+/**
  * Run when app is ready
  */
 export function runWhenLoaded(callback: Callback) {
