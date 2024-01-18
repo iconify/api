@@ -25,9 +25,9 @@ export async function initAPI(options: InitOptions = {}) {
 	let importers = options.importers;
 	if (!importers) {
 		importers = await getImporters();
-		for (let i = 0; i < importers.length; i++) {
-			await importers[i].init();
-		}
+	}
+	for (let i = 0; i < importers.length; i++) {
+		await importers[i].init();
 	}
 
 	// Update
