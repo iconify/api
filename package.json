@@ -16,6 +16,7 @@
 		"node": ">=16.15.0"
 	},
 	"scripts": {
+		"dev": "nodemon src/index.ts",
 		"build": "tsc -b",
 		"test": "vitest --config vitest.config.mjs",
 		"start": "node --expose-gc lib/index.js",
@@ -36,6 +37,8 @@
 	"devDependencies": {
 		"@types/jest": "^29.5.1",
 		"@types/node": "^18.16.12",
+		"nodemon": "^3.0.3",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.0.4",
 		"vitest": "^0.31.1"
 	}
