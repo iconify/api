@@ -15,7 +15,7 @@
 		"type": "git",
 		"url": "https://github.com/iconify/api.git"
 	},
-	"packageManager": "npm@10.3.0",
+	"packageManager": "npm@10.4.0",
 	"engines": {
 		"node": ">=16.15.0"
 	},
@@ -33,14 +33,15 @@
 		"@fastify/formbody": "^7.4.0",
 		"@iconify/tools": "^4.0.0",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.1.15",
-		"dotenv": "^16.3.1",
-		"fastify": "^4.25.2"
+		"@iconify/utils": "^2.1.22",
+		"dotenv": "^16.4.1",
+		"fastify": "^4.26.0",
+		"mlly": "^1.5.0"
 	},
 	"devDependencies": {
-		"@types/jest": "^29.5.11",
-		"@types/node": "^20.11.4",
+		"@types/jest": "^29.5.12",
+		"@types/node": "^20.11.16",
 		"typescript": "^5.3.3",
-		"vitest": "^1.2.0"
+		"vitest": "^1.2.2"
 	}
 }
