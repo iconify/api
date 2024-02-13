@@ -23,6 +23,17 @@ export function createIconSetsPackageImporter<Downloader extends BaseDownloader<
 
 	// Load collections list
 	obj._loadCollectionsListFromDirectory = async (path: string) => {
+		// Log version
+		try {
+			const packageJSON = JSON.parse(await readFile(path + '/package.json', 'utf8'));
+			if (packageJSON.name && packageJSON.version) {
+				console.log(`Loading ${packageJSON.name} ${packageJSON.version}`);
+			}
+		} catch {
+			//
+		}
+
+		// Get prefixes
 		let prefixes: string[];
 		let data: Record<string, IconifyInfo>;
 		try {
