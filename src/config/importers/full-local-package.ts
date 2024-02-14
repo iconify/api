@@ -1,5 +1,5 @@
+import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
-import { resolveSync } from 'mlly';
 import { Importer } from '../../types/importers.js';
 import { createIconSetsPackageImporter } from '../../importers/full/json.js';
 import { ImportedData } from '../../types/importers/common.js';
@@ -18,9 +18,8 @@ export function createPackageIconSetImporter(
 	// Try to locate package
 	let dir: string | undefined;
 	try {
-		const filename = resolveSync(`${packageName}/package.json`, {
-			url: import.meta.url,
-		});
+		const req = createRequire(import.meta.url);
+		const filename = req.resolve(`${packageName}/package.json`);
 		dir = filename ? dirname(filename) : undefined;
 	} catch (err) {
 		//

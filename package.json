@@ -3,7 +3,7 @@
 	"description": "Iconify API",
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
-	"version": "3.1.0-beta.7",
+	"version": "3.1.0-beta.8",
 	"publishConfig": {
 		"access": "public",
 		"tag": "next"
@@ -35,8 +35,7 @@
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.1.22",
 		"dotenv": "^16.4.4",
-		"fastify": "^4.26.1",
-		"mlly": "^1.5.0"
+		"fastify": "^4.26.1"
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.12",
