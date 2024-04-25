@@ -21,7 +21,14 @@ export function splitIconSetMainData(iconSet: IconifyJSON): SplitIconifyJSONMain
 	for (let i = 0; i < iconSetMainDataProps.length; i++) {
 		const prop = iconSetMainDataProps[i];
 		if (iconSet[prop]) {
-			result[prop as 'prefix'] = iconSet[prop as 'prefix'];
+			const value = iconSet[prop as 'prefix'];
+			if (typeof value === 'object') {
+				// Make sure object has null as constructor
+				result[prop as 'prefix'] = Object.create(null);
+				Object.assign(result[prop as 'prefix'], iconSet[prop as 'prefix']);
+			} else {
+				result[prop as 'prefix'] = iconSet[prop as 'prefix'];
+			}
 		} else if (prop === 'aliases') {
 			result[prop] = Object.create(null);
 		}
