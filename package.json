@@ -3,7 +3,7 @@
 	"description": "Iconify API",
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
-	"version": "3.1.0-beta.8",
+	"version": "3.1.0",
 	"publishConfig": {
 		"access": "public",
 		"tag": "next"
@@ -15,7 +15,7 @@
 		"type": "git",
 		"url": "https://github.com/iconify/api.git"
 	},
-	"packageManager": "npm@10.4.0",
+	"packageManager": "npm@10.6.0",
 	"engines": {
 		"node": ">=16.15.0"
 	},
@@ -31,16 +31,16 @@
 	},
 	"dependencies": {
 		"@fastify/formbody": "^7.4.0",
-		"@iconify/tools": "^4.0.2",
+		"@iconify/tools": "^4.0.4",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.1.22",
-		"dotenv": "^16.4.4",
-		"fastify": "^4.26.1"
+		"@iconify/utils": "^2.1.23",
+		"dotenv": "^16.4.5",
+		"fastify": "^4.26.2"
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.12",
-		"@types/node": "^20.11.17",
-		"typescript": "^5.3.3",
-		"vitest": "^1.2.2"
+		"@types/node": "^20.12.7",
+		"typescript": "^5.4.5",
+		"vitest": "^1.5.2"
 	}
 }
