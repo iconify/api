@@ -125,7 +125,7 @@ export function updateIconSets(): number {
 /**
  * Trigger update
  */
-export function triggerIconSetsUpdate(done?: (success?: boolean) => void) {
+export function triggerIconSetsUpdate(index?: number | null, done?: (success?: boolean) => void) {
 	if (!importers) {
 		done?.();
 		return;
@@ -141,6 +141,9 @@ export function triggerIconSetsUpdate(done?: (success?: boolean) => void) {
 		// Check for updates
 		let updated = false;
 		for (let i = 0; i < importers?.length; i++) {
+			if (typeof index === 'number' && i !== index) {
+				continue;
+			}
 			updated = (await importers[i].checkForUpdate()) || updated;
 		}
 		return updated;
