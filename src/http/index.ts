@@ -11,7 +11,7 @@ import { createKeywordsResponse } from './responses/keywords.js';
 import { createLastModifiedResponse } from './responses/modified.js';
 import { createAPIv2SearchResponse } from './responses/search.js';
 import { generateSVGResponse } from './responses/svg.js';
-import { generateUpdateResponse } from './responses/update.js';
+import { generateUpdateCustomResponse, generateUpdateResponse } from './responses/update.js';
 import { initVersionResponse, versionResponse } from './responses/version.js';
 import { generateIconsStyleResponse } from './responses/css.js';
 import { handleJSONResponse } from './helpers/send.js';
@@ -63,16 +63,13 @@ export async function startHTTPServer() {
 	}
 
 	// SVG: /prefix/icon.svg, /prefix:name.svg, /prefix-name.svg
-	server.get(
-		'/:prefix(' + iconNameRoutePartialRegEx + ')/:name(' + iconNameRoutePartialRegEx + ').svg',
-		(req, res) => {
-			type Params = PrefixParams & NameParams;
-			const name = req.params as Params;
-			runWhenLoaded(() => {
-				generateSVGResponse(name.prefix, name.name, req.query, res);
-			});
-		}
-	);
+	server.get('/:prefix(' + iconNameRoutePartialRegEx + ')/:name(' + iconNameRoutePartialRegEx + ').svg', (req, res) => {
+		type Params = PrefixParams & NameParams;
+		const name = req.params as Params;
+		runWhenLoaded(() => {
+			generateSVGResponse(name.prefix, name.name, req.query, res);
+		});
+	});
 
 	// SVG: /prefix:name.svg, /prefix-name.svg
 	server.get('/:name(' + iconNameRouteRegEx + ').svg', (req, res) => {
@@ -174,6 +171,14 @@ export async function startHTTPServer() {
 	});
 	server.post('/update', (req, res) => {
 		generateUpdateResponse(req.query, res);
+	});
+
+	// Update custom icon sets only
+	server.get('/update-custom-icons', (req, res) => {
+		generateUpdateCustomResponse(req.query, res);
+	});
+	server.post('/update-custom-icons', (req, res) => {
+		generateUpdateCustomResponse(req.query, res);
 	});
 
 	// Options
