@@ -1,0 +1,52 @@
+name: cd
+
+on:
+    push:
+        branches:
+            - main
+            - next
+    pull_request:
+        branches:
+            - main
+            - next
+
+env:
+  IMAGE_NAME: hooore-iconfiy
+
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Ping Server
+        run: tailscale ping ${{ secrets.TS_MACHINE_TARGET }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-config-inline: |
+            [registry."${{ secrets.REGISTRY }}"]
+              http = true
+              insecure = true
+
+      - name: Build Docker image
+        run: ./docker.sh
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Inspect
+        run: |
+          docker buildx imagetools inspect ${{ secrets.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Update Watchtower
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" ${{ secrets.WATCHTOWER_URL }}

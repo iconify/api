@@ -1,0 +1,19 @@
+services:
+  hooore-iconfiy:
+    image: localhost:5000/hooore-iconfiy:latest
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.docker.network=public-web"
+      - "traefik.http.routers.hooore-iconfiy.rule=Host(`${DEPLOYMENT_HOST}`)"
+      - "traefik.http.routers.hooore-iconfiy.entrypoints=web,websecure"
+      - "traefik.http.routers.hooore-iconfiy.tls.certresolver=myresolver"
+      - "traefik.http.services.hooore-iconfiy.loadbalancer.server.port=3000"
+    env_file:
+      - path: ./.env
+        required: true
+
+networks:
+  public-web:
+    external: true
