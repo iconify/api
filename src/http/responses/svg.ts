@@ -7,6 +7,7 @@ import { defaultIconCustomisations, IconifyIconCustomisations } from '@iconify/u
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getStoredIconData } from '../../data/icon-set/utils/get-icon.js';
 import { iconSets } from '../../data/icon-sets.js';
+import { errorText } from '../helpers/errors.js';
 
 /**
  * Generate SVG
@@ -16,7 +17,7 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 	const iconSetItem = iconSets[prefix]?.item;
 	if (!iconSetItem) {
 		// No such icon set
-		res.send(404);
+		res.code(404).send(errorText(404));
 		return;
 	}
 
@@ -24,7 +25,7 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 	const icons = iconSetItem.icons;
 	if (!(icons.visible[name] || icons.hidden[name]) && !iconSetItem.icons.chars?.[name]) {
 		// No such icon
-		res.send(404);
+		res.code(404).send(errorText(404));
 		return;
 	}
 
@@ -32,7 +33,7 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 	getStoredIconData(iconSetItem, name, (data) => {
 		if (!data) {
 			// Invalid icon
-			res.send(404);
+			res.code(404).send(errorText(404));
 			return;
 		}
 

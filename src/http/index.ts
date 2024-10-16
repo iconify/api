@@ -15,6 +15,7 @@ import { generateUpdateResponse } from './responses/update.js';
 import { initVersionResponse, versionResponse } from './responses/version.js';
 import { generateIconsStyleResponse } from './responses/css.js';
 import { handleJSONResponse } from './helpers/send.js';
+import { errorText } from './helpers/errors.js';
 
 /**
  * Start HTTP server
@@ -82,7 +83,7 @@ export async function startHTTPServer() {
 				generateSVGResponse(name.prefix, name.name, req.query, res);
 			});
 		} else {
-			res.send(404);
+			res.code(404).send(errorText(404));
 		}
 	});
 
@@ -178,7 +179,7 @@ export async function startHTTPServer() {
 
 	// Options
 	server.options('/*', (req, res) => {
-		res.send(200);
+		res.code(204).header('Content-Length', '0').send();
 	});
 
 	// Robots

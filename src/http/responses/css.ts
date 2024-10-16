@@ -5,6 +5,7 @@ import type { IconCSSIconSetOptions } from '@iconify/utils/lib/css/types';
 import { getStoredIconsData } from '../../data/icon-set/utils/get-icons.js';
 import { iconSets } from '../../data/icon-sets.js';
 import { paramToBoolean } from '../../misc/bool.js';
+import { errorText } from '../helpers/errors.js';
 
 /**
  * Check selector for weird stuff
@@ -26,7 +27,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 
 	if (!names || !names.length) {
 		// Missing or invalid icons parameter
-		res.send(404);
+		res.code(404).send(errorText(404));
 		return;
 	}
 
@@ -34,7 +35,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 	const iconSet = iconSets[prefix];
 	if (!iconSet) {
 		// No such icon set
-		res.send(404);
+		res.code(404).send(errorText(404));
 		return;
 	}
 

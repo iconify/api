@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { checkJSONPQuery, sendJSONResponse } from './json.js';
+import { errorText } from './errors.js';
 
 type CallbackResult = object | number;
 
@@ -17,14 +18,14 @@ export function handleJSONResponse(
 	const wrap = checkJSONPQuery(q);
 	if (!wrap) {
 		// Invalid JSONP callback
-		res.send(400);
+		res.code(400).send(errorText(400));
 		return;
 	}
 
 	// Function to send response
 	const respond = (result: CallbackResult) => {
 		if (typeof result === 'number') {
-			res.send(result);
+			res.code(result).send(errorText(result));
 		} else {
 			sendJSONResponse(result, q, wrap, res);
 		}
