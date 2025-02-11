@@ -8,6 +8,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getStoredIconData } from '../../data/icon-set/utils/get-icon.js';
 import { iconSets } from '../../data/icon-sets.js';
 import { errorText } from '../helpers/errors.js';
+import { cleanupQueryValue } from '../helpers/query.js';
 
 /**
  * Generate SVG
@@ -43,8 +44,8 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 		const customisations: IconifyIconCustomisations = {};
 
 		// Dimensions
-		customisations.width = q.width || defaultIconCustomisations.width;
-		customisations.height = q.height || defaultIconCustomisations.height;
+		customisations.width = cleanupQueryValue(q.width) || defaultIconCustomisations.width;
+		customisations.height = cleanupQueryValue(q.height) || defaultIconCustomisations.height;
 
 		// Rotation
 		customisations.rotate = q.rotate ? rotateFromString(q.rotate, 0) : 0;
@@ -75,7 +76,7 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 		let html = iconToHTML(body, svg.attributes);
 
 		// Change color
-		const color = q.color;
+		const color = cleanupQueryValue(q.color);
 		if (color && html.indexOf('currentColor') !== -1 && color.indexOf('"') === -1) {
 			html = html.split('currentColor').join(color);
 		}

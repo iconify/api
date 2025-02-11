@@ -6,6 +6,7 @@ import { getStoredIconsData } from '../../data/icon-set/utils/get-icons.js';
 import { iconSets } from '../../data/icon-sets.js';
 import { paramToBoolean } from '../../misc/bool.js';
 import { errorText } from '../helpers/errors.js';
+import { cleanupQueryValue } from '../helpers/query.js';
 
 /**
  * Check selector for weird stuff
@@ -57,7 +58,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 
 		// 'color': string
 		// Sets color for monotone images
-		const color = qOptions.color;
+		const color = cleanupQueryValue(qOptions.color);
 		if (typeof color === 'string' && stringToColor(color)) {
 			options.color = color;
 		}
@@ -98,7 +99,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'commonSelector': string
 		// Common selector for all requested icons
 		// Alias: 'common'
-		const commonSelector = qOptions.commonSelector || q.common;
+		const commonSelector = cleanupQueryValue(qOptions.commonSelector || q.common);
 		if (checkSelector(commonSelector)) {
 			options.commonSelector = commonSelector;
 		}
@@ -106,7 +107,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'iconSelector': string
 		// Icon selector
 		// Alias: 'selector'
-		const iconSelector = qOptions.iconSelector || q.selector;
+		const iconSelector = cleanupQueryValue(qOptions.iconSelector || q.selector);
 		if (checkSelector(iconSelector)) {
 			options.iconSelector = iconSelector;
 		}
@@ -114,7 +115,7 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'overrideSelector': string
 		// Selector for rules in icon that override common rules
 		// Alias: 'override'
-		const overrideSelector = qOptions.overrideSelector || q.override;
+		const overrideSelector = cleanupQueryValue(qOptions.overrideSelector || q.override);
 		if (checkSelector(overrideSelector)) {
 			options.overrideSelector = overrideSelector;
 		}
