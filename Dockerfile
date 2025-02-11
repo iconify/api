@@ -1,7 +1,7 @@
 ARG ARCH=amd64
 ARG NODE_VERSION=18
 ARG OS=bullseye-slim
-ARG ICONIFY_API_VERSION=3.0.0
+ARG ICONIFY_API_VERSION=3.1.1
 ARG SRC_PATH=./
 
 #### Stage BASE ########################################################################################################

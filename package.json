@@ -3,7 +3,7 @@
 	"description": "Iconify API",
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"type": "module",
 	"bugs": "https://github.com/iconify/api/issues",
 	"homepage": "https://github.com/iconify/api",
