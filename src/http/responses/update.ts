@@ -62,3 +62,14 @@ export function generateUpdateResponse(query: FastifyRequest['query'], res: Fast
 	// Send same message regardless of status
 	res.send('ok');
 }
+
+/**
+ * Generate custom icons data only
+ */
+export function generateUpdateCustomResponse(query: FastifyRequest['query'], res: FastifyReply) {
+	runWhenLoaded(() => {
+		triggerIconSetsUpdate(1, () => {
+			res.send('ok');
+		});
+	});
+}
