@@ -13,7 +13,7 @@
 	},
 	"packageManager": "npm@11.1.0",
 	"engines": {
-		"node": ">=16.15.0"
+		"node": ">=16.20.2"
 	},
 	"scripts": {
 		"build": "tsc -b",
