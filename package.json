@@ -35,7 +35,7 @@
 	},
 	"devDependencies": {
 		"@types/jest": "^30.0.0",
-		"@types/node": "^20.17.17",
+		"@types/node": "^20.19.21",
 		"typescript": "^5.7.3",
 		"vitest": "^3.0.5"
 	}
