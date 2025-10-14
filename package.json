@@ -31,7 +31,7 @@
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.3.0",
 		"dotenv": "^16.4.7",
-		"fastify": "^4.29.1"
+		"fastify": "^5.6.1"
 	},
 	"devDependencies": {
 		"@types/jest": "^30.0.0",
