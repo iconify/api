@@ -29,7 +29,7 @@
 		"@fastify/formbody": "^8.0.2",
 		"@iconify/tools": "^4.1.4",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.3.0",
+		"@iconify/utils": "^3.0.2",
 		"dotenv": "^16.4.7",
 		"fastify": "^4.29.1"
 	},
