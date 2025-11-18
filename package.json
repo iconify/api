@@ -30,13 +30,13 @@
 		"@iconify/tools": "^4.1.4",
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.3.0",
-		"dotenv": "^16.4.7",
+		"dotenv": "^17.2.3",
 		"fastify": "^4.29.1"
 	},
 	"devDependencies": {
 		"@types/jest": "^30.0.0",
-		"@types/node": "^22.18.10",
+		"@types/node": "^24.10.1",
 		"typescript": "^5.9.3",
-		"vitest": "^3.0.5"
+		"vitest": "^4.0.10"
 	}
 }
