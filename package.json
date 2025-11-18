@@ -26,7 +26,7 @@
 		"docker:publish": "docker push iconify/api"
 	},
 	"dependencies": {
-		"@fastify/formbody": "^8.0.2",
+		"@fastify/formbody": "^7.4.0",
 		"@iconify/tools": "^4.1.4",
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.3.0",
