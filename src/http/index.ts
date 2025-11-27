@@ -23,7 +23,9 @@ import { errorText } from './helpers/errors.js';
 export async function startHTTPServer() {
 	// Create HTP server
 	const server = fastify({
-		caseSensitive: true,
+		routerOptions: {
+			caseSensitive: true,
+		},
 	});
 
 	// Support `application/x-www-form-urlencoded`
@@ -199,21 +201,21 @@ export async function startHTTPServer() {
 
 	// Redirect
 	server.get('/', (req, res) => {
-		res.redirect(301, appConfig.redirectIndex);
+		res.redirect(appConfig.redirectIndex, 301);
 	});
 
 	// Error handling
-	server.setDefaultRoute((req, res) => {
+	server.setNotFoundHandler((req, res) => {
 		res.statusCode = 404;
 		console.log('404:', req.url);
 
 		// Need to set custom headers because hooks don't work here
 		for (let i = 0; i < headers.length; i++) {
 			const header = headers[i];
-			res.setHeader(header.key, header.value);
+			res.header(header.key, header.value);
 		}
 
-		res.end();
+		res.send();
 	});
 
 	// Start it
