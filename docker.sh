@@ -29,6 +29,7 @@ echo "Iconify API version: ${ICONIFY_API_VERSION}"
 mkdir -p $BUILD_SOURCE/tmp
 
 # If we need a different APT package list during the build, this will fetch it
+# This is copied to /etc/apt/sources.list.d/temporary-build-sources.list (trixie+ uses sources.list.d/)
 # This is useful in case a local APT cache is used.
 if [ -s $SHARED_DIR/sources-build.list ]; then
     cp -f $SHARED_DIR/sources-build.list $BUILD_SOURCE/tmp/sources.list

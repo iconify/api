@@ -1,6 +1,6 @@
 ARG ARCH=amd64
 ARG NODE_VERSION=22
-ARG OS=bullseye-slim
+ARG OS=trixie-slim
 ARG ICONIFY_API_VERSION=3.2.0
 ARG SRC_PATH=./
 
@@ -10,10 +10,9 @@ FROM --platform=${ARCH} node:${NODE_VERSION}-${OS} AS base
 # This gives node.js apps access to the OS CAs
 ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 
-# This handles using special APT sources during build only (it is safe to comment these 3 following lines out):
-RUN cp /etc/apt/sources.list /etc/apt/sources.list.original
-COPY tmp/sources.list /tmp/sources.list.tmp
-RUN ([ -s /tmp/sources.list.tmp ] && mv -f /tmp/sources.list.tmp /etc/apt/sources.list && cat /etc/apt/sources.list) || (cat /etc/apt/sources.list)
+# This handles using special APT sources during build only (it is safe to comment these 2 following lines out):
+# In trixie-slim and later, /etc/apt/sources.list is replaced by /etc/apt/sources.list.d/
+COPY tmp/sources.list /etc/apt/sources.list.d/temporary-build-sources.list
 
 # Add temporary CERTs needed during build (it is safe to comment the following 1 line out):
 COPY tmp/build-ca-cert.crt /usr/local/share/ca-certificates/build-ca-cert.crt
@@ -30,8 +29,8 @@ RUN set -ex && \
     mkdir -p /data/iconify-api && \
     apt-get clean && \
     rm -rf /tmp/* && \
-    # Restore the original sources.list
-    ([ -s /etc/apt/sources.list.original ] && mv /etc/apt/sources.list.original /etc/apt/sources.list) && \
+    # Remove the temporary sources.list.d file if it exists (only during build)
+    rm -f /etc/apt/sources.list.d/temporary-build-sources.list && \
     # Remove the temporary build CA cert
     rm -f /usr/local/share/ca-certificates/build-ca-cert.crt
 
