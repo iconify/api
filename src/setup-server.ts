@@ -36,11 +36,13 @@ if (typeof key !== 'string') {
 		'Access key is required. Please set the DEPLOY_KEY_FILE environment variable.'
 	);
 }
+const passphrase = process.env.DEPLOY_KEY_PASS ?? '';
 
 // Install server
 await installNodeServer({
 	ip,
 	key,
+	passphrase,
 	// skipInstall: true,
 	install: async (client) => {
 		const targetDir = baseAppDirectory;

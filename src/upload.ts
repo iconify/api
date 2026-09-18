@@ -36,9 +36,10 @@ if (typeof key !== 'string') {
 		'Access key is required. Please set the DEPLOY_KEY_FILE environment variable.'
 	);
 }
+const passphrase = process.env.DEPLOY_KEY_PASS ?? '';
 
 // Connect
-const client = await connectToSSHWithKeys(ip, 'root', key);
+const client = await connectToSSHWithKeys(ip, 'root', key, passphrase);
 if (!client) {
 	throw new Error('Failed to connect to SSH');
 }
