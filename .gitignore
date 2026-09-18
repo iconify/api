@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 /lib
 /cache
 /tmp
+/icons/*.json
