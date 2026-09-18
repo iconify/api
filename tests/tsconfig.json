@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig-base.json",
 	"compilerOptions": {
-		"types": ["node", "jest", "cheerio"],
+		"types": ["node", "vitest/globals", "cheerio"],
 		"rootDir": ".",
 		"sourceMap": true,
 		"mapRoot": "tests/"
