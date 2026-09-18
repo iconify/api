@@ -1,4 +1,4 @@
-import { getIconStyle } from '../../lib/data/icon-set/lists/style';
+import { getIconStyle } from '../../lib/data/icon-set/lists/style.js';
 
 describe('Checking icon style', () => {
 	test('Fill', () => {

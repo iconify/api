@@ -1,9 +1,12 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { appConfig } from '../../lib/config/app';
-import { createStorage, createStoredItem } from '../../lib/data/storage/create';
-import { uniqueCacheDir } from '../helpers';
-import type { MemoryStorageItem } from '../../lib/types/storage';
+import { appConfig } from '../../lib/config/app.js';
+import {
+	createStorage,
+	createStoredItem,
+} from '../../lib/data/storage/create.js';
+import { uniqueCacheDir } from '../helpers.js';
+import type { MemoryStorageItem } from '../../lib/types/storage.js';
 
 describe('Basic data storage tests', () => {
 	test('Storage with default config', () => {
@@ -65,30 +68,36 @@ describe('Basic data storage tests', () => {
 				const content = {
 					test: true,
 				};
-				const item = createStoredItem(storage, content, 'foo.json', false, (item) => {
-					// Async write, wrap in try..catch to reject with error
-					try {
-						expect(isSync).toBeFalsy();
+				const item = createStoredItem(
+					storage,
+					content,
+					'foo.json',
+					false,
+					(item) => {
+						// Async write, wrap in try..catch to reject with error
+						try {
+							expect(isSync).toBeFalsy();
 
-						expect(item.cache).toEqual({
-							filename: 'cache/' + dir + '/foo.json',
-							exists: true,
-						});
-						expect(item.data).toEqual(content);
+							expect(item.cache).toEqual({
+								filename: 'cache/' + dir + '/foo.json',
+								exists: true,
+							});
+							expect(item.data).toEqual(content);
 
-						// Expecting no pending writes, 1 watched item, no timer
-						expect(storage.timer).toBeUndefined();
-						expect(storage.watched.size).toBe(1);
-						expect(storage.pendingWrites.size).toBe(0);
-						expect(storage.pendingReads.size).toBe(0);
-					} catch (err) {
-						reject(err);
-						return;
+							// Expecting no pending writes, 1 watched item, no timer
+							expect(storage.timer).toBeUndefined();
+							expect(storage.watched.size).toBe(1);
+							expect(storage.pendingWrites.size).toBe(0);
+							expect(storage.pendingReads.size).toBe(0);
+						} catch (err) {
+							reject(err);
+							return;
+						}
+
+						// Done
+						fulfill(true);
 					}
-
-					// Done
-					fulfill(true);
-				});
+				);
 
 				// Expecting 1 pending write, but no timer
 				expect(item.cache).toEqual({
@@ -135,32 +144,38 @@ describe('Basic data storage tests', () => {
 				const content = {
 					test: true,
 				};
-				const item = createStoredItem(storage, content, 'foo.json', true, (item) => {
-					// Async write, wrap in try..catch to reject with error
-					try {
-						expect(isSync).toBeFalsy();
+				const item = createStoredItem(
+					storage,
+					content,
+					'foo.json',
+					true,
+					(item) => {
+						// Async write, wrap in try..catch to reject with error
+						try {
+							expect(isSync).toBeFalsy();
 
-						expect(item.cache).toEqual({
-							filename: 'cache/' + dir + '/foo.json',
-							exists: true,
-						});
+							expect(item.cache).toEqual({
+								filename: 'cache/' + dir + '/foo.json',
+								exists: true,
+							});
 
-						// Data should be unset
-						expect(item.data).toBeUndefined();
+							// Data should be unset
+							expect(item.data).toBeUndefined();
 
-						// Expecting no pending writes, 0 watched items, no timer
-						expect(storage.timer).toBeUndefined();
-						expect(storage.watched.size).toBe(0);
-						expect(storage.pendingWrites.size).toBe(0);
-						expect(storage.pendingReads.size).toBe(0);
-					} catch (err) {
-						reject(err);
-						return;
+							// Expecting no pending writes, 0 watched items, no timer
+							expect(storage.timer).toBeUndefined();
+							expect(storage.watched.size).toBe(0);
+							expect(storage.pendingWrites.size).toBe(0);
+							expect(storage.pendingReads.size).toBe(0);
+						} catch (err) {
+							reject(err);
+							return;
+						}
+
+						// Done
+						fulfill(true);
 					}
-
-					// Done
-					fulfill(true);
-				});
+				);
 
 				// Expecting 1 pending write, but no timer
 				expect(item.cache).toEqual({
@@ -207,32 +222,38 @@ describe('Basic data storage tests', () => {
 				const content = {
 					test: true,
 				};
-				const item = createStoredItem(storage, content, 'foo.json', true, (item) => {
-					// Async write, wrap in try..catch to reject with error
-					try {
-						expect(isSync).toBeFalsy();
+				const item = createStoredItem(
+					storage,
+					content,
+					'foo.json',
+					true,
+					(item) => {
+						// Async write, wrap in try..catch to reject with error
+						try {
+							expect(isSync).toBeFalsy();
 
-						expect(item.cache).toEqual({
-							filename: 'cache/' + dir + '/foo.json',
-							exists: true,
-						});
+							expect(item.cache).toEqual({
+								filename: 'cache/' + dir + '/foo.json',
+								exists: true,
+							});
 
-						// Data should be set because lastUsed was set
-						expect(item.data).toBe(content);
+							// Data should be set because lastUsed was set
+							expect(item.data).toBe(content);
 
-						// Expecting no pending writes, 1 watched item, no timer
-						expect(storage.timer).toBeUndefined();
-						expect(storage.watched.size).toBe(1);
-						expect(storage.pendingWrites.size).toBe(0);
-						expect(storage.pendingReads.size).toBe(0);
-					} catch (err) {
-						reject(err);
-						return;
+							// Expecting no pending writes, 1 watched item, no timer
+							expect(storage.timer).toBeUndefined();
+							expect(storage.watched.size).toBe(1);
+							expect(storage.pendingWrites.size).toBe(0);
+							expect(storage.pendingReads.size).toBe(0);
+						} catch (err) {
+							reject(err);
+							return;
+						}
+
+						// Done
+						fulfill(true);
 					}
-
-					// Done
-					fulfill(true);
-				});
+				);
 
 				// Expecting 1 pending write, but no timer
 				expect(item.cache).toEqual({
@@ -301,70 +322,76 @@ describe('Basic data storage tests', () => {
 				const content = {
 					test: true,
 				};
-				const item = createStoredItem(storage, content, 'foo.json', false, (item) => {
-					// Async write, wrap in try..catch to reject with error
-					try {
-						expect(isSync).toBeFalsy();
+				const item = createStoredItem(
+					storage,
+					content,
+					'foo.json',
+					false,
+					(item) => {
+						// Async write, wrap in try..catch to reject with error
+						try {
+							expect(isSync).toBeFalsy();
 
-						expect(item.cache).toEqual({
-							filename: 'cache/' + dir + '/foo.json',
-							exists: true,
-						});
+							expect(item.cache).toEqual({
+								filename: 'cache/' + dir + '/foo.json',
+								exists: true,
+							});
 
-						// Data should not be unset yet
-						expect(item.data).toBe(content);
+							// Data should not be unset yet
+							expect(item.data).toBe(content);
 
-						// Expecting no pending writes, 1 watched item and timer
-						expect(storage.timer).toBeTruthy();
-						expect(storage.watched.size).toBe(1);
-						expect(storage.pendingWrites.size).toBe(0);
-						expect(storage.pendingReads.size).toBe(0);
-					} catch (err) {
-						reject(err);
-						return;
-					}
-
-					// Wait for cleanup
-					let count = 0;
-					callback = () => {
-						if (count++ > 5) {
-							// Too much waiting!
-							clearInterval(storage.timer);
-							reject('Delay is too long');
+							// Expecting no pending writes, 1 watched item and timer
+							expect(storage.timer).toBeTruthy();
+							expect(storage.watched.size).toBe(1);
+							expect(storage.pendingWrites.size).toBe(0);
+							expect(storage.pendingReads.size).toBe(0);
+						} catch (err) {
+							reject(err);
 							return;
 						}
 
-						// Data should exist
-						expect(item.data).toBeTruthy();
-
-						// Test on next tick, after cleanup
-						setTimeout(() => {
-							if (item.data) {
-								// Not cleaned up yet
+						// Wait for cleanup
+						let count = 0;
+						callback = () => {
+							if (count++ > 5) {
+								// Too much waiting!
+								clearInterval(storage.timer);
+								reject('Delay is too long');
 								return;
 							}
 
-							// Clear timer before testing
-							clearInterval(storage.timer);
+							// Data should exist
+							expect(item.data).toBeTruthy();
 
-							try {
-								// Data should be unset
-								expect(item.data).toBeUndefined();
+							// Test on next tick, after cleanup
+							setTimeout(() => {
+								if (item.data) {
+									// Not cleaned up yet
+									return;
+								}
 
-								// Expecting no pending writes, 0 watched items, no timer
-								expect(storage.timer).toBeUndefined();
-								expect(storage.watched.size).toBe(0);
-								expect(storage.pendingWrites.size).toBe(0);
-								expect(storage.pendingReads.size).toBe(0);
+								// Clear timer before testing
+								clearInterval(storage.timer);
 
-								// Done
-								fulfill(true);
-							} catch (err) {
-								reject(err);
-							}
-						});
-					};
-				});
+								try {
+									// Data should be unset
+									expect(item.data).toBeUndefined();
+
+									// Expecting no pending writes, 0 watched items, no timer
+									expect(storage.timer).toBeUndefined();
+									expect(storage.watched.size).toBe(0);
+									expect(storage.pendingWrites.size).toBe(0);
+									expect(storage.pendingReads.size).toBe(0);
+
+									// Done
+									fulfill(true);
+								} catch (err) {
+									reject(err);
+								}
+							});
+						};
+					}
+				);
 
 				// Expecting 1 pending write, no timer
 				expect(item.cache).toEqual({

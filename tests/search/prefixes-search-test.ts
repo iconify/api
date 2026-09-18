@@ -1,21 +1,26 @@
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list';
-import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json';
-import { updateSearchIndex } from '../../lib/data/search';
-import { getPartialKeywords } from '../../lib/data/search/partial';
-import { filterSearchPrefixes } from '../../lib/data/search/prefixes';
-import type { IconSetImportedData } from '../../lib/types/importers/common';
-import type { IconSetEntry } from '../../lib/types/importers';
-import type { SearchParams } from '../../lib/types/search';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list.js';
+import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json.js';
+import { updateSearchIndex } from '../../lib/data/search.js';
+import { getPartialKeywords } from '../../lib/data/search/partial.js';
+import { filterSearchPrefixes } from '../../lib/data/search/prefixes.js';
+import type { IconSetImportedData } from '../../lib/types/importers/common.js';
+import type { IconSetEntry } from '../../lib/types/importers.js';
+import type { SearchParams } from '../../lib/types/search.js';
 
 describe('Creating search index, checking prefixes', () => {
 	test('One icon set', async () => {
 		// Create importer
-		const importer = createHardcodedCollectionsListImporter(['mdi-light'], (prefix) =>
-			createJSONIconSetImporter(new DirectoryDownloader<IconSetImportedData>(`tests/fixtures/json`), {
-				prefix,
-				filename: `/${prefix}.json`,
-			})
+		const importer = createHardcodedCollectionsListImporter(
+			['mdi-light'],
+			(prefix) =>
+				createJSONIconSetImporter(
+					new DirectoryDownloader<IconSetImportedData>(`tests/fixtures/json`),
+					{
+						prefix,
+						filename: `/${prefix}.json`,
+					}
+				)
 		);
 		await importer.init();
 		const data = importer.data!;
@@ -46,28 +51,43 @@ describe('Creating search index, checking prefixes', () => {
 		// Check index
 		expect(searchIndex).toBeTruthy();
 		expect(searchIndex!.sortedPrefixes).toEqual(['mdi-light']);
-		expect(Object.keys(searchIndex.keywords)).toEqual(Object.keys(mdiLightKeywords));
+		expect(Object.keys(searchIndex.keywords)).toEqual(
+			Object.keys(mdiLightKeywords)
+		);
 
 		expect(searchIndex.keywords['account']).toEqual(new Set(['mdi-light']));
 		expect(searchIndex.keywords['xml']).toEqual(new Set(['mdi-light']));
 
 		// Check for partial keywords
 		expect(getPartialKeywords('acc', true, searchIndex)).toEqual(['account']);
-		expect(getPartialKeywords('arr', true, searchIndex)).toEqual(['arrow', 'arrange']);
+		expect(getPartialKeywords('arr', true, searchIndex)).toEqual([
+			'arrow',
+			'arrange',
+		]);
 		expect(getPartialKeywords('row', true, searchIndex)).toEqual(['arrow']);
-		expect(getPartialKeywords('one', true, searchIndex)).toEqual(['none', 'phone', 'microphone']);
+		expect(getPartialKeywords('one', true, searchIndex)).toEqual([
+			'none',
+			'phone',
+			'microphone',
+		]);
 		expect(getPartialKeywords('one', false, searchIndex)).toEqual([]);
 	}, 5000);
 
 	test('Two icon sets', async () => {
 		// Create importer
 		// Use 'mdi-test-prefix' instead of 'mdi' to test prefix filters
-		const importer = createHardcodedCollectionsListImporter(['mdi-light', 'mdi-test-prefix'], (prefix) =>
-			createJSONIconSetImporter(new DirectoryDownloader<IconSetImportedData>(`tests/fixtures/json`), {
-				prefix,
-				filename: prefix === 'mdi-test-prefix' ? '/mdi.json' : `/${prefix}.json`,
-				ignoreInvalidPrefix: true,
-			})
+		const importer = createHardcodedCollectionsListImporter(
+			['mdi-light', 'mdi-test-prefix'],
+			(prefix) =>
+				createJSONIconSetImporter(
+					new DirectoryDownloader<IconSetImportedData>(`tests/fixtures/json`),
+					{
+						prefix,
+						filename:
+							prefix === 'mdi-test-prefix' ? '/mdi.json' : `/${prefix}.json`,
+						ignoreInvalidPrefix: true,
+					}
+				)
 		);
 		await importer.init();
 		const data = importer.data!;
@@ -98,24 +118,40 @@ describe('Creating search index, checking prefixes', () => {
 
 		// Check index
 		expect(searchIndex).toBeTruthy();
-		expect(searchIndex!.sortedPrefixes).toEqual(['mdi-light', 'mdi-test-prefix']);
+		expect(searchIndex!.sortedPrefixes).toEqual([
+			'mdi-light',
+			'mdi-test-prefix',
+		]);
 
-		expect(Object.keys(searchIndex.keywords)).not.toEqual(Object.keys(mdiLightKeywords));
-		expect(Object.keys(searchIndex.keywords)).not.toEqual(Object.keys(mdiKeywords));
+		expect(Object.keys(searchIndex.keywords)).not.toEqual(
+			Object.keys(mdiLightKeywords)
+		);
+		expect(Object.keys(searchIndex.keywords)).not.toEqual(
+			Object.keys(mdiKeywords)
+		);
 		expect(new Set(Object.keys(searchIndex.keywords))).toEqual(
 			new Set([...Object.keys(mdiKeywords), ...Object.keys(mdiLightKeywords)])
 		);
 
-		expect(searchIndex.keywords['account']).toEqual(new Set(['mdi-light', 'mdi-test-prefix']));
-		expect(searchIndex.keywords['xml']).toEqual(new Set(['mdi-light', 'mdi-test-prefix']));
-		expect(searchIndex.keywords['alphabetical']).toEqual(new Set(['mdi-test-prefix']));
+		expect(searchIndex.keywords['account']).toEqual(
+			new Set(['mdi-light', 'mdi-test-prefix'])
+		);
+		expect(searchIndex.keywords['xml']).toEqual(
+			new Set(['mdi-light', 'mdi-test-prefix'])
+		);
+		expect(searchIndex.keywords['alphabetical']).toEqual(
+			new Set(['mdi-test-prefix'])
+		);
 
 		// Test filter
 		const baseParams: SearchParams = {
 			keyword: '',
 			limit: 0,
 		};
-		expect(filterSearchPrefixes(searchIndex, iconSets, baseParams)).toEqual(['mdi-light', 'mdi-test-prefix']);
+		expect(filterSearchPrefixes(searchIndex, iconSets, baseParams)).toEqual([
+			'mdi-light',
+			'mdi-test-prefix',
+		]);
 
 		// Test filter by prefixes
 		expect(

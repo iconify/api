@@ -23,7 +23,7 @@ export function uniqueCacheDir(): string {
  * Await
  */
 export function awaitTick(): Promise<undefined> {
-	return new Promise((fulfill, reject) => {
+	return new Promise((fulfill) => {
 		setTimeout(() => {
 			fulfill(void 0);
 		});

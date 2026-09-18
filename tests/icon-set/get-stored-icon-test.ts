@@ -1,16 +1,22 @@
-import type { ExtendedIconifyIcon, IconifyIcons, IconifyJSON } from '@iconify/types';
-import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage';
-import { getStoredIconData } from '../../lib/data/icon-set/utils/get-icon';
-import { createStorage } from '../../lib/data/storage/create';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
-import { loadFixture, uniqueCacheDir } from '../helpers';
+import type {
+	ExtendedIconifyIcon,
+	IconifyIcons,
+	IconifyJSON,
+} from '@iconify/types';
+import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage.js';
+import { getStoredIconData } from '../../lib/data/icon-set/utils/get-icon.js';
+import { createStorage } from '../../lib/data/storage/create.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
+import { loadFixture, uniqueCacheDir } from '../helpers.js';
 
 describe('Loading icon data from storage', () => {
 	test('Testing mdi', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -96,7 +102,7 @@ describe('Loading icon data from storage', () => {
 		};
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -147,10 +153,12 @@ describe('Loading icon data from storage', () => {
 	});
 
 	test('Synchronous loading', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -169,7 +177,7 @@ describe('Loading icon data from storage', () => {
 		const storedIconSet = await store();
 
 		function syncTest(): Promise<boolean> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				const name = 'star';
 				let isSync1 = true;
 
@@ -192,10 +200,12 @@ describe('Loading icon data from storage', () => {
 	});
 
 	test('Asynchronous loading', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -215,7 +225,7 @@ describe('Loading icon data from storage', () => {
 		const storedIconSet = await store();
 
 		function syncTest(): Promise<boolean> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				const name = 'star';
 				let isSync1 = true;
 

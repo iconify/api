@@ -1,4 +1,4 @@
-import { splitKeywordEntries } from '../../lib/data/search/split';
+import { splitKeywordEntries } from '../../lib/data/search/split.js';
 
 describe('Splitting keywords', () => {
 	test('Bad entries', () => {

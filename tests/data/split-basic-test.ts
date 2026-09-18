@@ -3,8 +3,8 @@ import {
 	createSplitRecordsTree,
 	searchSplitRecordsTree,
 	searchSplitRecordsTreeForSet,
-} from '../../lib/data/storage/split';
-import type { SplitRecord } from '../../lib/types/split';
+} from '../../lib/data/storage/split.js';
+import type { SplitRecord } from '../../lib/types/split.js';
 
 describe('Splitting data', () => {
 	test('1 chunk', () => {
@@ -44,7 +44,9 @@ describe('Splitting data', () => {
 
 						// Check all items, including keys that do not exist
 						for (let i = -10; i < 10; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[0].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[0].data
+							);
 						}
 
 						fulfill(true);
@@ -98,10 +100,14 @@ describe('Splitting data', () => {
 
 						// Check all items
 						for (let i = 0; i < 4; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[0].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[0].data
+							);
 						}
 						for (let i = 4; i < 7; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[1].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[1].data
+							);
 						}
 
 						// Check items that do not exist. Keys are not checked, only alphabetical match is checked
@@ -112,13 +118,20 @@ describe('Splitting data', () => {
 						const map1 = new Map();
 						map1.set(split[0].data, ['test-0', 'test-2', 'test-10']); // '10' is compared as string, so its after 'test-1'
 						map1.set(split[1].data, ['test-6']);
-						expect(searchSplitRecordsTreeForSet(tree, ['test-0', 'test-2', 'test-6', 'test-10'])).toEqual(
-							map1
-						);
+						expect(
+							searchSplitRecordsTreeForSet(tree, [
+								'test-0',
+								'test-2',
+								'test-6',
+								'test-10',
+							])
+						).toEqual(map1);
 
 						const map2 = new Map();
 						map2.set(split[1].data, ['z', 'test-4']);
-						expect(searchSplitRecordsTreeForSet(tree, ['z', 'test-4'])).toEqual(map2);
+						expect(searchSplitRecordsTreeForSet(tree, ['z', 'test-4'])).toEqual(
+							map2
+						);
 
 						fulfill(true);
 					} catch (err) {
@@ -176,13 +189,19 @@ describe('Splitting data', () => {
 
 						// Check all items
 						for (let i = 0; i < 2; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[0].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[0].data
+							);
 						}
 						for (let i = 2; i < 5; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[1].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[1].data
+							);
 						}
 						for (let i = 5; i < 7; i++) {
-							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(split[2].data);
+							expect(searchSplitRecordsTree(tree, `test-${i}`)).toEqual(
+								split[2].data
+							);
 						}
 
 						fulfill(true);

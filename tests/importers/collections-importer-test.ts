@@ -1,8 +1,8 @@
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createJSONCollectionsListImporter } from '../../lib/importers/collections/collections';
-import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
-import type { ImportedData } from '../../lib/types/importers/common';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createJSONCollectionsListImporter } from '../../lib/importers/collections/collections.js';
+import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
+import type { ImportedData } from '../../lib/types/importers/common.js';
 
 describe('Icon collections.json importer', () => {
 	test('Import from JSON files', async () => {
@@ -12,10 +12,13 @@ describe('Icon collections.json importer', () => {
 			downloader,
 			(prefix) => {
 				// Create downloader and importer for icon set
-				return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'), {
-					prefix,
-					filename: `/${prefix}.json`,
-				});
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'),
+					{
+						prefix,
+						filename: `/${prefix}.json`,
+					}
+				);
 			},
 			{
 				filename: '/collections.mdi.json',
@@ -55,10 +58,13 @@ describe('Icon collections.json importer', () => {
 			downloader,
 			(prefix) => {
 				// Create downloader and importer for icon set
-				return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'), {
-					prefix,
-					filename: `/${prefix}.json`,
-				});
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'),
+					{
+						prefix,
+						filename: `/${prefix}.json`,
+					}
+				);
 			},
 			{
 				filename: '/collections.whatever.json',
@@ -90,10 +96,13 @@ describe('Icon collections.json importer', () => {
 			downloader,
 			(prefix) => {
 				// Create downloader and importer for icon set
-				return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'), {
-					prefix,
-					filename: `/mdi-light.json`,
-				});
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'),
+					{
+						prefix,
+						filename: `/mdi-light.json`,
+					}
+				);
 			},
 			{
 				filename: '/collections.mdi.json',

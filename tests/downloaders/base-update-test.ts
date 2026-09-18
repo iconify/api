@@ -1,4 +1,4 @@
-import { BaseDownloader } from '../../lib/downloaders/base';
+import { BaseDownloader } from '../../lib/downloaders/base.js';
 
 type BooleanCallback = (value: boolean) => void;
 type RejectCallback = (value: unknown) => void;
@@ -9,7 +9,9 @@ describe('Updating BaseDownloader class', () => {
 		 * Test init()
 		 */
 		initTested = false;
-		initCalled: ((done: BooleanCallback, reject: RejectCallback) => void) | undefined;
+		initCalled:
+			| ((done: BooleanCallback, reject: RejectCallback) => void)
+			| undefined;
 		_init(): Promise<boolean> {
 			this.initTested = true;
 			return new Promise((fulfill, reject) => {
@@ -187,7 +189,6 @@ describe('Updating BaseDownloader class', () => {
 		await new Promise((fulfill, reject) => {
 			// Setup callback
 			let updateCounter = 0;
-			let isSync = true;
 			let finishUpdate: BooleanCallback | undefined;
 
 			test.updateCalled = (done) => {
@@ -210,7 +211,12 @@ describe('Updating BaseDownloader class', () => {
 			let result4: boolean | undefined;
 
 			const tested = () => {
-				if (result1 === void 0 || result2 === void 0 || result3 === void 0 || result4 === void 0) {
+				if (
+					result1 === void 0 ||
+					result2 === void 0 ||
+					result3 === void 0 ||
+					result4 === void 0
+				) {
 					// Still waiting
 					return;
 				}
@@ -229,32 +235,34 @@ describe('Updating BaseDownloader class', () => {
 			};
 
 			// Run test twice
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result1 = value;
 					tested();
 				})
 				.catch(reject);
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result2 = value;
 					tested();
 				})
 				.catch(reject);
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result3 = value;
 					tested();
 				})
 				.catch(reject);
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result4 = value;
 					tested();
 				})
 				.catch(reject);
-
-			isSync = false;
 
 			// Finish loading asynchronously
 			setTimeout(() => {
@@ -278,7 +286,6 @@ describe('Updating BaseDownloader class', () => {
 		await new Promise((fulfill, reject) => {
 			// Setup callback
 			let updateCounter = 0;
-			let isSync = true;
 			let finishUpdate: BooleanCallback | undefined;
 
 			test.updateCalled = (done) => {
@@ -317,20 +324,20 @@ describe('Updating BaseDownloader class', () => {
 			};
 
 			// Run test twice
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result1 = value;
 					tested();
 				})
 				.catch(reject);
-			test.checkForUpdate()
+			test
+				.checkForUpdate()
 				.then((value) => {
 					result2 = value;
 					tested();
 				})
 				.catch(reject);
-
-			isSync = false;
 
 			// Finish loading asynchronously
 			setTimeout(() => {

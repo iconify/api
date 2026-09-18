@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { uniqueCacheDir } from '../helpers';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { uniqueCacheDir } from '../helpers.js';
 
 describe('Directory downloader', () => {
 	class TestDownloader extends DirectoryDownloader<unknown> {
@@ -80,8 +80,14 @@ describe('Directory downloader', () => {
 		}
 
 		// Create few files
-		await writeFile(dir + '/collections.json', await readFile('tests/fixtures/collections.mdi.json'));
-		await writeFile(dir + '/mdi.json', await readFile('tests/fixtures/json/mdi.json'));
+		await writeFile(
+			dir + '/collections.json',
+			await readFile('tests/fixtures/collections.mdi.json')
+		);
+		await writeFile(
+			dir + '/mdi.json',
+			await readFile('tests/fixtures/json/mdi.json')
+		);
 
 		// Create new instance
 		const test = new TestDownloader(dir);
@@ -95,19 +101,28 @@ describe('Directory downloader', () => {
 
 		// Replace file
 		await delay();
-		await writeFile(dir + '/mdi.json', await readFile('tests/fixtures/json/mdi-light.json'));
+		await writeFile(
+			dir + '/mdi.json',
+			await readFile('tests/fixtures/json/mdi-light.json')
+		);
 		expect(await test.checkForUpdate()).toBe(true);
 		expect(test.contentLoaded).toBe(2);
 
 		// Touch file: should trigger update because file modification time changes
 		await delay();
-		await writeFile(dir + '/mdi.json', await readFile('tests/fixtures/json/mdi-light.json'));
+		await writeFile(
+			dir + '/mdi.json',
+			await readFile('tests/fixtures/json/mdi-light.json')
+		);
 		expect(await test.checkForUpdate()).toBe(true);
 		expect(test.contentLoaded).toBe(3);
 
 		// Add new file
 		await delay();
-		await writeFile(dir + '/mdi-light.json', await readFile('tests/fixtures/json/mdi-light.json'));
+		await writeFile(
+			dir + '/mdi-light.json',
+			await readFile('tests/fixtures/json/mdi-light.json')
+		);
 
 		// Check for update
 		expect(await test.checkForUpdate()).toBe(true);

@@ -1,15 +1,17 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
-import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage';
-import { searchSplitRecordsTree } from '../../lib/data/storage/split';
-import { createStorage } from '../../lib/data/storage/create';
-import { getStoredItem } from '../../lib/data/storage/get';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
-import type { MemoryStorageItem } from '../../lib/types/storage';
-import { awaitTick, loadFixture, uniqueCacheDir } from '../helpers';
+import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage.js';
+import { searchSplitRecordsTree } from '../../lib/data/storage/split.js';
+import { createStorage } from '../../lib/data/storage/create.js';
+import { getStoredItem } from '../../lib/data/storage/get.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
+import type { MemoryStorageItem } from '../../lib/types/storage.js';
+import { awaitTick, loadFixture, uniqueCacheDir } from '../helpers.js';
 
 describe('Storing loaded icon set', () => {
 	test('No storage, no splitting', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		// Create storage
 		const dir = uniqueCacheDir();
@@ -20,7 +22,7 @@ describe('Storing loaded icon set', () => {
 
 		// Split icon set
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Split icon set
 				storeLoadedIconSet(iconSet, fulfill, storage, {
 					chunkSize: 0,
@@ -40,7 +42,7 @@ describe('Storing loaded icon set', () => {
 
 		// Load it
 		function getItem(): Promise<IconifyIcons | null> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				getStoredItem(storage, storedItem, fulfill);
 			});
 		}
@@ -52,7 +54,9 @@ describe('Storing loaded icon set', () => {
 	});
 
 	test('Split icon set', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		// Create storage
 		const dir = uniqueCacheDir();
@@ -63,7 +67,7 @@ describe('Storing loaded icon set', () => {
 
 		// Split icon set
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Split icon set
 				storeLoadedIconSet(iconSet, fulfill, storage, {
 					chunkSize: 10000,
@@ -84,11 +88,13 @@ describe('Storing loaded icon set', () => {
 		// Get item from first tree item
 		const firstStoredItem = searchSplitRecordsTree(storedIconSet.tree, 'alert');
 		expect(firstStoredItem).not.toBe(storedIconSet.tree.match);
-		expect(searchSplitRecordsTree(storedIconSet.tree, 'account')).toBe(firstStoredItem);
+		expect(searchSplitRecordsTree(storedIconSet.tree, 'account')).toBe(
+			firstStoredItem
+		);
 
 		// Load it
 		function getItem(): Promise<IconifyIcons | null> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				getStoredItem(storage, storedItem, fulfill);
 			});
 		}
@@ -106,7 +112,9 @@ describe('Storing loaded icon set', () => {
 	});
 
 	test('Split and store icon set', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		// Create storage
 		const dir = uniqueCacheDir();
@@ -118,7 +126,7 @@ describe('Storing loaded icon set', () => {
 
 		// Split icon set
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Split icon set
 				storeLoadedIconSet(iconSet, fulfill, storage, {
 					chunkSize: 10000,
@@ -139,11 +147,15 @@ describe('Storing loaded icon set', () => {
 		// Get item from first tree item
 		const firstStoredItem = searchSplitRecordsTree(storedIconSet.tree, 'alert');
 		expect(firstStoredItem).not.toBe(storedIconSet.tree.match);
-		expect(searchSplitRecordsTree(storedIconSet.tree, 'account')).toBe(firstStoredItem);
+		expect(searchSplitRecordsTree(storedIconSet.tree, 'account')).toBe(
+			firstStoredItem
+		);
 
 		// Load icon from middle
-		function getItem(item: MemoryStorageItem<IconifyIcons>): Promise<IconifyIcons | null> {
-			return new Promise((fulfill, reject) => {
+		function getItem(
+			item: MemoryStorageItem<IconifyIcons>
+		): Promise<IconifyIcons | null> {
+			return new Promise((fulfill) => {
 				getStoredItem(storage, item, fulfill);
 			});
 		}

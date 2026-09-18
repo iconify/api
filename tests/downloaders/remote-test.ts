@@ -1,7 +1,7 @@
 import { readFile, rm, writeFile } from 'node:fs/promises';
-import { RemoteDownloader } from '../../lib/downloaders/remote';
-import { getDownloadDirectory } from '../../lib/downloaders/remote/target';
-import type { RemoteDownloaderOptions } from '../../lib/types/downloaders/remote';
+import { RemoteDownloader } from '../../lib/downloaders/remote.js';
+import { getDownloadDirectory } from '../../lib/downloaders/remote/target.js';
+import type { RemoteDownloaderOptions } from '../../lib/types/downloaders/remote.js';
 
 describe('Remote downloader', () => {
 	class TestDownloader extends RemoteDownloader<unknown> {
@@ -41,7 +41,10 @@ describe('Remote downloader', () => {
 		// Change version number
 		const directory = test._sourceDir as string;
 		const filename = directory + '/package.json';
-		const data = JSON.parse(await readFile(filename, 'utf8')) as Record<string, unknown>;
+		const data = JSON.parse(await readFile(filename, 'utf8')) as Record<
+			string,
+			unknown
+		>;
 		data.version = '1.0.0';
 		await writeFile(filename, JSON.stringify(data, null, '\t'), 'utf8');
 
@@ -50,7 +53,10 @@ describe('Remote downloader', () => {
 		expect(test.contentLoaded).toBe(2);
 
 		// Check package.json
-		const data2 = JSON.parse(await readFile(filename, 'utf8')) as Record<string, unknown>;
+		const data2 = JSON.parse(await readFile(filename, 'utf8')) as Record<
+			string,
+			unknown
+		>;
 		expect(data2.version).not.toBe(data.version);
 	}, 10000);
 });

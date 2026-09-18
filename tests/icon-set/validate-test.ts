@@ -1,5 +1,5 @@
-import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons';
-import { removeBadIconSetItems } from '../../lib/data/icon-set/lists/validate';
+import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons.js';
+import { removeBadIconSetItems } from '../../lib/data/icon-set/lists/validate.js';
 
 describe('Validating icon set', () => {
 	test('Long chain of aliases, bad aliases', () => {
@@ -59,6 +59,14 @@ describe('Validating icon set', () => {
 		removeBadIconSetItems(iconSet, generateIconSetIconsTree(iconSet));
 
 		// Check aliases
-		expect(Object.keys(iconSet.aliases)).toEqual(['baz', 'baz2', 'baz3', 'baz4', 'baz5', 'baz6', 'bazz5']);
+		expect(Object.keys(iconSet.aliases)).toEqual([
+			'baz',
+			'baz2',
+			'baz3',
+			'baz4',
+			'baz5',
+			'baz6',
+			'bazz5',
+		]);
 	});
 });

@@ -1,8 +1,8 @@
-import { RemoteDownloader } from '../../lib/downloaders/remote';
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json';
-import { createJSONPackageIconSetImporter } from '../../lib/importers/icon-set/json-package';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
+import { RemoteDownloader } from '../../lib/downloaders/remote.js';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json.js';
+import { createJSONPackageIconSetImporter } from '../../lib/importers/icon-set/json-package.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
 
 describe('Icon set IconifyJSON importer', () => {
 	test('Import from NPM, nothing to update', async () => {
@@ -40,7 +40,9 @@ describe('Icon set IconifyJSON importer', () => {
 
 	test('Import from JSON file', async () => {
 		// Create downloader and importer
-		const downloader = new DirectoryDownloader<StoredIconSet>('tests/fixtures/json');
+		const downloader = new DirectoryDownloader<StoredIconSet>(
+			'tests/fixtures/json'
+		);
 		const importer = createJSONIconSetImporter(downloader, {
 			prefix: 'mdi-light',
 			filename: '/mdi-light.json',

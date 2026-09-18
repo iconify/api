@@ -1,5 +1,8 @@
-import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons';
-import type { IconSetIconNames, IconSetIconsListTag } from '../../lib/types/icon-set/extra';
+import { generateIconSetIconsTree } from '../../lib/data/icon-set/lists/icons.js';
+import type {
+	IconSetIconNames,
+	IconSetIconsListTag,
+} from '../../lib/types/icon-set/extra.js';
 
 describe('Icons tree', () => {
 	test('Simple icon set', () => {
@@ -29,7 +32,11 @@ describe('Icons tree', () => {
 		expect(tree.hidden).toEqual({});
 
 		expect(tree.tags).toEqual([]);
-		expect(tree.uncategorised).toEqual([expectedVisible.bar, expectedVisible.baz, expectedVisible.foo]);
+		expect(tree.uncategorised).toEqual([
+			expectedVisible.bar,
+			expectedVisible.baz,
+			expectedVisible.foo,
+		]);
 	});
 
 	test('Few aliases', () => {
@@ -164,9 +171,16 @@ describe('Icons tree', () => {
 			height: 24,
 		});
 
-		expect(tree.failed).toEqual(new Set(['alias3', 'icon3', 'loop1', 'loop2', 'loop3']));
+		expect(tree.failed).toEqual(
+			new Set(['alias3', 'icon3', 'loop1', 'loop2', 'loop3'])
+		);
 
-		const alias2z: IconSetIconNames = ['alias2z', 'alias2z3', 'alias2z4', 'alias2z5'];
+		const alias2z: IconSetIconNames = [
+			'alias2z',
+			'alias2z3',
+			'alias2z4',
+			'alias2z5',
+		];
 		const expectedVisible: Record<string, IconSetIconNames> = {
 			icon1: ['icon1'],
 			alias2z: alias2z,

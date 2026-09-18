@@ -1,16 +1,18 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
-import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage';
-import { getStoredIconsData } from '../../lib/data/icon-set/utils/get-icons';
-import { createStorage } from '../../lib/data/storage/create';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
-import { loadFixture, uniqueCacheDir } from '../helpers';
+import { storeLoadedIconSet } from '../../lib/data/icon-set/store/storage.js';
+import { getStoredIconsData } from '../../lib/data/icon-set/utils/get-icons.js';
+import { createStorage } from '../../lib/data/storage/create.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
+import { loadFixture, uniqueCacheDir } from '../helpers.js';
 
 describe('Loading icons from storage', () => {
 	test('Get existing icons', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -29,7 +31,7 @@ describe('Loading icons from storage', () => {
 		const storedIconSet = await store();
 
 		function getIcons(): Promise<IconifyJSON> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				getStoredIconsData(
 					storedIconSet,
 					[
@@ -69,10 +71,12 @@ describe('Loading icons from storage', () => {
 	});
 
 	test('Aliases, missing icons', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -91,7 +95,7 @@ describe('Loading icons from storage', () => {
 		const storedIconSet = await store();
 
 		function getIcons(): Promise<IconifyJSON> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				getStoredIconsData(
 					storedIconSet,
 					[
@@ -162,10 +166,12 @@ describe('Loading icons from storage', () => {
 	});
 
 	test('Synchronous loading', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -184,7 +190,7 @@ describe('Loading icons from storage', () => {
 		const storedIconSet = await store();
 
 		function syncTest(): Promise<boolean> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				const names: string[] = ['abacus', 'floor-1', 'star', 'wifi'];
 				let isSync1 = true;
 
@@ -207,10 +213,12 @@ describe('Loading icons from storage', () => {
 	});
 
 	test('Asynchronous loading', async () => {
-		const iconSet = JSON.parse(await loadFixture('json/mdi-light.json')) as IconifyJSON;
+		const iconSet = JSON.parse(
+			await loadFixture('json/mdi-light.json')
+		) as IconifyJSON;
 
 		function store(): Promise<StoredIconSet> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				// Create storage
 				const dir = uniqueCacheDir();
 				const cacheDir = '{cache}/' + dir;
@@ -230,7 +238,7 @@ describe('Loading icons from storage', () => {
 		const storedIconSet = await store();
 
 		function syncTest(): Promise<boolean> {
-			return new Promise((fulfill, reject) => {
+			return new Promise((fulfill) => {
 				const names: string[] = ['abacus', 'floor-1', 'star', 'wifi'];
 				let isSync1 = true;
 

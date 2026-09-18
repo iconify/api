@@ -1,18 +1,24 @@
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list';
-import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json';
-import type { StoredIconSet } from '../../lib/types/icon-set/storage';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list.js';
+import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json.js';
+import type { StoredIconSet } from '../../lib/types/icon-set/storage.js';
 
 describe('Hardcoded collections list importer', () => {
 	test('Import from JSON files', async () => {
 		// Create importer for collections list
-		const importer = createHardcodedCollectionsListImporter(['mdi-light', 'mdi'], (prefix) => {
-			// Create downloader and importer for icon set
-			return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'), {
-				prefix,
-				filename: `/${prefix}.json`,
-			});
-		});
+		const importer = createHardcodedCollectionsListImporter(
+			['mdi-light', 'mdi'],
+			(prefix) => {
+				// Create downloader and importer for icon set
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'),
+					{
+						prefix,
+						filename: `/${prefix}.json`,
+					}
+				);
+			}
+		);
 
 		// Track changes
 		let updateCounter = 0;
@@ -42,13 +48,19 @@ describe('Hardcoded collections list importer', () => {
 
 	test('Invalid files', async () => {
 		// Create importer for collections list
-		const importer = createHardcodedCollectionsListImporter(['foo', 'bar'], (prefix) => {
-			// Create downloader and importer for icon set
-			return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'), {
-				prefix,
-				filename: `/${prefix}.json`,
-			});
-		});
+		const importer = createHardcodedCollectionsListImporter(
+			['foo', 'bar'],
+			(prefix) => {
+				// Create downloader and importer for icon set
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<StoredIconSet>('tests/fixtures/json'),
+					{
+						prefix,
+						filename: `/${prefix}.json`,
+					}
+				);
+			}
+		);
 
 		// Track changes
 		let updateCounter = 0;

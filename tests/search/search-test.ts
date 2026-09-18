@@ -1,10 +1,10 @@
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list';
-import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json';
-import { updateSearchIndex } from '../../lib/data/search';
-import { search } from '../../lib/data/search/index';
-import type { IconSetImportedData } from '../../lib/types/importers/common';
-import type { IconSetEntry } from '../../lib/types/importers';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createHardcodedCollectionsListImporter } from '../../lib/importers/collections/list.js';
+import { createJSONIconSetImporter } from '../../lib/importers/icon-set/json.js';
+import { updateSearchIndex } from '../../lib/data/search.js';
+import { search } from '../../lib/data/search/index.js';
+import type { IconSetImportedData } from '../../lib/types/importers/common.js';
+import type { IconSetEntry } from '../../lib/types/importers.js';
 
 describe('Searching icons', () => {
 	test('Multiple icon sets', async () => {
@@ -26,11 +26,14 @@ describe('Searching icons', () => {
 					default:
 						filename = `/${prefix}.json`;
 				}
-				return createJSONIconSetImporter(new DirectoryDownloader<IconSetImportedData>(`tests/fixtures`), {
-					prefix,
-					filename,
-					ignoreInvalidPrefix: true,
-				});
+				return createJSONIconSetImporter(
+					new DirectoryDownloader<IconSetImportedData>(`tests/fixtures`),
+					{
+						prefix,
+						filename,
+						ignoreInvalidPrefix: true,
+					}
+				);
 			}
 		);
 		await importer.init();
@@ -60,7 +63,11 @@ describe('Searching icons', () => {
 
 		// Check index
 		expect(searchIndex).toBeTruthy();
-		expect(searchIndex!.sortedPrefixes).toEqual(['mdi-light', 'mdi-test-prefix', 'emojione-v1']);
+		expect(searchIndex!.sortedPrefixes).toEqual([
+			'mdi-light',
+			'mdi-test-prefix',
+			'emojione-v1',
+		]);
 
 		// Search
 		expect(

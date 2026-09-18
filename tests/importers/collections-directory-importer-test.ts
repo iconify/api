@@ -1,11 +1,13 @@
-import { DirectoryDownloader } from '../../lib/downloaders/directory';
-import { createJSONDirectoryImporter } from '../../lib/importers/full/directory-json';
-import type { ImportedData } from '../../lib/types/importers/common';
+import { DirectoryDownloader } from '../../lib/downloaders/directory.js';
+import { createJSONDirectoryImporter } from '../../lib/importers/full/directory-json.js';
+import type { ImportedData } from '../../lib/types/importers/common.js';
 
 describe('JSON files from directory importer', () => {
 	test('Scan directory', async () => {
 		// Create importer for collections list
-		const importer = createJSONDirectoryImporter(new DirectoryDownloader<ImportedData>('tests/fixtures/json'));
+		const importer = createJSONDirectoryImporter(
+			new DirectoryDownloader<ImportedData>('tests/fixtures/json')
+		);
 
 		// Track changes
 		let updateCounter = 0;

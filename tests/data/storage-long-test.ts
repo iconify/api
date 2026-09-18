@@ -1,8 +1,11 @@
-import { createStorage, createStoredItem } from '../../lib/data/storage/create';
-import { cleanupStorage } from '../../lib/data/storage/cleanup';
-import { getStoredItem } from '../../lib/data/storage/get';
-import type { MemoryStorageItem } from '../../lib/types/storage';
-import { uniqueCacheDir } from '../helpers';
+import {
+	createStorage,
+	createStoredItem,
+} from '../../lib/data/storage/create.js';
+import { cleanupStorage } from '../../lib/data/storage/cleanup.js';
+import { getStoredItem } from '../../lib/data/storage/get.js';
+import type { MemoryStorageItem } from '../../lib/types/storage.js';
+import { uniqueCacheDir } from '../helpers.js';
 
 describe('Advanced storage tests', () => {
 	test('Big set of data, limit to 2', () => {
@@ -49,7 +52,9 @@ describe('Advanced storage tests', () => {
 
 									for (let i = 0; i < limit; i++) {
 										const item = items[i];
-										expect(storage.watched.has(item)).toBe(i % 2 === 0 && item !== lastItem);
+										expect(storage.watched.has(item)).toBe(
+											i % 2 === 0 && item !== lastItem
+										);
 									}
 
 									// Wait for next tick to add `lastItem` to watched items
@@ -67,7 +72,9 @@ describe('Advanced storage tests', () => {
 
 											// Only `lastItem` should have been removed
 											expect(lastItem.data).toBeUndefined();
-											expect(storage.watched.size).toBe(Math.floor(limit / 2) - 1);
+											expect(storage.watched.size).toBe(
+												Math.floor(limit / 2) - 1
+											);
 
 											// Load last item again
 											getStoredItem(storage, lastItem, (data) => {

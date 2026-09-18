@@ -1,4 +1,4 @@
-import { BaseDownloader } from '../../lib/downloaders/base';
+import { BaseDownloader } from '../../lib/downloaders/base.js';
 
 type BooleanCallback = (value: boolean) => void;
 type RejectCallback = (value: unknown) => void;
@@ -10,7 +10,9 @@ describe('Initialising BaseDownloader class', () => {
 		 */
 		initTested = false;
 
-		initCalled: ((done: BooleanCallback, reject: RejectCallback) => void) | undefined;
+		initCalled:
+			| ((done: BooleanCallback, reject: RejectCallback) => void)
+			| undefined;
 
 		_init(): Promise<boolean> {
 			this.initTested = true;
