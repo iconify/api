@@ -2,15 +2,21 @@
 
 This repository contains Iconify API script. It is a HTTP server, written in Node.js that:
 
--   Provides icon data, used by icon components that load icon data on demand (instead of bundling thousands of icons).
--   Generates SVG, which you can link to in HTML or stylesheet.
--   Provides search engine for hosted icons, which can be used by icon pickers.
+- Provides icon data, used by icon components that load icon data on demand (instead of bundling thousands of icons).
+- Generates SVG, which you can link to in HTML or stylesheet.
+- Provides search engine for hosted icons, which can be used by icon pickers.
 
 ## NPM Package
 
 This package is also available at NPM, allowing using API code in custom wrappers.
 
 NPM package contains only compiled files, to build custom Docker image you need to use source files from Git repository, not NPM package.
+
+## Depployment script
+
+This package also contains a simple deployment script, which can deploy API on Ubuntu server.
+
+See [deployment script documentation](https://iconify.design/docs/api/hosting-js/deployment.html) on how to setup server and deploy API.
 
 ## Docker
 
@@ -22,10 +28,10 @@ To run a Docker image, run `docker run -d -p 3000:3000 iconify/api` (change firs
 
 NPM commands for working with Docker images:
 
--   `npm run docker:build` - builds Docker image.
--   `npm run docker:start` - starts Docker container on port 3000.
--   `npm run docker:stop` - stops all Iconify API Docker containers.
--   `npm run docker:cleanup` - removes all unused Iconify API Docker containers.
+- `npm run docker:build` - builds Docker image.
+- `npm run docker:start` - starts Docker container on port 3000.
+- `npm run docker:stop` - stops all Iconify API Docker containers.
+- `npm run docker:cleanup` - removes all unused Iconify API Docker containers.
 
 There is no command to remove unused images because of Docker limitations. You need to do it manually from Docker Desktop or command line.
 
@@ -46,15 +52,15 @@ npm run start
 
 By default, server will:
 
--   Automatically load latest icons from [`@iconify/json`](https://github.com/iconify/icon-sets).
--   Load custom icon sets from `icons` directory.
--   Serve data on port 3000.
+- Automatically load latest icons from [`@iconify/json`](https://github.com/iconify/icon-sets).
+- Load custom icon sets from `icons` directory.
+- Serve data on port 3000.
 
 You can customise API to:
 
--   Serve custom icon sets, loaded from various sources.
--   Run on different port.
--   Disable search engine if you do not need it, reducing memory usage.
+- Serve custom icon sets, loaded from various sources.
+- Run on different port.
+- Disable search engine if you do not need it, reducing memory usage.
 
 ## Port and HTTPS
 
@@ -68,22 +74,22 @@ HTTPS is not supported. It is a very resource intensive process, better handled 
 
 There are several ways to change configuration:
 
--   Editing files in `src/config/`, then rebuilding script. This is required for some advanced options, such as using API with custom icons.
--   Using environment variables, such as `PORT=3100 npm run start`.
--   Using `.env` file to store environment variables.
+- Editing files in `src/config/`, then rebuilding script. This is required for some advanced options, such as using API with custom icons.
+- Using environment variables, such as `PORT=3100 npm run start`.
+- Using `.env` file to store environment variables.
 
 ### Env options
 
 Options that can be changed with environment variables and their default values (you can find all of them in `src/config/app.ts`):
 
--   `HOST=0.0.0.0`: IP address or hostname HTTP server listens on.
--   `PORT=3000`: port HTTP server listens on.
--   `ICONIFY_SOURCE=full`: source for Iconify icon sets. Set to `full` to use `@iconify/json` package, `split` to use `@iconify-json/*` packages, `none` to use only custom icon sets.
--   `REDIRECT_INDEX=https://iconify.design/`: redirect for `/` route. API does not serve any pages, so index page redirects to main website.
--   `STATUS_REGION=`: custom text to add to `/version` route response. Iconify API is ran on network of servers, visitor is routed to closest server. It is used to tell which server user is connected to.
--   `ENABLE_ICON_LISTS=true`: enables `/collections` route that lists icon sets and `/collection?prefix=whatever` route to get list of icons. Used by icon pickers. Disable it if you are using API only to serve icon data.
--   `ENABLE_SEARCH_ENGINE=true`: enables `/search` route. Requires `ENABLE_ICON_LISTS` to be enabled.
--   `ALLOW_FILTER_ICONS_BY_STYLE=true`: allows searching for icons based on fill or stroke, such as adding `style=fill` to search query. This feature uses a bit of memory, so it can be disabled. Requires `ENABLE_SEARCH_ENGINE` to be enabled.
+- `HOST=0.0.0.0`: IP address or hostname HTTP server listens on.
+- `PORT=3000`: port HTTP server listens on.
+- `ICONIFY_SOURCE=full`: source for Iconify icon sets. Set to `full` to use `@iconify/json` package, `split` to use `@iconify-json/*` packages, `none` to use only custom icon sets.
+- `REDIRECT_INDEX=https://iconify.design/`: redirect for `/` route. API does not serve any pages, so index page redirects to main website.
+- `STATUS_REGION=`: custom text to add to `/version` route response. Iconify API is ran on network of servers, visitor is routed to closest server. It is used to tell which server user is connected to.
+- `ENABLE_ICON_LISTS=true`: enables `/collections` route that lists icon sets and `/collection?prefix=whatever` route to get list of icons. Used by icon pickers. Disable it if you are using API only to serve icon data.
+- `ENABLE_SEARCH_ENGINE=true`: enables `/search` route. Requires `ENABLE_ICON_LISTS` to be enabled.
+- `ALLOW_FILTER_ICONS_BY_STYLE=true`: allows searching for icons based on fill or stroke, such as adding `style=fill` to search query. This feature uses a bit of memory, so it can be disabled. Requires `ENABLE_SEARCH_ENGINE` to be enabled.
 
 ### Memory management
 
@@ -101,10 +107,10 @@ In addition to that, API can update icon sets without restarting server.
 
 To enable automatic update, you must set `APP_UPDATE_SECRET` environment variable. Without it, update will not work.
 
--   `ALLOW_UPDATE=true`: enables `/update` route.
--   `UPDATE_REQUIRED_PARAM=secret`: key from secret key/value pair. Cannot be empty.
--   `APP_UPDATE_SECRET=`: value from secret key/value pair. Cannot be empty.
--   `UPDATE_THROTTLE=60`: number of seconds to wait before running update.
+- `ALLOW_UPDATE=true`: enables `/update` route.
+- `UPDATE_REQUIRED_PARAM=secret`: key from secret key/value pair. Cannot be empty.
+- `APP_UPDATE_SECRET=`: value from secret key/value pair. Cannot be empty.
+- `UPDATE_THROTTLE=60`: number of seconds to wait before running update.
 
 To trigger icon sets update, open `/update?foo=bar`, where `foo` is value of `UPDATE_REQUIRED_PARAM`, `bar` is value of `APP_UPDATE_SECRET`.
 
@@ -118,8 +124,8 @@ Response to `/update` route is always the same, regardless of outcome. This is d
 
 By default, server sends the following HTTP headers:
 
--   Various CORS headers, allowing access from anywhere.
--   Cache headers to cache responses for 604800 seconds (7 days).
+- Various CORS headers, allowing access from anywhere.
+- Cache headers to cache responses for 604800 seconds (7 days).
 
 To change headers, edit `httpHeaders` variable in `src/config/app.ts`, then rebuild script.
 
