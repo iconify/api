@@ -6,22 +6,6 @@
 		{
 			"matchDepTypes": ["peerDependencies"],
 			"enabled": false
-		},
-		{
-			"matchPackageNames": ["fastify"],
-			"allowedVersions": "<4.0.0"
-		},
-		{
-			"matchPackageNames": ["@fastify/formbody"],
-			"allowedVersions": "<8.0.0"
-		},
-		{
-			"matchPackageNames": ["@iconify/utils"],
-			"allowedVersions": "<3.0.0"
-		},
-		{
-			"matchPackageNames": ["@iconify/tools"],
-			"allowedVersions": "<5.0.0"
 		}
 	]
 }
