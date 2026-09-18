@@ -35,6 +35,8 @@ export async function uploadAPIFiles(client: Client) {
 
 	// Add .env
 	const currentEnv = await readFile('.env', 'utf8');
+
+	let foundPort = false;
 	const envLines = currentEnv
 		.split('\n')
 		.filter(
@@ -51,12 +53,20 @@ export async function uploadAPIFiles(client: Client) {
 			const chunks = line.split('=');
 			if (chunks.length > 1) {
 				const key = chunks[0];
+				if (key === 'PORT') {
+					// Always run on port 80 on server
+					foundPort = true;
+					return 'PORT=80';
+				}
 				if (process.env[key]) {
 					return `${key}=${process.env[key]}`;
 				}
 			}
 			return line;
 		});
+	if (!foundPort) {
+		envLines.unshift('PORT=80');
+	}
 	uploadFiles['.env'] = envLines.join('\n') + '\n';
 
 	// Upload all files
