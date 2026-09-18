@@ -1,4 +1,8 @@
-import type { ExtendedIconifyAlias, ExtendedIconifyIcon, IconifyIcons } from '@iconify/types';
+import type {
+	ExtendedIconifyAlias,
+	ExtendedIconifyIcon,
+	IconifyIcons,
+} from '@iconify/types';
 import { mergeIconData } from '@iconify/utils/lib/icon/merge';
 import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split.js';
 import type { StoredIconSet } from '../../../types/icon-set/storage.js';
@@ -13,7 +17,10 @@ interface PrepareResult {
 	name: string;
 }
 
-function prepareAlias(data: SplitIconifyJSONMainData, name: string): PrepareResult {
+function prepareAlias(
+	data: SplitIconifyJSONMainData,
+	name: string
+): PrepareResult {
 	const aliases = data.aliases;
 
 	// Resolve aliases tree
@@ -40,7 +47,11 @@ function prepareAlias(data: SplitIconifyJSONMainData, name: string): PrepareResu
  *
  * Assumes that icon exists and valid. Should validate icon set and load data before running this function
  */
-export function getIconData(data: SplitIconifyJSONMainData, name: string, icons: IconifyIcons): ExtendedIconifyIcon {
+export function getIconData(
+	data: SplitIconifyJSONMainData,
+	name: string,
+	icons: IconifyIcons
+): ExtendedIconifyIcon {
 	// Get data
 	let props: ExtendedIconifyIcon | ExtendedIconifyAlias;
 	if (icons[name]) {

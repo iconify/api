@@ -5,7 +5,9 @@ import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 /**
  * Get last modified time for all icon sets
  */
-export function createLastModifiedResponse(q: Record<string, string>): number | APIv3LastModifiedResponse {
+export function createLastModifiedResponse(
+	q: Record<string, string>
+): number | APIv3LastModifiedResponse {
 	// Filter prefixes
 	const prefixes = filterPrefixesByPrefix(getPrefixes(), q, false);
 

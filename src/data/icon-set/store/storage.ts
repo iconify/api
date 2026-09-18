@@ -1,9 +1,20 @@
 import type { IconifyIcons, IconifyJSON } from '@iconify/types';
-import { appConfig, splitIconSetConfig, storageConfig } from '../../../config/app.js';
+import {
+	appConfig,
+	splitIconSetConfig,
+	storageConfig,
+} from '../../../config/app.js';
 import type { SplitIconSetConfig } from '../../../types/config/split.js';
-import type { StorageIconSetThemes, StoredIconSet, StoredIconSetDone } from '../../../types/icon-set/storage.js';
+import type {
+	StorageIconSetThemes,
+	StoredIconSet,
+	StoredIconSetDone,
+} from '../../../types/icon-set/storage.js';
 import type { SplitRecord } from '../../../types/split.js';
-import type { MemoryStorage, MemoryStorageItem } from '../../../types/storage.js';
+import type {
+	MemoryStorage,
+	MemoryStorageItem,
+} from '../../../types/storage.js';
 import { createSplitRecordsTree, splitRecords } from '../../storage/split.js';
 import { createStorage, createStoredItem } from '../../storage/create.js';
 import { getIconSetSplitChunksCount, splitIconSetMainData } from './split.js';
@@ -83,16 +94,22 @@ export function storeLoadedIconSet(
 		chunksCount,
 		(splitIcons, next, index) => {
 			// Store data
-			createStoredItem<IconifyIcons>(storage, splitIcons.data, cachePrefix + index, true, (storedItem) => {
-				// Create split record for stored item
-				const storedSplitItem: SplitRecord<typeof storedItem> = {
-					keyword: splitIcons.keyword,
-					data: storedItem,
-				};
-				storedItems.push(storedItem);
-				splitItems.push(storedSplitItem);
-				next();
-			});
+			createStoredItem<IconifyIcons>(
+				storage,
+				splitIcons.data,
+				cachePrefix + index,
+				true,
+				(storedItem) => {
+					// Create split record for stored item
+					const storedSplitItem: SplitRecord<typeof storedItem> = {
+						keyword: splitIcons.keyword,
+						data: storedItem,
+					};
+					storedItems.push(storedItem);
+					splitItems.push(storedSplitItem);
+					next();
+				}
+			);
 		},
 		() => {
 			// Create tree

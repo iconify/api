@@ -18,7 +18,9 @@ export async function importIconSetFromJSONPackage(
 	options: IconSetJSONPackageOptions = {}
 ): Promise<StoredIconSet | undefined> {
 	try {
-		const data = quicklyValidateIconSet(JSON.parse(await readFile(path + '/icons.json', 'utf8')));
+		const data = quicklyValidateIconSet(
+			JSON.parse(await readFile(path + '/icons.json', 'utf8'))
+		);
 		if (!data) {
 			console.error(`Error loading "${prefix}" icon set: failed to validate`);
 			return;
@@ -60,7 +62,9 @@ export async function importIconSetFromJSONPackage(
 
 			// Categories, themes
 			try {
-				const metadata = JSON.parse(await readFile(path + '/metadata.json', 'utf8'));
+				const metadata = JSON.parse(
+					await readFile(path + '/metadata.json', 'utf8')
+				);
 				if (typeof metadata === 'object') {
 					Object.assign(data, metadata);
 				}

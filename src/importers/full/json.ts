@@ -5,7 +5,10 @@ import type { BaseDownloader } from '../../downloaders/base.js';
 import type { ImportedData } from '../../types/importers/common.js';
 import type { BaseFullImporter } from '../../types/importers/full.js';
 import { createBaseImporter } from './base.js';
-import { IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json.js';
+import {
+	IconSetJSONOptions,
+	importIconSetFromJSON,
+} from '../common/icon-set-json.js';
 
 interface IconSetsPackageImporterOptions extends IconSetJSONOptions {
 	// Icon set filter
@@ -15,7 +18,9 @@ interface IconSetsPackageImporterOptions extends IconSetJSONOptions {
 /**
  * Create importer for all .json files in directory
  */
-export function createIconSetsPackageImporter<Downloader extends BaseDownloader<ImportedData>>(
+export function createIconSetsPackageImporter<
+	Downloader extends BaseDownloader<ImportedData>,
+>(
 	downloader: Downloader,
 	options: IconSetsPackageImporterOptions = {}
 ): Downloader & BaseFullImporter {
@@ -25,7 +30,9 @@ export function createIconSetsPackageImporter<Downloader extends BaseDownloader<
 	obj._loadCollectionsListFromDirectory = async (path: string) => {
 		// Log version
 		try {
-			const packageJSON = JSON.parse(await readFile(path + '/package.json', 'utf8'));
+			const packageJSON = JSON.parse(
+				await readFile(path + '/package.json', 'utf8')
+			);
 			if (packageJSON.name && packageJSON.version) {
 				console.log(`Loading ${packageJSON.name} ${packageJSON.version}`);
 			}
@@ -37,8 +44,12 @@ export function createIconSetsPackageImporter<Downloader extends BaseDownloader<
 		let prefixes: string[];
 		let data: Record<string, IconifyInfo>;
 		try {
-			data = JSON.parse(await readFile(path + '/collections.json', 'utf8')) as Record<string, IconifyInfo>;
-			prefixes = Object.keys(data).filter((prefix) => matchIconName.test(prefix));
+			data = JSON.parse(
+				await readFile(path + '/collections.json', 'utf8')
+			) as Record<string, IconifyInfo>;
+			prefixes = Object.keys(data).filter((prefix) =>
+				matchIconName.test(prefix)
+			);
 
 			if (!(prefixes instanceof Array)) {
 				console.error(`Error loading "collections.json": invalid data`);

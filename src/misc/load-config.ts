@@ -28,7 +28,11 @@ export function loadEnvConfig(env = process.env) {
 	config.forEach(({ config, prefix }) => {
 		const cfg = config as Record<string, unknown>;
 		for (const key in cfg) {
-			const envKey = prefix + key.replace(/[A-Z]/g, (letter) => '_' + letter.toLowerCase()).toUpperCase();
+			const envKey =
+				prefix +
+				key
+					.replace(/[A-Z]/g, (letter) => '_' + letter.toLowerCase())
+					.toUpperCase();
 			const value = env[envKey];
 			if (value !== void 0) {
 				const defaultValue = cfg[key];

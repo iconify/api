@@ -12,7 +12,11 @@ export type DownloaderType = 'collections' | 'icon-set' | 'full';
  * true - ready
  * false - fatal error
  */
-export type DownloaderStatus = 'pending-init' | 'initialising' | 'updating' | boolean;
+export type DownloaderStatus =
+	| 'pending-init'
+	| 'initialising'
+	| 'updating'
+	| boolean;
 
 /**
  * Callback to run after checking for update

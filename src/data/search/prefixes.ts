@@ -5,7 +5,10 @@ import type { SearchIndexData, SearchParams } from '../../types/search.js';
 /**
  * Filter prefixes by keyword
  */
-export function filterSearchPrefixesList(prefixes: readonly string[], filters: string[]): string[] {
+export function filterSearchPrefixesList(
+	prefixes: readonly string[],
+	filters: string[]
+): string[] {
 	const set = new Set(filters);
 	const hasPartial = !!filters.find((item) => item.slice(-1) === '-');
 	return prefixes.filter((prefix) => {
@@ -76,7 +79,10 @@ export function filterSearchPrefixes(
 
 	// Filter by prefix
 	if (params.prefixes) {
-		prefixes = filterSearchPrefixesList(prefixes || data.sortedPrefixes, params.prefixes);
+		prefixes = filterSearchPrefixesList(
+			prefixes || data.sortedPrefixes,
+			params.prefixes
+		);
 	}
 
 	// TODO: add more filter options

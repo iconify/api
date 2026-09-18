@@ -3,7 +3,10 @@ import { iconToSVG } from '@iconify/utils/lib/svg/build';
 import { flipFromString } from '@iconify/utils/lib/customisations/flip';
 import { rotateFromString } from '@iconify/utils/lib/customisations/rotate';
 import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
-import { defaultIconCustomisations, IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
+import {
+	defaultIconCustomisations,
+	IconifyIconCustomisations,
+} from '@iconify/utils/lib/customisations/defaults';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { getStoredIconData } from '../../data/icon-set/utils/get-icon.js';
 import { iconSets } from '../../data/icon-sets.js';
@@ -13,7 +16,12 @@ import { cleanupQueryValue } from '../helpers/query.js';
 /**
  * Generate SVG
  */
-export function generateSVGResponse(prefix: string, name: string, query: FastifyRequest['query'], res: FastifyReply) {
+export function generateSVGResponse(
+	prefix: string,
+	name: string,
+	query: FastifyRequest['query'],
+	res: FastifyReply
+) {
 	// Get icon set
 	const iconSetItem = iconSets[prefix]?.item;
 	if (!iconSetItem) {
@@ -24,7 +32,10 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 
 	// Check if icon exists
 	const icons = iconSetItem.icons;
-	if (!(icons.visible[name] || icons.hidden[name]) && !iconSetItem.icons.chars?.[name]) {
+	if (
+		!(icons.visible[name] || icons.hidden[name]) &&
+		!iconSetItem.icons.chars?.[name]
+	) {
 		// No such icon
 		res.code(404).send(errorText(404));
 		return;
@@ -44,8 +55,10 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 		const customisations: IconifyIconCustomisations = {};
 
 		// Dimensions
-		customisations.width = cleanupQueryValue(q.width) || defaultIconCustomisations.width;
-		customisations.height = cleanupQueryValue(q.height) || defaultIconCustomisations.height;
+		customisations.width =
+			cleanupQueryValue(q.width) || defaultIconCustomisations.width;
+		customisations.height =
+			cleanupQueryValue(q.height) || defaultIconCustomisations.height;
 
 		// Rotation
 		customisations.rotate = q.rotate ? rotateFromString(q.rotate, 0) : 0;
@@ -77,13 +90,20 @@ export function generateSVGResponse(prefix: string, name: string, query: Fastify
 
 		// Change color
 		const color = cleanupQueryValue(q.color);
-		if (color && html.indexOf('currentColor') !== -1 && color.indexOf('"') === -1) {
+		if (
+			color &&
+			html.indexOf('currentColor') !== -1 &&
+			color.indexOf('"') === -1
+		) {
 			html = html.split('currentColor').join(color);
 		}
 
 		// Send SVG, optionally as attachment
 		if (q.download) {
-			res.header('Content-Disposition', 'attachment; filename="' + name + '.svg"');
+			res.header(
+				'Content-Disposition',
+				'attachment; filename="' + name + '.svg"'
+			);
 		}
 		res.type('image/svg+xml; charset=utf-8').send(html);
 	});

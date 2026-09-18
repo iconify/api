@@ -10,7 +10,8 @@ export function createIconsDataResponse(
 	q: Record<string, string | string[]>
 ): number | IconifyJSON | Promise<IconifyJSON | number> {
 	const iconNames = q.icons;
-	const names = typeof iconNames === 'string' ? iconNames.split(',') : iconNames;
+	const names =
+		typeof iconNames === 'string' ? iconNames.split(',') : iconNames;
 
 	if (!names || !names.length) {
 		// Missing or invalid icons parameter

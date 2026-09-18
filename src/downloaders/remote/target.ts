@@ -5,7 +5,10 @@ import { getRemoteDownloaderCacheKey } from './key.js';
 /**
  * Get directory
  */
-export function getDownloadDirectory(options: RemoteDownloaderOptions, key?: string): string {
+export function getDownloadDirectory(
+	options: RemoteDownloaderOptions,
+	key?: string
+): string {
 	key = key || getRemoteDownloaderCacheKey(options);
 
 	switch (options.downloadType) {

@@ -10,7 +10,9 @@ import type { APIv2CollectionResponse } from '../../types/server/v2.js';
  *
  * Those parameters are always requested anyway, so does not make sense to re-create data in case they are disabled
  */
-export function createAPIv2CollectionResponse(q: Record<string, string>): APIv2CollectionResponse | number {
+export function createAPIv2CollectionResponse(
+	q: Record<string, string>
+): APIv2CollectionResponse | number {
 	// Get icon set
 	const prefix = q.prefix;
 	if (!prefix || !iconSets[prefix]) {

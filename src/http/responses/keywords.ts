@@ -1,12 +1,17 @@
 import { matchIconName } from '@iconify/utils/lib/icon/name';
 import { searchIndex } from '../../data/search.js';
 import { getPartialKeywords } from '../../data/search/partial.js';
-import type { APIv3KeywordsQuery, APIv3KeywordsResponse } from '../../types/server/keywords.js';
+import type {
+	APIv3KeywordsQuery,
+	APIv3KeywordsResponse,
+} from '../../types/server/keywords.js';
 
 /**
  * Find full keywords for partial keyword
  */
-export function createKeywordsResponse(q: Record<string, string>): number | APIv3KeywordsResponse {
+export function createKeywordsResponse(
+	q: Record<string, string>
+): number | APIv3KeywordsResponse {
 	// Check if search data is available
 	const searchIndexData = searchIndex.data;
 	if (!searchIndexData) {
@@ -58,7 +63,10 @@ export function createKeywordsResponse(q: Record<string, string>): number | APIv
 		...(q as unknown as APIv3KeywordsQuery),
 		invalid,
 		exists: failed ? false : keywords[test] !== void 0,
-		matches: failed || invalid ? [] : getPartialKeywords(test, suffixes, searchIndexData)?.slice(0) || [],
+		matches:
+			failed || invalid
+				? []
+				: getPartialKeywords(test, suffixes, searchIndexData)?.slice(0) || [],
 	};
 
 	return response;

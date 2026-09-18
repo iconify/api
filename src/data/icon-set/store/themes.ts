@@ -4,7 +4,10 @@ import { StorageIconSetThemes } from '../../../types/icon-set/storage.js';
 /**
  * Themes to copy
  */
-export const themeKeys: (keyof StorageIconSetThemes)[] = ['prefixes', 'suffixes'];
+export const themeKeys: (keyof StorageIconSetThemes)[] = [
+	'prefixes',
+	'suffixes',
+];
 
 /**
  * Hardcoded list of themes
@@ -48,7 +51,9 @@ export function findIconSetThemes(iconSet: IconifyJSON): string[] {
 	});
 
 	// Check all icons and aliases
-	const names = Object.keys(iconSet.icons).concat(Object.keys(iconSet.aliases || {}));
+	const names = Object.keys(iconSet.icons).concat(
+		Object.keys(iconSet.aliases || {})
+	);
 	for (let i = 0; i < names.length; i++) {
 		const name = names[i];
 		const parts = name.split('-');

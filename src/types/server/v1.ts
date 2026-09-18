@@ -61,12 +61,21 @@ export interface APIv1ListIconsCategorisedResponse extends APIv1ListIconsBaseRes
  *
  * Result is object, where prefix is key, value is icons list
  */
-export interface APIv1ListIconsPrefixedParams extends Omit<APIv1ListIconsParams, 'prefix'> {
+export interface APIv1ListIconsPrefixedParams extends Omit<
+	APIv1ListIconsParams,
+	'prefix'
+> {
 	// Comma separated list of prefix matches: 'mdi,mdi-'
 	// If value ends with '-', it is treated as partial prefix
 	prefixes: string;
 }
 
-export type APIv1ListIconsPrefixedResponse = Record<string, APIv1ListIconsResponse>;
+export type APIv1ListIconsPrefixedResponse = Record<
+	string,
+	APIv1ListIconsResponse
+>;
 
-export type APIv1ListIconsCategorisedPrefixedResponse = Record<string, APIv1ListIconsCategorisedResponse>;
+export type APIv1ListIconsCategorisedPrefixedResponse = Record<
+	string,
+	APIv1ListIconsCategorisedResponse
+>;

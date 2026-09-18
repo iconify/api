@@ -21,7 +21,9 @@ export async function importIconSetFromJSON(
 	options: IconSetJSONOptions = {}
 ): Promise<StoredIconSet | undefined> {
 	try {
-		const data = quicklyValidateIconSet(JSON.parse(await readFile(path + prependSlash(filename), 'utf8')));
+		const data = quicklyValidateIconSet(
+			JSON.parse(await readFile(path + prependSlash(filename), 'utf8'))
+		);
 		if (!data) {
 			console.error(`Error loading "${prefix}" icon set: failed to validate`);
 			return;

@@ -14,7 +14,10 @@ function stopTimer<T>(storage: MemoryStorage<T>) {
 /**
  * Clean up stored item
  */
-export function cleanupStoredItem<T>(storage: MemoryStorage<T>, storedItem: MemoryStorageItem<T>): boolean {
+export function cleanupStoredItem<T>(
+	storage: MemoryStorage<T>,
+	storedItem: MemoryStorageItem<T>
+): boolean {
 	if (!storedItem.cache?.exists) {
 		// Cannot be cleaned up
 		return false;
@@ -72,7 +75,9 @@ export function cleanupStorage<T>(storage: MemoryStorage<T>) {
 		}
 
 		// Sort items
-		const sortedList = Array.from(watched).sort((item1, item2) => item1.lastUsed - item2.lastUsed);
+		const sortedList = Array.from(watched).sort(
+			(item1, item2) => item1.lastUsed - item2.lastUsed
+		);
 		delete storage.minLastUsed;
 
 		// Delete items, sorted by `lastUsed`
@@ -95,7 +100,10 @@ export function cleanupStorage<T>(storage: MemoryStorage<T>) {
  *
  * Should be called after writeStoredItem() or loadStoredItem()
  */
-export function addStorageToCleanup<T>(storage: MemoryStorage<T>, storedItem: MemoryStorageItem<T>) {
+export function addStorageToCleanup<T>(
+	storage: MemoryStorage<T>,
+	storedItem: MemoryStorageItem<T>
+) {
 	if (!storedItem.data) {
 		// Nothing to watch
 		return;

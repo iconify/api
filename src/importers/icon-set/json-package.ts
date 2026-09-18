@@ -1,7 +1,10 @@
 import type { BaseDownloader } from '../../downloaders/base.js';
 import type { BaseIconSetImporter } from '../../types/importers/icon-set.js';
 import type { IconSetImportedData } from '../../types/importers/common.js';
-import { IconSetJSONPackageOptions, importIconSetFromJSONPackage } from '../common/json-package.js';
+import {
+	IconSetJSONPackageOptions,
+	importIconSetFromJSONPackage,
+} from '../common/json-package.js';
 
 interface JSONPackageIconSetImporterOptions extends IconSetJSONPackageOptions {
 	// Icon set prefix
@@ -11,7 +14,9 @@ interface JSONPackageIconSetImporterOptions extends IconSetJSONPackageOptions {
 /**
  * Create importer for `@iconify-json/*` package
  */
-export function createJSONPackageIconSetImporter<Downloader extends BaseDownloader<IconSetImportedData>>(
+export function createJSONPackageIconSetImporter<
+	Downloader extends BaseDownloader<IconSetImportedData>,
+>(
 	instance: Downloader,
 	options: JSONPackageIconSetImporterOptions
 ): Downloader & BaseIconSetImporter {
@@ -26,7 +31,8 @@ export function createJSONPackageIconSetImporter<Downloader extends BaseDownload
 	Object.assign(obj, baseData);
 
 	// Load data
-	obj._loadDataFromDirectory = (path: string) => importIconSetFromJSONPackage(prefix, path, options);
+	obj._loadDataFromDirectory = (path: string) =>
+		importIconSetFromJSONPackage(prefix, path, options);
 
 	return obj;
 }

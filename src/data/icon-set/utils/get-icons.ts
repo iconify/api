@@ -6,12 +6,17 @@ import { getStoredItem } from '../../storage/get.js';
 /**
  * Get list of icons that must be retrieved
  */
-export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copyTo?: IconifyAliases): Set<string> {
+export function getIconsToRetrieve(
+	iconSet: StoredIconSet,
+	names: string[],
+	copyTo?: IconifyAliases
+): Set<string> {
 	const icons: Set<string> = new Set();
 	const iconSetData = iconSet.common;
 	const iconsData = iconSet.icons;
 	const chars = iconsData.chars;
-	const aliases = iconSetData.aliases || (Object.create(null) as IconifyAliases);
+	const aliases =
+		iconSetData.aliases || (Object.create(null) as IconifyAliases);
 
 	function resolve(name: string, nested: boolean) {
 		if (!iconsData.visible[name] && !iconsData.hidden[name]) {
@@ -55,7 +60,11 @@ export function getIconsToRetrieve(iconSet: StoredIconSet, names: string[], copy
 /**
  * Get icons from stored icon set
  */
-export function getStoredIconsData(iconSet: StoredIconSet, names: string[], callback: (data: IconifyJSON) => void) {
+export function getStoredIconsData(
+	iconSet: StoredIconSet,
+	names: string[],
+	callback: (data: IconifyJSON) => void
+) {
 	// Get list of icon names
 	const aliases = Object.create(null) as IconifyAliases;
 	const iconNames = Array.from(getIconsToRetrieve(iconSet, names, aliases));

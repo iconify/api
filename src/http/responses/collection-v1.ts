@@ -9,7 +9,9 @@ import type {
 import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
 
 // Response results, depends on `categorised` option
-type PossibleResults = APIv1ListIconsResponse | APIv1ListIconsCategorisedResponse;
+type PossibleResults =
+	| APIv1ListIconsResponse
+	| APIv1ListIconsCategorisedResponse;
 
 /**
  * Create API v1 response

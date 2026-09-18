@@ -10,14 +10,17 @@ import type { ImportedData } from '../../types/importers/common.js';
 /**
  * Base collections list importer
  */
-export function createBaseCollectionsListImporter<Downloader extends BaseDownloader<ImportedData>>(
+export function createBaseCollectionsListImporter<
+	Downloader extends BaseDownloader<ImportedData>,
+>(
 	instance: Downloader,
 	createIconSetImporter: CreateIconSetImporter
 ): Downloader & BaseCollectionsImporter {
 	const obj = instance as Downloader & BaseCollectionsImporter;
 
 	// Importers
-	const importers: Record<string, CreateIconSetImporterResult> = Object.create(null);
+	const importers: Record<string, CreateIconSetImporterResult> =
+		Object.create(null);
 
 	// Import status
 	let importing = false;
@@ -40,7 +43,9 @@ export function createBaseCollectionsListImporter<Downloader extends BaseDownloa
 			let importer = importers[prefix];
 			if (!importer) {
 				// New item
-				importer = importers[prefix] = await maybeAwait(createIconSetImporter(prefix));
+				importer = importers[prefix] = await maybeAwait(
+					createIconSetImporter(prefix)
+				);
 				importer._dataUpdated = async (iconSetData) => {
 					data.iconSets[prefix] = iconSetData;
 					if (!importing) {
@@ -70,7 +75,9 @@ export function createBaseCollectionsListImporter<Downloader extends BaseDownloa
 	// Import from directory
 	obj._loadDataFromDirectory = async (path: string) => {
 		if (!obj._loadCollectionsListFromDirectory) {
-			throw new Error('Importer does not implement _loadCollectionsListFromDirectory()');
+			throw new Error(
+				'Importer does not implement _loadCollectionsListFromDirectory()'
+			);
 		}
 		const prefixes = await obj._loadCollectionsListFromDirectory(path);
 		if (prefixes) {

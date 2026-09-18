@@ -12,7 +12,12 @@ export interface SplitRecord<T> {
 /**
  * Callback to call to store record
  */
-export type SplitRecordCallback<T> = (data: SplitRecord<T>, next: () => void, index: number, total: number) => void;
+export type SplitRecordCallback<T> = (
+	data: SplitRecord<T>,
+	next: () => void,
+	index: number,
+	total: number
+) => void;
 
 /**
  * Tree for searching records

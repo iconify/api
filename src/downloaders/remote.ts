@@ -1,9 +1,15 @@
 import { directoryExists } from '../misc/files.js';
-import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../types/downloaders/remote.js';
+import type {
+	RemoteDownloaderOptions,
+	RemoteDownloaderVersion,
+} from '../types/downloaders/remote.js';
 import { BaseDownloader } from './base.js';
 import { downloadRemoteArchive } from './remote/download.js';
 import { getRemoteDownloaderCacheKey } from './remote/key.js';
-import { getDownloaderVersion, saveDownloaderVersion } from './remote/versions.js';
+import {
+	getDownloaderVersion,
+	saveDownloaderVersion,
+} from './remote/versions.js';
 
 /**
  * Remote downloader
@@ -39,7 +45,10 @@ export class RemoteDownloader<DataType> extends BaseDownloader<DataType> {
 		const cacheKey = getRemoteDownloaderCacheKey(downloader);
 
 		// Get last stored version
-		const lastVersion = await getDownloaderVersion(cacheKey, downloader.downloadType);
+		const lastVersion = await getDownloaderVersion(
+			cacheKey,
+			downloader.downloadType
+		);
 
 		if (lastVersion && !this._autoUpdate) {
 			// Keep last version
@@ -55,7 +64,9 @@ export class RemoteDownloader<DataType> extends BaseDownloader<DataType> {
 		// Missing or need to check for update
 		const version = await downloadRemoteArchive(
 			downloader,
-			lastVersion?.downloadType === downloader.downloadType ? lastVersion : void 0
+			lastVersion?.downloadType === downloader.downloadType
+				? lastVersion
+				: void 0
 		);
 		if (version === false) {
 			if (lastVersion) {
@@ -99,7 +110,9 @@ export class RemoteDownloader<DataType> extends BaseDownloader<DataType> {
 			// Check for update
 			const version = await downloadRemoteArchive(
 				downloader,
-				lastVersion?.downloadType === downloader.downloadType ? lastVersion : void 0
+				lastVersion?.downloadType === downloader.downloadType
+					? lastVersion
+					: void 0
 			);
 			if (version === false) {
 				// Nothing to update
@@ -107,7 +120,10 @@ export class RemoteDownloader<DataType> extends BaseDownloader<DataType> {
 			}
 
 			// Save new version, use it
-			await saveDownloaderVersion(getRemoteDownloaderCacheKey(downloader), version);
+			await saveDownloaderVersion(
+				getRemoteDownloaderCacheKey(downloader),
+				version
+			);
 			this._sourceDir = version.contentsDir;
 			this._version = version;
 			return true;

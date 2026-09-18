@@ -3,7 +3,10 @@ import { downloadGitHubRepo } from '@iconify/tools/lib/download/github';
 import { downloadGitLabRepo } from '@iconify/tools/lib/download/gitlab';
 import { downloadNPMPackage } from '@iconify/tools/lib/download/npm';
 import { appConfig } from '../../config/app.js';
-import type { RemoteDownloaderOptions, RemoteDownloaderVersion } from '../../types/downloaders/remote.js';
+import type {
+	RemoteDownloaderOptions,
+	RemoteDownloaderVersion,
+} from '../../types/downloaders/remote.js';
 import {
 	isGitHubUpdateAvailable,
 	isGitLabUpdateAvailable,
@@ -24,7 +27,10 @@ export async function downloadRemoteArchive(
 
 	switch (options.downloadType) {
 		case 'git': {
-			if (ifModifiedSince?.downloadType === 'git' && !(await isGitUpdateAvailable(options, ifModifiedSince))) {
+			if (
+				ifModifiedSince?.downloadType === 'git' &&
+				!(await isGitUpdateAvailable(options, ifModifiedSince))
+			) {
 				return false;
 			}
 
@@ -69,7 +75,10 @@ export async function downloadRemoteArchive(
 		}
 
 		case 'npm': {
-			if (ifModifiedSince?.downloadType === 'npm' && !(await isNPMUpdateAvailable(options, ifModifiedSince))) {
+			if (
+				ifModifiedSince?.downloadType === 'npm' &&
+				!(await isNPMUpdateAvailable(options, ifModifiedSince))
+			) {
 				return false;
 			}
 

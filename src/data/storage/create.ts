@@ -1,12 +1,18 @@
 import { appConfig } from '../../config/app.js';
-import type { MemoryStorage, MemoryStorageConfig, MemoryStorageItem } from '../../types/storage.js';
+import type {
+	MemoryStorage,
+	MemoryStorageConfig,
+	MemoryStorageItem,
+} from '../../types/storage.js';
 import { cleanupStoredItem } from './cleanup.js';
 import { writeStoredItem } from './write.js';
 
 /**
  * Create storage
  */
-export function createStorage<T>(config: MemoryStorageConfig): MemoryStorage<T> {
+export function createStorage<T>(
+	config: MemoryStorageConfig
+): MemoryStorage<T> {
 	return {
 		config,
 		watched: new Set(),
@@ -25,7 +31,10 @@ export function createStoredItem<T>(
 	autoCleanup = true,
 	done?: (storedItem: MemoryStorageItem<T>, err?: NodeJS.ErrnoException) => void
 ): MemoryStorageItem<T> {
-	const filename = storage.config.cacheDir.replace('{cache}', appConfig.cacheRootDir) + '/' + cacheFile;
+	const filename =
+		storage.config.cacheDir.replace('{cache}', appConfig.cacheRootDir) +
+		'/' +
+		cacheFile;
 	const storedItem: MemoryStorageItem<T> = {
 		cache: {
 			filename,

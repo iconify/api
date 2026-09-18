@@ -46,7 +46,10 @@ export async function getDownloaderVersion<T extends RemoteDownloaderType>(
 /**
  * Store downloader version in cache
  */
-export async function saveDownloaderVersion(key: string, value: RemoteDownloaderVersion) {
+export async function saveDownloaderVersion(
+	key: string,
+	value: RemoteDownloaderVersion
+) {
 	const filename = getCacheFile();
 
 	// Create directory for cache, if missing

@@ -13,7 +13,9 @@ export interface APIv3KeywordsFullQuery {
 	keyword: string;
 }
 
-export type APIv3KeywordsQuery = APIv3KeywordsPrefixQuery | APIv3KeywordsFullQuery;
+export type APIv3KeywordsQuery =
+	| APIv3KeywordsPrefixQuery
+	| APIv3KeywordsFullQuery;
 
 /**
  * Response for /keywords query

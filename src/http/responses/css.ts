@@ -22,7 +22,11 @@ function checkSelector(value: string | undefined): boolean {
 /**
  * Generate icons style
  */
-export function generateIconsStyleResponse(prefix: string, query: FastifyRequest['query'], res: FastifyReply) {
+export function generateIconsStyleResponse(
+	prefix: string,
+	query: FastifyRequest['query'],
+	res: FastifyReply
+) {
 	const q = (query || {}) as Record<string, string>;
 	const names = q.icons?.split(',');
 
@@ -83,7 +87,10 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'forceSquare': boolean
 		// Forces icon to be square, regardless of width/height ratio
 		// Aliases: 'square', 'force-square'
-		const forceSquare = paramToBoolean(q.square || q.forceSquare || q['force-square'], void 0);
+		const forceSquare = paramToBoolean(
+			q.square || q.forceSquare || q['force-square'],
+			void 0
+		);
 		if (typeof forceSquare === 'boolean') {
 			options.forceSquare = forceSquare;
 		}
@@ -91,7 +98,10 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'pseudoSelector': boolean
 		// Adds `content: '';` to common selector. Useful when selector is a pseudo-selector
 		// Aliases: 'pseudo', 'pseudo-selector'
-		const pseudoSelector = paramToBoolean(q.pseudo || q.pseudoSelector || q['pseudo-selector'], void 0);
+		const pseudoSelector = paramToBoolean(
+			q.pseudo || q.pseudoSelector || q['pseudo-selector'],
+			void 0
+		);
 		if (typeof pseudoSelector === 'boolean') {
 			options.pseudoSelector = pseudoSelector;
 		}
@@ -99,7 +109,9 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'commonSelector': string
 		// Common selector for all requested icons
 		// Alias: 'common'
-		const commonSelector = cleanupQueryValue(qOptions.commonSelector || q.common);
+		const commonSelector = cleanupQueryValue(
+			qOptions.commonSelector || q.common
+		);
 		if (checkSelector(commonSelector)) {
 			options.commonSelector = commonSelector;
 		}
@@ -115,7 +127,9 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 		// 'overrideSelector': string
 		// Selector for rules in icon that override common rules
 		// Alias: 'override'
-		const overrideSelector = cleanupQueryValue(qOptions.overrideSelector || q.override);
+		const overrideSelector = cleanupQueryValue(
+			qOptions.overrideSelector || q.override
+		);
 		if (checkSelector(overrideSelector)) {
 			options.overrideSelector = overrideSelector;
 		}
@@ -146,7 +160,10 @@ export function generateIconsStyleResponse(prefix: string, query: FastifyRequest
 
 		// Send CSS, optionally as attachment
 		if (q.download) {
-			res.header('Content-Disposition', 'attachment; filename="' + prefix + '.css"');
+			res.header(
+				'Content-Disposition',
+				'attachment; filename="' + prefix + '.css"'
+			);
 		}
 
 		res.type('text/css; charset=utf-8').send(css);

@@ -3,7 +3,10 @@ import { searchIndex } from '../../data/search.js';
 import { search } from '../../data/search/index.js';
 import { paramToBoolean } from '../../misc/bool.js';
 import type { SearchParams } from '../../types/search.js';
-import type { APIv2SearchParams, APIv2SearchResponse } from '../../types/server/v2.js';
+import type {
+	APIv2SearchParams,
+	APIv2SearchResponse,
+} from '../../types/server/v2.js';
 
 const minSearchLimit = 32;
 const maxSearchLimit = 999;
@@ -12,7 +15,9 @@ const defaultSearchLimit = minSearchLimit * 2;
 /**
  * Send API v2 response
  */
-export function createAPIv2SearchResponse(q: Record<string, string>): number | APIv2SearchResponse {
+export function createAPIv2SearchResponse(
+	q: Record<string, string>
+): number | APIv2SearchResponse {
 	// Check if search data is available
 	const searchIndexData = searchIndex.data;
 	if (!searchIndexData) {

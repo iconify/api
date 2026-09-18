@@ -1,7 +1,10 @@
 import { matchIconName } from '@iconify/utils/lib/icon/name';
 import { paramToBoolean } from '../../misc/bool.js';
 import type { IconStyle } from '../../types/icon-set/extra.js';
-import type { SearchKeywords, SearchKeywordsEntry } from '../../types/search.js';
+import type {
+	SearchKeywords,
+	SearchKeywordsEntry,
+} from '../../types/search.js';
 import { minPartialKeywordLength } from './partial.js';
 
 interface SplitOptions {
@@ -28,7 +31,10 @@ interface SplitResultItem {
 
 type SplitResult = SplitResultItem[];
 
-export function splitKeywordEntries(values: string[], options: SplitOptions): SplitResult | undefined {
+export function splitKeywordEntries(
+	values: string[],
+	options: SplitOptions
+): SplitResult | undefined {
 	const results: SplitResult = [];
 	let invalid = false;
 
@@ -75,7 +81,9 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 			// Empty or only one keyword
 			return;
 		}
-		return (items[0].empty ? '-' : '') + items.map((item) => item.value).join('-');
+		return (
+			(items[0].empty ? '-' : '') + items.map((item) => item.value).join('-')
+		);
 	}
 
 	interface ResultsSet {
@@ -93,7 +101,11 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		for (let i = 0; i <= max; i++) {
 			const value = items[i];
 			if (!value.empty) {
-				if (i === max && allowPartial && value.value.length >= minPartialKeywordLength) {
+				if (
+					i === max &&
+					allowPartial &&
+					value.value.length >= minPartialKeywordLength
+				) {
 					partial = value.value;
 				} else {
 					set.keywords.add(value.value);
@@ -110,7 +122,9 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		// Add partial
 		if (allowPartial && partial) {
 			if (set.partial && set.partial !== partial) {
-				console.error('Different partial keywords. This should not be happening!');
+				console.error(
+					'Different partial keywords. This should not be happening!'
+				);
 			}
 			set.partial = partial;
 		}
@@ -141,8 +155,12 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 		if (lastIndex) {
 			// Check for empty item. It can only be present at the end of value
 			const emptyItem = firstItem.find((item) => item.empty);
-			if (!emptyItem || (maxFirstItemIndex > 0 && emptyItem === firstItem[maxFirstItemIndex])) {
-				const prefix = firstItem.length > 1 ? valuesToString(firstItem) : firstItem[0].value;
+			if (
+				!emptyItem ||
+				(maxFirstItemIndex > 0 && emptyItem === firstItem[maxFirstItemIndex])
+			) {
+				const prefix =
+					firstItem.length > 1 ? valuesToString(firstItem) : firstItem[0].value;
 				if (prefix) {
 					// Valid prefix
 					const set: ResultsSet = {
@@ -167,7 +185,11 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 				test: new Set(),
 			};
 			for (let i = 0; i <= lastIndex; i++) {
-				addToSet(i ? splitValues[i] : modifiedFirstItem, set, options.partial && i === lastIndex);
+				addToSet(
+					i ? splitValues[i] : modifiedFirstItem,
+					set,
+					options.partial && i === lastIndex
+				);
 			}
 			addToResult(set, prefix);
 		}
@@ -226,7 +248,11 @@ export function splitKeywordEntries(values: string[], options: SplitOptions): Sp
 						test: new Set(),
 					};
 					for (let i = 0; i <= newLastIndex; i++) {
-						addToSet(newSplitValues[i], set, options.partial && i === newLastIndex);
+						addToSet(
+							newSplitValues[i],
+							set,
+							options.partial && i === newLastIndex
+						);
 					}
 					addToResult(set);
 				}
@@ -261,7 +287,10 @@ function addPartialPrefix(prefix: string, set: Set<string>): boolean {
 /**
  * Split keyword
  */
-export function splitKeyword(keyword: string, allowPartial = true): SearchKeywords | undefined {
+export function splitKeyword(
+	keyword: string,
+	allowPartial = true
+): SearchKeywords | undefined {
 	const commonPrefixes: Set<string> = new Set();
 	let palette: boolean | undefined;
 	let iconStyle: IconStyle | undefined;
@@ -470,8 +499,8 @@ export function splitKeyword(keyword: string, allowPartial = true): SearchKeywor
 			prefixes: item.prefix
 				? [...commonPrefixes, item.prefix]
 				: commonPrefixes.size
-				? [...commonPrefixes]
-				: undefined,
+					? [...commonPrefixes]
+					: undefined,
 		};
 	});
 

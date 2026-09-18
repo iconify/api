@@ -19,7 +19,10 @@ export async function initVersionResponse() {
 /**
  * Send response
  */
-export function versionResponse(query: FastifyRequest['query'], res: FastifyReply) {
+export function versionResponse(
+	query: FastifyRequest['query'],
+	res: FastifyReply
+) {
 	res.send(
 		'Iconify API' +
 			(version ? ' version ' + version : '') +

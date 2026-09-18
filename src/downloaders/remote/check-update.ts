@@ -1,7 +1,10 @@
 import { execAsync } from '@iconify/tools/lib/misc/exec';
 import { getGitHubRepoHash } from '@iconify/tools/lib/download/github/hash';
 import { getGitLabRepoHash } from '@iconify/tools/lib/download/gitlab/hash';
-import { getNPMVersion, getPackageVersion } from '@iconify/tools/lib/download/npm/version';
+import {
+	getNPMVersion,
+	getPackageVersion,
+} from '@iconify/tools/lib/download/npm/version';
 import { directoryExists } from '../../misc/files.js';
 import type {
 	GitDownloaderOptions,
@@ -21,10 +24,15 @@ export async function isGitUpdateAvailable(
 	options: GitDownloaderOptions,
 	oldVersion: GitDownloaderVersion
 ): Promise<false | GitDownloaderVersion> {
-	const result = await execAsync(`git ls-remote ${options.remote} --branch ${options.branch}`);
+	const result = await execAsync(
+		`git ls-remote ${options.remote} --branch ${options.branch}`
+	);
 	const parts = result.stdout.split(/\s/);
 	const hash = parts.shift() as string;
-	if (hash !== oldVersion.hash || !(await directoryExists(oldVersion.contentsDir))) {
+	if (
+		hash !== oldVersion.hash ||
+		!(await directoryExists(oldVersion.contentsDir))
+	) {
 		const newVerison: GitDownloaderVersion = {
 			...oldVersion,
 			hash,
@@ -42,7 +50,10 @@ export async function isGitHubUpdateAvailable(
 	oldVersion: GitHubDownloaderVersion
 ): Promise<false | GitHubDownloaderVersion> {
 	const hash = await getGitHubRepoHash(options);
-	if (hash !== oldVersion.hash || !(await directoryExists(oldVersion.contentsDir))) {
+	if (
+		hash !== oldVersion.hash ||
+		!(await directoryExists(oldVersion.contentsDir))
+	) {
 		const newVerison: GitHubDownloaderVersion = {
 			...oldVersion,
 			hash,
@@ -60,7 +71,10 @@ export async function isGitLabUpdateAvailable(
 	oldVersion: GitLabDownloaderVersion
 ): Promise<false | GitLabDownloaderVersion> {
 	const hash = await getGitLabRepoHash(options);
-	if (hash !== oldVersion.hash || !(await directoryExists(oldVersion.contentsDir))) {
+	if (
+		hash !== oldVersion.hash ||
+		!(await directoryExists(oldVersion.contentsDir))
+	) {
 		const newVerison: GitLabDownloaderVersion = {
 			...oldVersion,
 			hash,
@@ -79,7 +93,11 @@ export async function isNPMUpdateAvailable(
 ): Promise<false | NPMDownloaderVersion> {
 	const { version } = await getNPMVersion(options);
 	const dir = oldVersion.contentsDir;
-	if (version !== oldVersion.version || !(await directoryExists(dir)) || (await getPackageVersion(dir)) !== version) {
+	if (
+		version !== oldVersion.version ||
+		!(await directoryExists(dir)) ||
+		(await getPackageVersion(dir)) !== version
+	) {
 		const newVerison: NPMDownloaderVersion = {
 			...oldVersion,
 			version,

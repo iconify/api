@@ -1,5 +1,8 @@
 import { CustomDownloader } from '../../downloaders/custom.js';
-import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections.js';
+import type {
+	BaseCollectionsImporter,
+	CreateIconSetImporter,
+} from '../../types/importers/collections.js';
 import type { ImportedData } from '../../types/importers/common.js';
 import { createBaseCollectionsListImporter } from './base.js';
 
@@ -10,7 +13,10 @@ export function createHardcodedCollectionsListImporter(
 	prefixes: string[],
 	createIconSetImporter: CreateIconSetImporter
 ): CustomDownloader<ImportedData> & BaseCollectionsImporter {
-	const obj = createBaseCollectionsListImporter(new CustomDownloader<ImportedData>(), createIconSetImporter);
+	const obj = createBaseCollectionsListImporter(
+		new CustomDownloader<ImportedData>(),
+		createIconSetImporter
+	);
 
 	// Add methods that aren't defined in custom downloader
 	obj._init = async () => {

@@ -23,7 +23,9 @@ function checkKey(query: Record<string, string>): boolean {
 		const expectedValue = process.env[envKey];
 		if (!expectedValue) {
 			// Missing env variable
-			logError(`Cannot process update request: missing env variable "${envKey}"`);
+			logError(
+				`Cannot process update request: missing env variable "${envKey}"`
+			);
 			return false;
 		}
 
@@ -46,8 +48,15 @@ function checkKey(query: Record<string, string>): boolean {
 /**
  * Generate icons data
  */
-export function generateUpdateResponse(query: FastifyRequest['query'], res: FastifyReply) {
-	if (appConfig.allowUpdate && checkKey((query || {}) as Record<string, string>) && !pendingUpdate) {
+export function generateUpdateResponse(
+	query: FastifyRequest['query'],
+	res: FastifyReply
+) {
+	if (
+		appConfig.allowUpdate &&
+		checkKey((query || {}) as Record<string, string>) &&
+		!pendingUpdate
+	) {
 		pendingUpdate = true;
 		runWhenLoaded(() => {
 			const delay = appConfig.updateThrottle;

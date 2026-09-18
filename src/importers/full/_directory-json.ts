@@ -3,7 +3,10 @@ import { matchIconName } from '@iconify/utils/lib/icon/name';
 import type { BaseDownloader } from '../../downloaders/base.js';
 import { DirectoryDownloader } from '../../downloaders/directory.js';
 import type { StoredIconSet } from '../../types/icon-set/storage.js';
-import type { BaseCollectionsImporter, CreateIconSetImporter } from '../../types/importers/collections.js';
+import type {
+	BaseCollectionsImporter,
+	CreateIconSetImporter,
+} from '../../types/importers/collections.js';
 import type { ImportedData } from '../../types/importers/common.js';
 import { createJSONIconSetImporter } from '../icon-set/json.js';
 import { createBaseCollectionsListImporter } from '../collections/base.js';
@@ -16,7 +19,9 @@ interface JSONDirectoryImporterOptions {
 /**
  * Create importer for all .json files in directory
  */
-export function _createJSONDirectoryImporter<Downloader extends BaseDownloader<ImportedData>>(
+export function _createJSONDirectoryImporter<
+	Downloader extends BaseDownloader<ImportedData>,
+>(
 	downloader: Downloader,
 	options?: JSONDirectoryImporterOptions
 ): Downloader & BaseCollectionsImporter {
@@ -28,12 +33,18 @@ export function _createJSONDirectoryImporter<Downloader extends BaseDownloader<I
 		if (!importPath) {
 			throw new Error('Importer called before path was set');
 		}
-		return createJSONIconSetImporter(new DirectoryDownloader<StoredIconSet>(importPath), {
-			prefix,
-			filename: `/${prefix}.json`,
-		});
+		return createJSONIconSetImporter(
+			new DirectoryDownloader<StoredIconSet>(importPath),
+			{
+				prefix,
+				filename: `/${prefix}.json`,
+			}
+		);
 	};
-	const obj = createBaseCollectionsListImporter(downloader, createIconSetImporter);
+	const obj = createBaseCollectionsListImporter(
+		downloader,
+		createIconSetImporter
+	);
 
 	// Load data
 	obj._loadCollectionsListFromDirectory = async (path: string) => {
@@ -45,7 +56,11 @@ export function _createJSONDirectoryImporter<Downloader extends BaseDownloader<I
 			for (let i = 0; i < files.length; i++) {
 				const file = files[i];
 				const parts = file.split('.');
-				if (parts.length !== 2 || parts.pop() !== 'json' || !matchIconName.test(parts[0])) {
+				if (
+					parts.length !== 2 ||
+					parts.pop() !== 'json' ||
+					!matchIconName.test(parts[0])
+				) {
 					continue;
 				}
 				const data = await stat(path + '/' + file);

@@ -10,7 +10,9 @@ type CallbackResult = object | number;
 export function handleJSONResponse(
 	req: FastifyRequest,
 	res: FastifyReply,
-	callback: (query: Record<string, string>) => CallbackResult | Promise<CallbackResult>
+	callback: (
+		query: Record<string, string>
+	) => CallbackResult | Promise<CallbackResult>
 ) {
 	const q = (req.query || {}) as Record<string, string>;
 

@@ -18,7 +18,9 @@ export function getPartialKeywords(
 	}
 
 	// Check cache
-	const storedItem = (suffixes ? data.partial : data.partialPrefixes)?.[keyword];
+	const storedItem = (suffixes ? data.partial : data.partialPrefixes)?.[
+		keyword
+	];
 	if (storedItem) {
 		return storedItem;
 	}
@@ -32,7 +34,11 @@ export function getPartialKeywords(
 	}
 	const storageKey = suffixes ? 'partial' : 'partialPrefixes';
 	const storage =
-		data[storageKey] || (data[storageKey] = Object.create(null) as Exclude<SearchIndexData['partial'], undefined>);
+		data[storageKey] ||
+		(data[storageKey] = Object.create(null) as Exclude<
+			SearchIndexData['partial'],
+			undefined
+		>);
 
 	// Generate partial list
 	const prefixMatches: string[] = [];
@@ -52,6 +58,12 @@ export function getPartialKeywords(
 
 	// Sort: shortest matches first
 	return (storage[keyword] = prefixMatches
-		.sort((a, b) => (a.length === b.length ? a.localeCompare(b) : a.length - b.length))
-		.concat(suffixMatches.sort((a, b) => (a.length === b.length ? a.localeCompare(b) : a.length - b.length))));
+		.sort((a, b) =>
+			a.length === b.length ? a.localeCompare(b) : a.length - b.length
+		)
+		.concat(
+			suffixMatches.sort((a, b) =>
+				a.length === b.length ? a.localeCompare(b) : a.length - b.length
+			)
+		));
 }

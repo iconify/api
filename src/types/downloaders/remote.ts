@@ -36,15 +36,18 @@ export interface GitDownloaderOptions extends BaseRemoteDownloaderOptions {
 	branch: string;
 }
 
-export interface GitHubDownloaderOptions extends BaseRemoteDownloaderOptions, GitHubAPIOptions {
+export interface GitHubDownloaderOptions
+	extends BaseRemoteDownloaderOptions, GitHubAPIOptions {
 	downloadType: 'github';
 }
 
-export interface GitLabDownloaderOptions extends BaseRemoteDownloaderOptions, GitLabAPIOptions {
+export interface GitLabDownloaderOptions
+	extends BaseRemoteDownloaderOptions, GitLabAPIOptions {
 	downloadType: 'gitlab';
 }
 
-export interface NPMDownloaderOptions extends BaseRemoteDownloaderOptions, NPMPackageOptions {
+export interface NPMDownloaderOptions
+	extends BaseRemoteDownloaderOptions, NPMPackageOptions {
 	downloadType: 'npm';
 }
 
@@ -54,15 +57,16 @@ export type RemoteDownloaderOptions =
 	| GitLabDownloaderOptions
 	| NPMDownloaderOptions;
 
-export type RemoteDownloaderOptionsMixin<T extends RemoteDownloaderType> = T extends 'git'
-	? GitDownloaderOptions
-	: T extends 'github'
-	? GitHubDownloaderOptions
-	: T extends 'gitlab'
-	? GitLabDownloaderOptions
-	: T extends 'npm'
-	? NPMDownloaderOptions
-	: never;
+export type RemoteDownloaderOptionsMixin<T extends RemoteDownloaderType> =
+	T extends 'git'
+		? GitDownloaderOptions
+		: T extends 'github'
+			? GitHubDownloaderOptions
+			: T extends 'gitlab'
+				? GitLabDownloaderOptions
+				: T extends 'npm'
+					? NPMDownloaderOptions
+					: never;
 
 /**
  * Latest version result
@@ -71,28 +75,32 @@ interface BaseRemoteDownloaderVersion {
 	downloadType: RemoteDownloaderType;
 }
 
-export interface GitDownloaderVersion extends BaseRemoteDownloaderVersion, DownloadGitRepoResult {
+export interface GitDownloaderVersion
+	extends BaseRemoteDownloaderVersion, DownloadGitRepoResult {
 	downloadType: 'git';
 
 	// `contentsDir` contains full path to uncompressed files
 	// `hash` contains latest version hash
 }
 
-export interface GitHubDownloaderVersion extends BaseRemoteDownloaderVersion, DownloadGitHubRepoResult {
+export interface GitHubDownloaderVersion
+	extends BaseRemoteDownloaderVersion, DownloadGitHubRepoResult {
 	downloadType: 'github';
 
 	// `contentsDir` contains full path to uncompressed files
 	// `hash` contains latest version hash
 }
 
-export interface GitLabDownloaderVersion extends BaseRemoteDownloaderVersion, DownloadGitLabRepoResult {
+export interface GitLabDownloaderVersion
+	extends BaseRemoteDownloaderVersion, DownloadGitLabRepoResult {
 	downloadType: 'gitlab';
 
 	// `contentsDir` contains full path to uncompressed files
 	// `hash` contains latest version hash
 }
 
-export interface NPMDownloaderVersion extends BaseRemoteDownloaderVersion, DownloadNPMPackageResult {
+export interface NPMDownloaderVersion
+	extends BaseRemoteDownloaderVersion, DownloadNPMPackageResult {
 	downloadType: 'npm';
 
 	// `contentsDir` contains full path to uncompressed files
@@ -105,12 +113,13 @@ export type RemoteDownloaderVersion =
 	| GitLabDownloaderVersion
 	| NPMDownloaderVersion;
 
-export type RemoteDownloaderVersionMixin<T extends RemoteDownloaderType> = T extends 'git'
-	? GitDownloaderVersion
-	: T extends 'github'
-	? GitHubDownloaderVersion
-	: T extends 'gitlab'
-	? GitLabDownloaderVersion
-	: T extends 'npm'
-	? NPMDownloaderVersion
-	: never;
+export type RemoteDownloaderVersionMixin<T extends RemoteDownloaderType> =
+	T extends 'git'
+		? GitDownloaderVersion
+		: T extends 'github'
+			? GitHubDownloaderVersion
+			: T extends 'gitlab'
+				? GitLabDownloaderVersion
+				: T extends 'npm'
+					? NPMDownloaderVersion
+					: never;

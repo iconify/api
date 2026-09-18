@@ -10,7 +10,9 @@ import { filterPrefixesByPrefix } from '../helpers/prefixes.js';
  * Ignored parameters:
  * - hidden (always enabled)
  */
-export function createCollectionsListResponse(q: Record<string, string>): APIv2CollectionsResponse {
+export function createCollectionsListResponse(
+	q: Record<string, string>
+): APIv2CollectionsResponse {
 	// Filter prefixes
 	const prefixes = filterPrefixesByPrefix(getPrefixes('info'), q, false);
 	const response = Object.create(null) as APIv2CollectionsResponse;

@@ -8,7 +8,10 @@ import type { IconifyAliases, IconifyJSONIconsData } from '@iconify/types';
  * ...optional icon dimensions
  * lastModified
  */
-export interface SplitIconifyJSONMainData extends Omit<IconifyJSONIconsData, 'provider' | 'icons'> {
+export interface SplitIconifyJSONMainData extends Omit<
+	IconifyJSONIconsData,
+	'provider' | 'icons'
+> {
 	// Last modified time
 	lastModified?: number;
 

@@ -1,7 +1,10 @@
 /**
  * Convert string to boolean
  */
-export function paramToBoolean(value: string, defaultValue?: boolean): boolean | undefined {
+export function paramToBoolean(
+	value: string,
+	defaultValue?: boolean
+): boolean | undefined {
 	switch (value) {
 		case 'true':
 		case 'yes':

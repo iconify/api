@@ -6,17 +6,22 @@ import type { BaseFullImporter } from '../../types/importers/full.js';
 /**
  * Base full importer
  */
-export function createBaseImporter<Downloader extends BaseDownloader<ImportedData>>(
-	instance: Downloader
-): Downloader & BaseFullImporter {
+export function createBaseImporter<
+	Downloader extends BaseDownloader<ImportedData>,
+>(instance: Downloader): Downloader & BaseFullImporter {
 	const obj = instance as Downloader & BaseFullImporter;
 
 	// Import status
 	let importing = false;
 
 	// Import each icon set
-	type ImportIconSetCallback = (prefix: string) => Promise<StoredIconSet | void | undefined>;
-	const importIconSets = async (prefixes: string[], callback: ImportIconSetCallback): Promise<ImportedData> => {
+	type ImportIconSetCallback = (
+		prefix: string
+	) => Promise<StoredIconSet | void | undefined>;
+	const importIconSets = async (
+		prefixes: string[],
+		callback: ImportIconSetCallback
+	): Promise<ImportedData> => {
 		importing = true;
 
 		// Reuse old data
@@ -47,11 +52,15 @@ export function createBaseImporter<Downloader extends BaseDownloader<ImportedDat
 	// Import from directory
 	obj._loadDataFromDirectory = async (path: string) => {
 		if (!obj._loadCollectionsListFromDirectory) {
-			throw new Error('Importer does not implement _loadCollectionsListFromDirectory()');
+			throw new Error(
+				'Importer does not implement _loadCollectionsListFromDirectory()'
+			);
 		}
 		const loader = obj._loadIconSetFromDirectory;
 		if (!loader) {
-			throw new Error('Importer does not implement _loadIconSetFromDirectory()');
+			throw new Error(
+				'Importer does not implement _loadIconSetFromDirectory()'
+			);
 		}
 		const prefixes = await obj._loadCollectionsListFromDirectory(path);
 		if (prefixes) {

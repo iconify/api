@@ -1,4 +1,7 @@
-import type { DownloaderStatus, DownloaderType } from '../types/downloaders/base.js';
+import type {
+	DownloaderStatus,
+	DownloaderType,
+} from '../types/downloaders/base.js';
 
 /**
  * loadDataFromDirectory()
@@ -13,7 +16,9 @@ type LoadData<DataType> = () => Promise<DataType | void | undefined>;
 /**
  * loadDataFromDirectory()
  */
-type LoadDataFromDirectory<DataType> = (path: string) => Promise<DataType | void | undefined>;
+type LoadDataFromDirectory<DataType> = (
+	path: string
+) => Promise<DataType | void | undefined>;
 
 /**
  * Base downloader class, shared with all child classes

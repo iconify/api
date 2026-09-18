@@ -4,7 +4,10 @@ import type { BaseDownloader } from '../../downloaders/base.js';
 import type { ImportedData } from '../../types/importers/common.js';
 import type { BaseFullImporter } from '../../types/importers/full.js';
 import { createBaseImporter } from './base.js';
-import { type IconSetJSONOptions, importIconSetFromJSON } from '../common/icon-set-json.js';
+import {
+	type IconSetJSONOptions,
+	importIconSetFromJSON,
+} from '../common/icon-set-json.js';
 
 interface JSONDirectoryImporterOptions extends IconSetJSONOptions {
 	// Icon set filter
@@ -14,7 +17,9 @@ interface JSONDirectoryImporterOptions extends IconSetJSONOptions {
 /**
  * Create importer for all .json files in directory
  */
-export function createJSONDirectoryImporter<Downloader extends BaseDownloader<ImportedData>>(
+export function createJSONDirectoryImporter<
+	Downloader extends BaseDownloader<ImportedData>,
+>(
 	downloader: Downloader,
 	options: JSONDirectoryImporterOptions = {}
 ): Downloader & BaseFullImporter {
@@ -28,7 +33,11 @@ export function createJSONDirectoryImporter<Downloader extends BaseDownloader<Im
 			for (let i = 0; i < files.length; i++) {
 				const file = files[i];
 				const parts = file.split('.');
-				if (parts.length !== 2 || parts.pop() !== 'json' || !matchIconName.test(parts[0])) {
+				if (
+					parts.length !== 2 ||
+					parts.pop() !== 'json' ||
+					!matchIconName.test(parts[0])
+				) {
 					continue;
 				}
 				const data = await stat(path + '/' + file);

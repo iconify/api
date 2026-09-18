@@ -1,4 +1,8 @@
-import type { IconifyAliases, IconifyJSON, IconifyOptional } from '@iconify/types';
+import type {
+	IconifyAliases,
+	IconifyJSON,
+	IconifyOptional,
+} from '@iconify/types';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import { appConfig } from '../../../config/app.js';
 import type {
@@ -9,14 +13,20 @@ import type {
 } from '../../../types/icon-set/extra.js';
 import { getIconStyle } from './style.js';
 
-const customisableProps = Object.keys(defaultIconProps) as (keyof IconifyOptional)[];
+const customisableProps = Object.keys(
+	defaultIconProps
+) as (keyof IconifyOptional)[];
 
 /**
  * Generate icons tree
  */
-export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: string[]): IconSetIconsListIcons {
+export function generateIconSetIconsTree(
+	iconSet: IconifyJSON,
+	commonChunks?: string[]
+): IconSetIconsListIcons {
 	const iconSetIcons = iconSet.icons;
-	const iconSetAliases = iconSet.aliases || (Object.create(null) as IconifyAliases);
+	const iconSetAliases =
+		iconSet.aliases || (Object.create(null) as IconifyAliases);
 
 	const checked: Set<string> = new Set();
 	const visible = Object.create(null) as Record<string, IconSetIconNames>;
@@ -28,7 +38,10 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: st
 	const tags: IconSetIconsListTag[] = [];
 	const uncategorised: IconSetIconNames[] = [];
 
-	const resolvedTags = Object.create(null) as Record<string, Set<IconSetIconsListTag>>;
+	const resolvedTags = Object.create(null) as Record<
+		string,
+		Set<IconSetIconsListTag>
+	>;
 	const categories = iconSet.categories;
 	if (categories && appConfig.enableIconLists) {
 		for (const title in categories) {
@@ -53,7 +66,9 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: st
 	const iconsWithStroke: Set<IconSetIconNames> = new Set();
 	const iconsWithFill: Set<IconSetIconNames> = new Set();
 	const checkIconStyle =
-		appConfig.allowFilterIconsByStyle && appConfig.enableSearchEngine && appConfig.enableIconLists;
+		appConfig.allowFilterIconsByStyle &&
+		appConfig.enableSearchEngine &&
+		appConfig.enableIconLists;
 
 	for (const name in iconSetIcons) {
 		const isVisible = !iconSetIcons[name].hidden;
@@ -213,7 +228,9 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: st
 			tags[i].icons.sort((a, b) => a[0].localeCompare(b[0]));
 		}
 		result.tags = tags.filter((tag) => tag.icons.length > 0);
-		result.uncategorised = uncategorised.sort((a, b) => a[0].localeCompare(b[0]));
+		result.uncategorised = uncategorised.sort((a, b) =>
+			a[0].localeCompare(b[0])
+		);
 	}
 
 	// Add characters
@@ -234,8 +251,16 @@ export function generateIconSetIconsTree(iconSet: IconifyJSON, commonChunks?: st
 	// - search engine is enabled
 	// - icon set has info (cannot search icon set if cannot show it)
 	// - icon set is not marked as hidden
-	if (appConfig.enableIconLists && appConfig.enableSearchEngine && iconSet.info && !iconSet.info.hidden) {
-		const keywords = (result.keywords = Object.create(null) as Record<string, Set<IconSetIconNames>>);
+	if (
+		appConfig.enableIconLists &&
+		appConfig.enableSearchEngine &&
+		iconSet.info &&
+		!iconSet.info.hidden
+	) {
+		const keywords = (result.keywords = Object.create(null) as Record<
+			string,
+			Set<IconSetIconNames>
+		>);
 		for (const name in visible) {
 			const icon = visible[name];
 			if (icon[0] !== name) {

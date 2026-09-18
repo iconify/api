@@ -6,7 +6,10 @@ import { addStorageToCleanup } from './cleanup.js';
 /**
  * Load data
  */
-export function loadStoredItem<T>(storage: MemoryStorage<T>, storedItem: MemoryStorageItem<T>) {
+export function loadStoredItem<T>(
+	storage: MemoryStorage<T>,
+	storedItem: MemoryStorageItem<T>
+) {
 	const pendingReads = storage.pendingReads;
 	if (storedItem.data || pendingReads.has(storedItem)) {
 		// Already loaded or loading

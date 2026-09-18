@@ -125,7 +125,10 @@ export function updateIconSets(): number {
 /**
  * Trigger update
  */
-export function triggerIconSetsUpdate(index?: number | null, done?: (success?: boolean) => void) {
+export function triggerIconSetsUpdate(
+	index?: number | null,
+	done?: (success?: boolean) => void
+) {
 	if (!importers) {
 		done?.();
 		return;

@@ -1,4 +1,8 @@
-import type { SplitDataTree, SplitRecord, SplitRecordCallback } from '../../types/split.js';
+import type {
+	SplitDataTree,
+	SplitRecord,
+	SplitRecordCallback,
+} from '../../types/split.js';
 
 /**
  * Split records into `count` chunks
@@ -28,7 +32,10 @@ export function splitRecords<T>(
 			return;
 		}
 
-		const end = index === numChunks - 1 ? total : Math.round((total * (index + 1)) / numChunks);
+		const end =
+			index === numChunks - 1
+				? total
+				: Math.round((total * (index + 1)) / numChunks);
 		const keywords = keys.slice(start, end);
 
 		// Copy data
@@ -55,7 +62,9 @@ export function splitRecords<T>(
 /**
  * Create tree for searching split records list
  */
-export function createSplitRecordsTree<T>(items: SplitRecord<T>[]): SplitDataTree<T> {
+export function createSplitRecordsTree<T>(
+	items: SplitRecord<T>[]
+): SplitDataTree<T> {
 	const length = items.length;
 	const midIndex = Math.floor(length / 2);
 	const midItem = items[midIndex];
@@ -94,7 +103,10 @@ export function createSplitRecordsTree<T>(items: SplitRecord<T>[]): SplitDataTre
 /**
  * Find item
  */
-export function searchSplitRecordsTree<T>(tree: SplitDataTree<T>, keyword: string): T {
+export function searchSplitRecordsTree<T>(
+	tree: SplitDataTree<T>,
+	keyword: string
+): T {
 	if (!tree.split) {
 		return tree.match;
 	}
@@ -103,13 +115,18 @@ export function searchSplitRecordsTree<T>(tree: SplitDataTree<T>, keyword: strin
 	if (match < 0) {
 		return tree.prev ? searchSplitRecordsTree(tree.prev, keyword) : tree.match;
 	}
-	return match > 0 && tree.next ? searchSplitRecordsTree(tree.next, keyword) : tree.match;
+	return match > 0 && tree.next
+		? searchSplitRecordsTree(tree.next, keyword)
+		: tree.match;
 }
 
 /**
  * Find multiple items
  */
-export function searchSplitRecordsTreeForSet<T>(tree: SplitDataTree<T>, keywords: string[]): Map<T, string[]> {
+export function searchSplitRecordsTreeForSet<T>(
+	tree: SplitDataTree<T>,
+	keywords: string[]
+): Map<T, string[]> {
 	const map: Map<T, string[]> = new Map();
 
 	function search(tree: SplitDataTree<T>, keywords: string[]) {

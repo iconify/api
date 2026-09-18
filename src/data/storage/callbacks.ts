@@ -1,9 +1,15 @@
-import type { MemoryStorageItem, MemoryStorageCallback } from '../../types/storage.js';
+import type {
+	MemoryStorageItem,
+	MemoryStorageCallback,
+} from '../../types/storage.js';
 
 /**
  * Run all callbacks from storage
  */
-export function runStorageCallbacks<T>(storedItem: MemoryStorageItem<T>, force = false) {
+export function runStorageCallbacks<T>(
+	storedItem: MemoryStorageItem<T>,
+	force = false
+) {
 	// Get data
 	const data = storedItem.data;
 	if (!data && !force) {

@@ -1,10 +1,16 @@
 import type { IconifyJSON } from '@iconify/types';
-import type { IconSetIconsListIcons, IconSetAPIv2IconsList } from '../../../types/icon-set/extra.js';
+import type {
+	IconSetIconsListIcons,
+	IconSetAPIv2IconsList,
+} from '../../../types/icon-set/extra.js';
 
 /**
  * Prepare data for icons list API v2 response
  */
-export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIconsListIcons): IconSetAPIv2IconsList {
+export function prepareAPIv2IconsList(
+	iconSet: IconifyJSON,
+	iconsList: IconSetIconsListIcons
+): IconSetAPIv2IconsList {
 	const tags = iconsList.tags;
 	const uncategorised = iconsList.uncategorised;
 	if (!tags || !uncategorised) {
@@ -30,7 +36,10 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 
 	// Categories
 	if (tags.length) {
-		const categories = (result.categories = Object.create(null) as Record<string, string[]>);
+		const categories = (result.categories = Object.create(null) as Record<
+			string,
+			string[]
+		>);
 		for (let i = 0; i < tags.length; i++) {
 			const tag = tags[i];
 			categories[tag.title] = tag.icons.map((icon) => icon[0]);
@@ -69,7 +78,10 @@ export function prepareAPIv2IconsList(iconSet: IconifyJSON, iconsList: IconSetIc
 
 	if (iconsList.chars) {
 		// Add characters map
-		const chars = (result.chars = Object.create(null) as Record<string, string>);
+		const chars = (result.chars = Object.create(null) as Record<
+			string,
+			string
+		>);
 		const sourceChars = iconsList.chars;
 		for (const key in sourceChars) {
 			chars[key] = sourceChars[key][0];

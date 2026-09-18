@@ -4,7 +4,10 @@ import type { IconSetIconsListIcons } from '../../../types/icon-set/extra.js';
 /**
  * Removes bad items
  */
-export function removeBadIconSetItems(data: IconifyJSON, iconsList: IconSetIconsListIcons) {
+export function removeBadIconSetItems(
+	data: IconifyJSON,
+	iconsList: IconSetIconsListIcons
+) {
 	// Remove bad aliases
 	const aliases = data.aliases;
 	if (aliases) {

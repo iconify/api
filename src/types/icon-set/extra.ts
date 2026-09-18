@@ -19,7 +19,8 @@ export interface ExtraIconSetIconNamesProps {
 /**
  * Icon. First entry is main name, other entries are aliases
  */
-export type IconSetIconNames = [string, ...string[]] & ExtraIconSetIconNamesProps;
+export type IconSetIconNames = [string, ...string[]] &
+	ExtraIconSetIconNamesProps;
 
 /**
  * Tag

@@ -3,7 +3,9 @@ import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
 import type { SplitIconSetConfig } from '../../../types/config/split.js';
 import type { SplitIconifyJSONMainData } from '../../../types/icon-set/split.js';
 
-const iconDimensionProps = Object.keys(defaultIconDimensions) as (keyof typeof defaultIconDimensions)[];
+const iconDimensionProps = Object.keys(
+	defaultIconDimensions
+) as (keyof typeof defaultIconDimensions)[];
 
 const iconSetMainDataProps: (keyof SplitIconifyJSONMainData)[] = [
 	'prefix',
@@ -15,7 +17,9 @@ const iconSetMainDataProps: (keyof SplitIconifyJSONMainData)[] = [
 /**
  * Get main data
  */
-export function splitIconSetMainData(iconSet: IconifyJSON): SplitIconifyJSONMainData {
+export function splitIconSetMainData(
+	iconSet: IconifyJSON
+): SplitIconifyJSONMainData {
 	const result = {} as SplitIconifyJSONMainData;
 
 	for (let i = 0; i < iconSetMainDataProps.length; i++) {
@@ -54,7 +58,10 @@ export function getIconSetIconsSize(icons: IconifyIcons): number {
 /**
  * Split icon set
  */
-export function getIconSetSplitChunksCount(icons: IconifyIcons, config: SplitIconSetConfig): number {
+export function getIconSetSplitChunksCount(
+	icons: IconifyIcons,
+	config: SplitIconSetConfig
+): number {
 	const chunkSize = config.chunkSize;
 	if (!chunkSize) {
 		return 1;

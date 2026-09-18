@@ -25,7 +25,10 @@ export function createPackageIconSetImporter(
 		//
 	}
 	if (dir) {
-		return createIconSetsPackageImporter(new DirectoryDownloader<ImportedData>(dir), {});
+		return createIconSetsPackageImporter(
+			new DirectoryDownloader<ImportedData>(dir),
+			{}
+		);
 	}
 	if (!useRemoteFallback) {
 		throw new Error(`Cannot find package "${packageName}"`);
@@ -36,5 +39,7 @@ export function createPackageIconSetImporter(
 		downloadType: 'npm',
 		package: packageName,
 	};
-	return createIconSetsPackageImporter(new RemoteDownloader<ImportedData>(npm, autoUpdateRemotePackage));
+	return createIconSetsPackageImporter(
+		new RemoteDownloader<ImportedData>(npm, autoUpdateRemotePackage)
+	);
 }

@@ -34,7 +34,7 @@ export function checkJSONPQuery(
 			? {
 					wrap: true,
 					callback: defaultCallback,
-			  }
+				}
 			: false;
 	}
 
@@ -48,9 +48,16 @@ export function checkJSONPQuery(
 /**
  * Send JSON response
  */
-export function sendJSONResponse(data: unknown, query: Record<string, string>, wrap: JSONPStatus, res: FastifyReply) {
+export function sendJSONResponse(
+	data: unknown,
+	query: Record<string, string>,
+	wrap: JSONPStatus,
+	res: FastifyReply
+) {
 	// Generate text
-	const html = query.pretty ? JSON.stringify(data, null, 4) : JSON.stringify(data);
+	const html = query.pretty
+		? JSON.stringify(data, null, 4)
+		: JSON.stringify(data);
 
 	// Check for JSONP callback
 	if (wrap.wrap) {
