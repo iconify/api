@@ -58,8 +58,9 @@ export async function uploadAPIFiles(client: Client) {
 					foundPort = true;
 					return 'PORT=80';
 				}
-				if (process.env[key]) {
-					return `${key}=${process.env[key]}`;
+				const customValue = process.env[key];
+				if (typeof customValue !== 'undefined') {
+					return `${key}=${customValue}`;
 				}
 			}
 			return line;
