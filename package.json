@@ -32,7 +32,7 @@
 	},
 	"devDependencies": {
 		"@cyberalien/deploy-utils": "^0.0.17",
-		"@types/node": "^26.6.1",
+		"@types/node": "^26.6.3",
 		"oxfmt": "^0.68.0",
 		"typescript": "^7.0.2",
 		"vitest": "^5.0.1"
