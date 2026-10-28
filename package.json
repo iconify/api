@@ -32,13 +32,13 @@
 	},
 	"devDependencies": {
 		"@cyberalien/deploy-utils": "^0.0.17",
-		"@types/node": "^26.6.1",
+		"@types/node": "^26.6.6",
 		"oxfmt": "^0.68.0",
 		"typescript": "^7.0.2",
 		"vitest": "^5.0.1"
 	},
 	"engines": {
-		"node": ">=22.20.0"
+		"node": ">=26.13.0"
 	},
 	"packageManager": "npm@12.0.2"
 }
